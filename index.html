@@ -225,6 +225,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
 <body>
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
 
 <!-- LOGIN -->
 <div class="login-screen" id="loginScreen">
@@ -1323,8 +1324,9 @@ window.renderDash = function(){
       </div>
     </div>
 
-    <div style="text-align:center;padding:8px 0 16px">
+    <div style="text-align:center;padding:8px 0 16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
       <button onclick="exportPDF()" style="background:var(--jia);color:white;border:none;border-radius:10px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">📄 匯出 PDF 報告</button>
+      <button onclick="exportExcel()" style="background:#16a34a;color:white;border:none;border-radius:10px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">📊 下載 Excel</button>
     </div>`;
 };
 
@@ -1522,12 +1524,218 @@ window.exportPDF = () => {
   <div class="box"><div class="box-title">🏢 各事業部設計件數</div>${bizQtyBars||'<div style="color:#94a3b8;font-size:12px">此篩選無件數資料</div>'}</div>
 
   <button class="print-btn" onclick="window.print()">🖨️ 列印 ／ 儲存為 PDF</button>
-  </body></html>`);
+</body></html>`);
   win.document.close();
 };
 
 // ── SCREEN NAV ──
 // dash filter chips (removed - now using dropdowns)
+
+// ── EXCEL EXPORT ──
+window.exportExcel = async () => {
+  try {
+    showToast('⏳ 準備下載…');
+    const wb = new ExcelJS.Workbook();
+    wb.creator = '設計專案課';
+    wb.created = new Date();
+
+    const hFill = {type:'pattern',pattern:'solid',fgColor:{argb:'FF1E3A5F'}};
+    const hFont = {bold:true,color:{argb:'FFFFFFFF'},size:11};
+    const hAlign = {horizontal:'center',vertical:'middle',wrapText:true};
+    const border = {top:{style:'thin'},left:{style:'thin'},bottom:{style:'thin'},right:{style:'thin'}};
+    const altFill = {type:'pattern',pattern:'solid',fgColor:{argb:'FFF0F4FA'}};
+    const centerAlign = {horizontal:'center',vertical:'middle'};
+    const midAlign = {vertical:'middle',wrapText:true};
+
+    function styleHeader(row){
+      row.height = 22;
+      row.eachCell(cell=>{
+        cell.fill=hFill; cell.font=hFont;
+        cell.alignment=hAlign; cell.border=border;
+      });
+    }
+    function styleData(row, alt){
+      row.height = 18;
+      row.eachCell(cell=>{
+        if(alt) cell.fill=altFill;
+        cell.alignment=midAlign; cell.border=border;
+      });
+    }
+
+    // ── 工作表1：大項目 ──
+    const ws1 = wb.addWorksheet('大項目');
+    ws1.columns = [
+      {header:'等級',key:'grade',width:6},
+      {header:'專案名稱',key:'name',width:28},
+      {header:'事業部',key:'biz',width:10},
+      {header:'狀態',key:'status',width:8},
+      {header:'完成率',key:'pct',width:8},
+      {header:'總件數',key:'qty',width:8},
+      {header:'預計完工',key:'date',width:12},
+      {header:'實際完成',key:'doneDate',width:12},
+      {header:'關注',key:'alert',width:10},
+      {header:'最新備註',key:'note',width:35},
+    ];
+    styleHeader(ws1.getRow(1));
+    ws1.views = [{state:'frozen',ySplit:1}];
+
+    const sortedProjs=[...projects].sort((a,b)=>{const o={急:0,大:1,中:2,小:3};return (o[a.grade]||4)-(o[b.grade]||4);});
+    sortedProjs.forEach((p,idx)=>{
+      const st=getStatus(p),pc=pctNum(p.id);
+      const qty=items.filter(i=>i.projId===p.id).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+      const al=autoAlert(p.id);
+      const lastLog=(p.logs&&p.logs.length)?p.logs[p.logs.length-1].text:'';
+      const row=ws1.addRow([p.grade,p.name,bizL(p.biz),st,pc+'%',qty||0,p.date||'',autoDoneDate(p.id)||p.doneDate||'',al==='-'?'—':al,lastLog]);
+      styleData(row,idx%2===1);
+      // 狀態顏色
+      const stCell=row.getCell('status');
+      if(st==='已完成') stCell.font={color:{argb:'FF16A34A'},bold:true};
+      else if(st==='執行中') stCell.font={color:{argb:'FFD97706'},bold:true};
+      // 等級顏色
+      const grCell=row.getCell('grade');
+      if(p.grade==='急') grCell.font={color:{argb:'FFDC2626'},bold:true};
+      else if(p.grade==='大') grCell.font={color:{argb:'FF92400E'},bold:true};
+      grCell.alignment=centerAlign;
+    });
+
+    // ── 工作表2：細項 ──
+    const ws2 = wb.addWorksheet('細項');
+    ws2.columns = [
+      {header:'專案名稱',key:'proj',width:22},
+      {header:'事業部',key:'biz',width:8},
+      {header:'具體內容',key:'content',width:28},
+      {header:'分類',key:'cat',width:10},
+      {header:'狀態',key:'status',width:8},
+      {header:'件數',key:'qty',width:6},
+      {header:'起始日',key:'start',width:12},
+      {header:'預計完成',key:'end',width:12},
+      {header:'實際完成',key:'done',width:12},
+      {header:'最新備註',key:'note',width:35},
+    ];
+    styleHeader(ws2.getRow(1));
+    ws2.views = [{state:'frozen',ySplit:1}];
+
+    items.forEach((i,idx)=>{
+      const p=getProj(i.projId)||{};
+      const biz=i.biz||p.biz||'';
+      const lastLog=(i.logs&&i.logs.length)?i.logs[i.logs.length-1].text:'';
+      const row=ws2.addRow([p.name||'',bizL(biz),i.content||'',i.category||'',i.status||'',parseInt(i.qty)||1,i.start||'',i.end||'',i.doneDate||'',lastLog]);
+      styleData(row,idx%2===1);
+      const stCell=row.getCell('status');
+      if(i.status==='已完成') stCell.font={color:{argb:'FF16A34A'},bold:true};
+      else if(i.status==='執行中') stCell.font={color:{argb:'FFD97706'},bold:true};
+    });
+
+    // ── 工作表3：統計 ──
+    const ws3 = wb.addWorksheet('統計');
+    ws3.getColumn(1).width=22; ws3.getColumn(2).width=12;
+    ws3.getColumn(3).width=10; ws3.getColumn(4).width=10; ws3.getColumn(5).width=10;
+
+    function addSection(title, headers, dataRows){
+      // 分區標題
+      ws3.addRow([title]);
+      const titleRow=ws3.lastRow;
+      titleRow.height=20;
+      titleRow.getCell(1).fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF2563EB'}};
+      titleRow.getCell(1).font={bold:true,color:{argb:'FFFFFFFF'},size:11};
+      titleRow.getCell(1).border=border;
+      // 小標題
+      ws3.addRow(headers);
+      styleHeader(ws3.lastRow);
+      // 資料
+      dataRows.forEach((r,idx)=>{
+        ws3.addRow(r);
+        styleData(ws3.lastRow, idx%2===1);
+      });
+      ws3.addRow([]);
+    }
+
+    const total=projects.length;
+    const done=projects.filter(p=>getStatus(p)==='已完成').length;
+    const prog=projects.filter(p=>getStatus(p)==='執行中').length;
+    const wait=projects.filter(p=>getStatus(p)==='待執行').length;
+    const alertC=projects.filter(p=>autoAlert(p.id)==='需追蹤').length;
+    const totalQty=items.reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+    const doneQty=items.filter(i=>i.status==='已完成').reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+
+    // 統計工作表用公式連動大項目和細項
+    // 大項目：A=等級 B=名稱 C=事業部 D=狀態 E=完成率 F=件數 G=預計完工 H=實際完成 I=關注
+    // 細項：A=專案 B=事業部 C=內容 D=分類 E=狀態 F=件數 G=起始 H=預計 I=實際
+
+    function addSectionF(title, headers, dataRows){
+      ws3.addRow([title]);
+      const titleRow=ws3.lastRow;
+      titleRow.height=20;
+      for(let ci=1;ci<=5;ci++){
+        const cell=titleRow.getCell(ci);
+        cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF2563EB'}};
+        cell.font={bold:true,color:{argb:'FFFFFFFF'},size:11};
+        cell.border=border;
+      }
+      ws3.addRow(headers);
+      styleHeader(ws3.lastRow);
+      dataRows.forEach((r,idx)=>{
+        const row=ws3.addRow(r);
+        styleData(row,idx%2===1);
+      });
+      ws3.addRow([]);
+    }
+
+    const pMax = projects.length + 1; // 大項目最大列
+    const iMax = items.length + 1;    // 細項最大列
+
+    addSectionF('📋 專案總覽',['項目','數量（公式自動計算）'],[
+      ['總專案數',          {formula:`COUNTA(大項目!B2:B${pMax})`}],
+      ['已完成',            {formula:`COUNTIF(大項目!D2:D${pMax},"已完成")`}],
+      ['執行中',            {formula:`COUNTIF(大項目!D2:D${pMax},"執行中")`}],
+      ['待執行',            {formula:`COUNTIF(大項目!D2:D${pMax},"待執行")`}],
+      ['需追蹤',            {formula:`COUNTIF(大項目!I2:I${pMax},"需追蹤")`}],
+    ]);
+
+    addSectionF('✏️ 設計件數',['項目','數量（公式自動計算）'],[
+      ['總件數',            {formula:`SUM(細項!F2:F${iMax})`}],
+      ['已完成件數',        {formula:`SUMIF(細項!E2:E${iMax},"已完成",細項!F2:F${iMax})`}],
+      ['未完成件數',        {formula:`SUMIF(細項!E2:E${iMax},"<>已完成",細項!F2:F${iMax})`}],
+      ['整體完成率',        {formula:`IFERROR(SUMIF(細項!E2:E${iMax},"已完成",細項!F2:F${iMax})/SUM(細項!F2:F${iMax}),0)`}],
+    ]);
+    // 完成率格式
+    const pctRow = ws3.lastRow.number - 1;
+    ws3.getCell(`B${pctRow}`).numFmt = '0%';
+
+    addSectionF('📅 各季完成專案（依實際完成日）',['季度','完成專案數（公式）'],[
+      ['Q1（1-3月）',  {formula:`SUMPRODUCT((大項目!D2:D${pMax}="已完成")*(ISNUMBER(大項目!H2:H${pMax}))*(MONTH(IF(大項目!H2:H${pMax}="",TODAY(),大項目!H2:H${pMax}))>=1)*(MONTH(IF(大項目!H2:H${pMax}="",TODAY(),大項目!H2:H${pMax}))<=3))`}],
+      ['Q2（4-6月）',  {formula:`SUMPRODUCT((大項目!D2:D${pMax}="已完成")*(ISNUMBER(大項目!H2:H${pMax}))*(MONTH(IF(大項目!H2:H${pMax}="",TODAY(),大項目!H2:H${pMax}))>=4)*(MONTH(IF(大項目!H2:H${pMax}="",TODAY(),大項目!H2:H${pMax}))<=6))`}],
+      ['Q3（7-9月）',  {formula:`SUMPRODUCT((大項目!D2:D${pMax}="已完成")*(ISNUMBER(大項目!H2:H${pMax}))*(MONTH(IF(大項目!H2:H${pMax}="",TODAY(),大項目!H2:H${pMax}))>=7)*(MONTH(IF(大項目!H2:H${pMax}="",TODAY(),大項目!H2:H${pMax}))<=9))`}],
+      ['Q4（10-12月）',{formula:`SUMPRODUCT((大項目!D2:D${pMax}="已完成")*(ISNUMBER(大項目!H2:H${pMax}))*(MONTH(IF(大項目!H2:H${pMax}="",TODAY(),大項目!H2:H${pMax}))>=10)*(MONTH(IF(大項目!H2:H${pMax}="",TODAY(),大項目!H2:H${pMax}))<=12))`}],
+    ]);
+
+    addSectionF('🏢 各事業部分布',['事業部','專案數','總件數','完成件數','完成率(%)（公式）'],[
+      ['佳瑪',   {formula:`COUNTIF(大項目!C2:C${pMax},"佳瑪")`},{formula:`SUMIF(細項!B2:B${iMax},"佳瑪",細項!F2:F${iMax})`},{formula:`SUMIFS(細項!F2:F${iMax},細項!B2:B${iMax},"佳瑪",細項!E2:E${iMax},"已完成")`},{formula:`IFERROR(SUMIFS(細項!F2:F${iMax},細項!B2:B${iMax},"佳瑪",細項!E2:E${iMax},"已完成")/SUMIF(細項!B2:B${iMax},"佳瑪",細項!F2:F${iMax}),0)`}],
+      ['艾瑪特', {formula:`COUNTIF(大項目!C2:C${pMax},"艾瑪特")`},{formula:`SUMIF(細項!B2:B${iMax},"艾瑪特",細項!F2:F${iMax})`},{formula:`SUMIFS(細項!F2:F${iMax},細項!B2:B${iMax},"艾瑪特",細項!E2:E${iMax},"已完成")`},{formula:`IFERROR(SUMIFS(細項!F2:F${iMax},細項!B2:B${iMax},"艾瑪特",細項!E2:E${iMax},"已完成")/SUMIF(細項!B2:B${iMax},"艾瑪特",細項!F2:F${iMax}),0)`}],
+      ['JCPARK', {formula:`COUNTIF(大項目!C2:C${pMax},"JCPARK")`},{formula:`SUMIF(細項!B2:B${iMax},"JCPARK",細項!F2:F${iMax})`},{formula:`SUMIFS(細項!F2:F${iMax},細項!B2:B${iMax},"JCPARK",細項!E2:E${iMax},"已完成")`},{formula:`IFERROR(SUMIFS(細項!F2:F${iMax},細項!B2:B${iMax},"JCPARK",細項!E2:E${iMax},"已完成")/SUMIF(細項!B2:B${iMax},"JCPARK",細項!F2:F${iMax}),0)`}],
+      ['事業部', {formula:`COUNTIF(大項目!C2:C${pMax},"事業部")`},{formula:`SUMIF(細項!B2:B${iMax},"事業部",細項!F2:F${iMax})`},{formula:`SUMIFS(細項!F2:F${iMax},細項!B2:B${iMax},"事業部",細項!E2:E${iMax},"已完成")`},{formula:`IFERROR(SUMIFS(細項!F2:F${iMax},細項!B2:B${iMax},"事業部",細項!E2:E${iMax},"已完成")/SUMIF(細項!B2:B${iMax},"事業部",細項!F2:F${iMax}),0)`}],
+    ]);
+    // 完成率格式
+    const bizStartRow = ws3.lastRow.number - 3;
+    for(let ri=bizStartRow;ri<=ws3.lastRow.number;ri++){
+      ws3.getCell(`E${ri}`).numFmt = '0%';
+    }
+
+    // 下載
+    const buf = await wb.xlsx.writeBuffer();
+    const blob = new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const date = new Date().toLocaleDateString('zh-TW').replace(/\//g,'-');
+    a.href=url; a.download=`設計專案執行總覽_${date}.xlsx`;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+    showToast('✅ Excel 已下載！');
+  } catch(e) {
+    console.error(e);
+    showToast('❌ 下載失敗：'+e.message);
+  }
+};
 
 // toggle proj table in dash
 window.toggleProjTable = () => {
