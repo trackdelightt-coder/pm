@@ -1658,10 +1658,6 @@ window.exportExcel = async () => {
     const totalQty=items.reduce((a,i)=>a+(parseInt(i.qty)||1),0);
     const doneQty=items.filter(i=>i.status==='已完成').reduce((a,i)=>a+(parseInt(i.qty)||1),0);
 
-    // 統計工作表用公式連動大項目和細項
-    // 大項目：A=等級 B=名稱 C=事業部 D=狀態 E=完成率 F=件數 G=預計完工 H=實際完成 I=關注
-    // 細項：A=專案 B=事業部 C=內容 D=分類 E=狀態 F=件數 G=起始 H=預計 I=實際
-
     function addSectionF(title, headers, dataRows){
       ws3.addRow([title]);
       const titleRow=ws3.lastRow;
@@ -1681,45 +1677,55 @@ window.exportExcel = async () => {
       ws3.addRow([]);
     }
 
-    const pMax = projects.length + 1; // 大項目最大列
-    const iMax = items.length + 1;    // 細項最大列
+    const totalQtyX=items.reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+    const doneQtyX=items.filter(i=>i.status==='已完成').reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+    const qtyPctX=totalQtyX>0?Math.round(doneQtyX/totalQtyX*100)+'%':'0%';
 
-    addSectionF('📋 專案總覽',['項目','數量（公式自動計算）'],[
-      ['總專案數',          {formula:`COUNTA(大項目!B2:B${pMax})`}],
-      ['已完成',            {formula:`COUNTIF(大項目!D2:D${pMax},"已完成")`}],
-      ['執行中',            {formula:`COUNTIF(大項目!D2:D${pMax},"執行中")`}],
-      ['待執行',            {formula:`COUNTIF(大項目!D2:D${pMax},"待執行")`}],
-      ['需追蹤',            {formula:`COUNTIF(大項目!I2:I${pMax},"需追蹤")`}],
+    addSectionF('📋 專案總覽',['項目','數量'],[
+      ['總專案數', projects.length],
+      ['已完成', projects.filter(p=>getStatus(p)==='已完成').length],
+      ['執行中', projects.filter(p=>getStatus(p)==='執行中').length],
+      ['待執行', projects.filter(p=>getStatus(p)==='待執行').length],
+      ['需追蹤', projects.filter(p=>autoAlert(p.id)==='需追蹤').length],
     ]);
 
-    addSectionF('✏️ 設計件數',['項目','數量（公式自動計算）'],[
-      ['總件數',            {formula:`SUM(細項!F2:F${iMax})`}],
-      ['已完成件數',        {formula:`SUMIF(細項!E2:E${iMax},"已完成",細項!F2:F${iMax})`}],
-      ['未完成件數',        {formula:`SUMIF(細項!E2:E${iMax},"<>已完成",細項!F2:F${iMax})`}],
-      ['整體完成率',        {formula:`IFERROR(SUMIF(細項!E2:E${iMax},"已完成",細項!F2:F${iMax})/SUM(細項!F2:F${iMax}),0)`}],
-    ]);
-    // 完成率格式
-    const pctRow = ws3.lastRow.number - 1;
-    ws3.getCell(`B${pctRow}`).numFmt = '0%';
-
-    addSectionF('📅 各季完成專案（依實際完成日）',['季度','完成專案數（公式）'],[
-      ['Q1（1-3月）',  {formula:`SUMPRODUCT((大項目!D2:D${pMax}="已完成")*(ISNUMBER(大項目!H2:H${pMax}))*(MONTH(IF(大項目!H2:H${pMax}="",TODAY(),大項目!H2:H${pMax}))>=1)*(MONTH(IF(大項目!H2:H${pMax}="",TODAY(),大項目!H2:H${pMax}))<=3))`}],
-      ['Q2（4-6月）',  {formula:`SUMPRODUCT((大項目!D2:D${pMax}="已完成")*(ISNUMBER(大項目!H2:H${pMax}))*(MONTH(IF(大項目!H2:H${pMax}="",TODAY(),大項目!H2:H${pMax}))>=4)*(MONTH(IF(大項目!H2:H${pMax}="",TODAY(),大項目!H2:H${pMax}))<=6))`}],
-      ['Q3（7-9月）',  {formula:`SUMPRODUCT((大項目!D2:D${pMax}="已完成")*(ISNUMBER(大項目!H2:H${pMax}))*(MONTH(IF(大項目!H2:H${pMax}="",TODAY(),大項目!H2:H${pMax}))>=7)*(MONTH(IF(大項目!H2:H${pMax}="",TODAY(),大項目!H2:H${pMax}))<=9))`}],
-      ['Q4（10-12月）',{formula:`SUMPRODUCT((大項目!D2:D${pMax}="已完成")*(ISNUMBER(大項目!H2:H${pMax}))*(MONTH(IF(大項目!H2:H${pMax}="",TODAY(),大項目!H2:H${pMax}))>=10)*(MONTH(IF(大項目!H2:H${pMax}="",TODAY(),大項目!H2:H${pMax}))<=12))`}],
+    addSectionF('✏️ 設計件數',['項目','數量'],[
+      ['總件數', totalQtyX],
+      ['已完成件數', doneQtyX],
+      ['未完成件數', totalQtyX-doneQtyX],
+      ['整體完成率', qtyPctX],
     ]);
 
-    addSectionF('🏢 各事業部分布',['事業部','專案數','總件數','完成件數','完成率(%)（公式）'],[
-      ['佳瑪',   {formula:`COUNTIF(大項目!C2:C${pMax},"佳瑪")`},{formula:`SUMIF(細項!B2:B${iMax},"佳瑪",細項!F2:F${iMax})`},{formula:`SUMIFS(細項!F2:F${iMax},細項!B2:B${iMax},"佳瑪",細項!E2:E${iMax},"已完成")`},{formula:`IFERROR(SUMIFS(細項!F2:F${iMax},細項!B2:B${iMax},"佳瑪",細項!E2:E${iMax},"已完成")/SUMIF(細項!B2:B${iMax},"佳瑪",細項!F2:F${iMax}),0)`}],
-      ['艾瑪特', {formula:`COUNTIF(大項目!C2:C${pMax},"艾瑪特")`},{formula:`SUMIF(細項!B2:B${iMax},"艾瑪特",細項!F2:F${iMax})`},{formula:`SUMIFS(細項!F2:F${iMax},細項!B2:B${iMax},"艾瑪特",細項!E2:E${iMax},"已完成")`},{formula:`IFERROR(SUMIFS(細項!F2:F${iMax},細項!B2:B${iMax},"艾瑪特",細項!E2:E${iMax},"已完成")/SUMIF(細項!B2:B${iMax},"艾瑪特",細項!F2:F${iMax}),0)`}],
-      ['JCPARK', {formula:`COUNTIF(大項目!C2:C${pMax},"JCPARK")`},{formula:`SUMIF(細項!B2:B${iMax},"JCPARK",細項!F2:F${iMax})`},{formula:`SUMIFS(細項!F2:F${iMax},細項!B2:B${iMax},"JCPARK",細項!E2:E${iMax},"已完成")`},{formula:`IFERROR(SUMIFS(細項!F2:F${iMax},細項!B2:B${iMax},"JCPARK",細項!E2:E${iMax},"已完成")/SUMIF(細項!B2:B${iMax},"JCPARK",細項!F2:F${iMax}),0)`}],
-      ['事業部', {formula:`COUNTIF(大項目!C2:C${pMax},"事業部")`},{formula:`SUMIF(細項!B2:B${iMax},"事業部",細項!F2:F${iMax})`},{formula:`SUMIFS(細項!F2:F${iMax},細項!B2:B${iMax},"事業部",細項!E2:E${iMax},"已完成")`},{formula:`IFERROR(SUMIFS(細項!F2:F${iMax},細項!B2:B${iMax},"事業部",細項!E2:E${iMax},"已完成")/SUMIF(細項!B2:B${iMax},"事業部",細項!F2:F${iMax}),0)`}],
-    ]);
-    // 完成率格式
-    const bizStartRow = ws3.lastRow.number - 3;
-    for(let ri=bizStartRow;ri<=ws3.lastRow.number;ri++){
-      ws3.getCell(`E${ri}`).numFmt = '0%';
-    }
+    const quarters={Q1:0,Q2:0,Q3:0,Q4:0};
+    projects.forEach(p=>{
+      const d=parseDate(autoDoneDate(p.id)||p.doneDate||p.date);
+      if(!d||getStatus(p)!=='已完成') return;
+      const m=d.getMonth()+1;
+      if(m<=3)quarters.Q1++;else if(m<=6)quarters.Q2++;else if(m<=9)quarters.Q3++;else quarters.Q4++;
+    });
+    addSectionF('📅 各季完成專案（依實際完成日）',['季度','完成專案數'],
+      Object.entries(quarters).map(([q,n])=>[q,n])
+    );
+
+    const bizData={佳瑪:{proj:0,total:0,done:0},艾瑪特:{proj:0,total:0,done:0},JCPARK:{proj:0,total:0,done:0},事業部:{proj:0,total:0,done:0}};
+    projects.forEach(p=>{
+      if(p.biz==='佳'||p.biz==='佳艾')bizData['佳瑪'].proj++;
+      if(p.biz==='艾'||p.biz==='佳艾')bizData['艾瑪特'].proj++;
+      if(p.biz==='JC')bizData['JCPARK'].proj++;
+      if(p.biz==='事業')bizData['事業部'].proj++;
+    });
+    items.forEach(i=>{
+      const p=getProj(i.projId)||{};
+      const biz=i.biz||p.biz||'';
+      const qty=parseInt(i.qty)||1,isDone=i.status==='已完成';
+      if(biz==='佳'||biz==='佳艾'){bizData['佳瑪'].total+=qty;if(isDone)bizData['佳瑪'].done+=qty;}
+      if(biz==='艾'||biz==='佳艾'){bizData['艾瑪特'].total+=qty;if(isDone)bizData['艾瑪特'].done+=qty;}
+      if(biz==='JC'){bizData['JCPARK'].total+=qty;if(isDone)bizData['JCPARK'].done+=qty;}
+      if(biz==='事業'){bizData['事業部'].total+=qty;if(isDone)bizData['事業部'].done+=qty;}
+    });
+    addSectionF('🏢 各事業部分布',['事業部','專案數','總件數','完成件數','完成率(%)'],
+      Object.entries(bizData).map(([b,d])=>[b,d.proj,d.total,d.done,d.total>0?Math.round(d.done/d.total*100)+'%':'0%'])
+    );
 
     // 下載
     const buf = await wb.xlsx.writeBuffer();
