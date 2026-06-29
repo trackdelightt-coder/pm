@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="mobile-web-app-capable" content="yes">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✏️</text></svg>">
 <meta name="theme-color" content="#0f172a">
 <title>設計專案執行總覽</title>
 <style>
@@ -100,8 +101,9 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
 .table-wrap{padding:12px 16px;overflow-x:auto}
 .boss-table{width:100%;background:white;border-radius:14px;overflow:hidden;border-collapse:collapse;box-shadow:0 1px 4px rgba(15,23,42,.06);min-width:760px}
 .boss-table th{background:var(--bg);font-size:11px;font-weight:700;color:var(--ink3);padding:10px 12px;text-align:left;letter-spacing:.04em;white-space:nowrap}
-.boss-table td{padding:11px 12px;border-top:1px solid var(--line);font-size:13px;vertical-align:middle}
+.boss-table td{padding:11px 12px;border-top:1px solid var(--line);font-size:13px;vertical-align:middle;white-space:normal;word-break:break-word}
 .boss-table tr:hover td{background:#f8fafc;cursor:pointer}
+.boss-table tr:hover td{background:#eff6ff}
 .boss-table tr.alert-tr>td:first-child{border-left:3px solid var(--alert)}
 
 /* MOBILE CARDS */
@@ -122,7 +124,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
 .items-table-wrap{padding:12px 16px;overflow-x:auto}
 .items-table{width:100%;background:white;border-radius:14px;overflow:hidden;border-collapse:collapse;box-shadow:0 1px 4px rgba(15,23,42,.06);min-width:750px}
 .items-table th{background:var(--bg);font-size:11px;font-weight:700;color:var(--ink3);padding:10px 12px;text-align:left;letter-spacing:.04em;white-space:nowrap}
-.items-table td{padding:10px 12px;border-top:1px solid var(--line);font-size:13px;vertical-align:middle}
+.items-table td{padding:10px 12px;border-top:1px solid var(--line);font-size:13px;vertical-align:middle;white-space:normal;word-break:break-word}
 .items-table tr:hover td{background:#f8fafc;cursor:pointer}
 .items-table tr.row-執行中>td:first-child{border-left:3px solid var(--prog)}
 .items-table tr.row-待執行>td:first-child{border-left:3px solid var(--wait)}
@@ -308,7 +310,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
   </div>
   <div class="table-wrap">
     <table class="boss-table"><thead><tr>
-      <th>等級</th><th>專案名稱</th><th>事業部</th><th style="min-width:120px">進度</th>
+      <th>等級</th><th>專案名稱</th><th style="width:40px"></th><th>事業部</th><th style="min-width:120px">進度</th>
       <th>狀態</th><th>預計完工</th><th>實際完成</th><th>關注</th><th>最新備註</th>
     </tr></thead><tbody id="bossTableBody"></tbody></table>
   </div>
@@ -398,51 +400,48 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
       <select class="form-select" id="pGrade"><option value="急">急件</option><option value="大">大型</option><option value="中" selected>中型</option><option value="小">小型</option></select></div>
     <div class="form-group"><label class="form-label">事業部</label>
       <select class="form-select" id="pBiz"><option value="佳">佳瑪</option><option value="艾">艾瑪特</option><option value="JC">JCPARK</option><option value="佳艾">佳瑪＋艾瑪特</option><option value="事業">事業部</option><option value="招商">招商事業部</option></select></div>
-    <div class="form-group"><label class="form-label">店別</label>
-      <select class="form-select" id="pStore" onchange="updateProjName()">
-        <option value="">— 選擇店別 —</option>
-        <optgroup label="── 佳瑪 ──">
-        <option value="佳瑪_樹林店1001">佳瑪_樹林店1001</option>
-        <option value="佳瑪_蘆洲店1002">佳瑪_蘆洲店1002</option>
-        <option value="佳瑪_楊梅店1005">佳瑪_楊梅店1005</option>
-        <option value="佳瑪_新莊店1006">佳瑪_新莊店1006</option>
-        <option value="佳瑪_南崁店1007">佳瑪_南崁店1007</option>
-        <option value="佳瑪_新店店1009">佳瑪_新店店1009</option>
-        <option value="佳瑪_三重店1010">佳瑪_三重店1010</option>
-        <option value="佳瑪_竹南店1011">佳瑪_竹南店1011</option>
-        <option value="佳瑪_博愛店1013">佳瑪_博愛店1013</option>
-        <option value="佳瑪_龍潭店1016">佳瑪_龍潭店1016</option>
-        </optgroup>
-        <optgroup label="── 艾瑪特 ──">
-        <option value="艾瑪特_三樹店601">艾瑪特_三樹店601</option>
-        <option value="艾瑪特_沙鹿店602">艾瑪特_沙鹿店602</option>
-        <option value="艾瑪特_員林店603">艾瑪特_員林店603</option>
-        <option value="艾瑪特_新莊店604">艾瑪特_新莊店604</option>
-        <option value="艾瑪特_三富店605">艾瑪特_三富店605</option>
-        <option value="艾瑪特_丹比店606">艾瑪特_丹比店606</option>
-        <option value="艾瑪特_三百店607">艾瑪特_三百店607</option>
-        <option value="艾瑪特_大甲店608">艾瑪特_大甲店608</option>
-        <option value="艾瑪特_新竹店609">艾瑪特_新竹店609</option>
-        <option value="艾瑪特_板橋店611">艾瑪特_板橋店611</option>
-        <option value="艾瑪特_蘆洲店613">艾瑪特_蘆洲店613</option>
-        <option value="艾瑪特_幸福店616">艾瑪特_幸福店616</option>
-        <option value="艾瑪特_南崁店617">艾瑪特_南崁店617</option>
-        <option value="艾瑪特_彰化店618">艾瑪特_彰化店618</option>
-        <option value="艾瑪特_竹南店501">艾瑪特_竹南店501</option>
-        <option value="艾瑪特_楊梅店502">艾瑪特_楊梅店502</option>
-        <option value="艾瑪特_樹林店505">艾瑪特_樹林店505</option>
-        <option value="艾瑪特_景美店622">艾瑪特_景美店622</option>
-        <option value="艾瑪特_北埔店623">艾瑪特_北埔店623</option>
-        </optgroup>
-        <optgroup label="── JCPARK ──">
-        <option value="JC_幸福館1301">JC_幸福館1301</option>
-        <option value="JC_中正館1302">JC_中正館1302</option>
-        <option value="JC_春日館1303">JC_春日館1303</option>
-        </optgroup>
-        <optgroup label="── 招商事業部 ──">
-        <option value="招商事業部">招商事業部</option>
-        </optgroup>
-      </select></div>
+    <div class="form-group fg-full">
+      <label class="form-label">店別（可多選）</label>
+      <div id="storeCheckboxes" style="background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;max-height:160px;overflow-y:auto">
+        <div style="font-size:11px;font-weight:700;color:var(--jia);margin-bottom:6px">── 佳瑪 ──</div>
+        <label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="佳瑪_樹林店1001" onchange="updateProjName()" style="width:16px;height:16px"><span>佳瑪_樹林店1001</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="佳瑪_蘆洲店1002" onchange="updateProjName()" style="width:16px;height:16px"><span>佳瑪_蘆洲店1002</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="佳瑪_楊梅店1005" onchange="updateProjName()" style="width:16px;height:16px"><span>佳瑪_楊梅店1005</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="佳瑪_新莊店1006" onchange="updateProjName()" style="width:16px;height:16px"><span>佳瑪_新莊店1006</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="佳瑪_南崁店1007" onchange="updateProjName()" style="width:16px;height:16px"><span>佳瑪_南崁店1007</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="佳瑪_新店店1009" onchange="updateProjName()" style="width:16px;height:16px"><span>佳瑪_新店店1009</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="佳瑪_三重店1010" onchange="updateProjName()" style="width:16px;height:16px"><span>佳瑪_三重店1010</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="佳瑪_竹南店1011" onchange="updateProjName()" style="width:16px;height:16px"><span>佳瑪_竹南店1011</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="佳瑪_博愛店1013" onchange="updateProjName()" style="width:16px;height:16px"><span>佳瑪_博愛店1013</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="佳瑪_龍潭店1016" onchange="updateProjName()" style="width:16px;height:16px"><span>佳瑪_龍潭店1016</span></label>
+        <div style="font-size:11px;font-weight:700;color:var(--ai);margin:8px 0 6px">── 艾瑪特 ──</div>
+        <label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="艾瑪特_三樹店601" onchange="updateProjName()" style="width:16px;height:16px"><span>艾瑪特_三樹店601</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="艾瑪特_沙鹿店602" onchange="updateProjName()" style="width:16px;height:16px"><span>艾瑪特_沙鹿店602</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="艾瑪特_員林店603" onchange="updateProjName()" style="width:16px;height:16px"><span>艾瑪特_員林店603</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="艾瑪特_新莊店604" onchange="updateProjName()" style="width:16px;height:16px"><span>艾瑪特_新莊店604</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="艾瑪特_三富店605" onchange="updateProjName()" style="width:16px;height:16px"><span>艾瑪特_三富店605</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="艾瑪特_丹比店606" onchange="updateProjName()" style="width:16px;height:16px"><span>艾瑪特_丹比店606</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="艾瑪特_三百店607" onchange="updateProjName()" style="width:16px;height:16px"><span>艾瑪特_三百店607</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="艾瑪特_大甲店608" onchange="updateProjName()" style="width:16px;height:16px"><span>艾瑪特_大甲店608</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="艾瑪特_新竹店609" onchange="updateProjName()" style="width:16px;height:16px"><span>艾瑪特_新竹店609</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="艾瑪特_板橋店611" onchange="updateProjName()" style="width:16px;height:16px"><span>艾瑪特_板橋店611</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="艾瑪特_蘆洲店613" onchange="updateProjName()" style="width:16px;height:16px"><span>艾瑪特_蘆洲店613</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="艾瑪特_幸福店616" onchange="updateProjName()" style="width:16px;height:16px"><span>艾瑪特_幸福店616</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="艾瑪特_南崁店617" onchange="updateProjName()" style="width:16px;height:16px"><span>艾瑪特_南崁店617</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="艾瑪特_彰化店618" onchange="updateProjName()" style="width:16px;height:16px"><span>艾瑪特_彰化店618</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="艾瑪特_竹南店501" onchange="updateProjName()" style="width:16px;height:16px"><span>艾瑪特_竹南店501</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="艾瑪特_楊梅店502" onchange="updateProjName()" style="width:16px;height:16px"><span>艾瑪特_楊梅店502</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="艾瑪特_樹林店505" onchange="updateProjName()" style="width:16px;height:16px"><span>艾瑪特_樹林店505</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="艾瑪特_景美店622" onchange="updateProjName()" style="width:16px;height:16px"><span>艾瑪特_景美店622</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="艾瑪特_北埔店623" onchange="updateProjName()" style="width:16px;height:16px"><span>艾瑪特_北埔店623</span></label>
+        <div style="font-size:11px;font-weight:700;color:var(--jc);margin:8px 0 6px">── JCPARK ──</div>
+        <label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="JC_幸福館1301" onchange="updateProjName()" style="width:16px;height:16px"><span>JC_幸福館1301</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="JC_中正館1302" onchange="updateProjName()" style="width:16px;height:16px"><span>JC_中正館1302</span></label>
+<label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="JC_春日館1303" onchange="updateProjName()" style="width:16px;height:16px"><span>JC_春日館1303</span></label>
+        <div style="font-size:11px;font-weight:700;color:var(--biz);margin:8px 0 6px">── 招商 ──</div>
+        <label style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;cursor:pointer"><input type="checkbox" class="store-cb" value="招商事業部" onchange="updateProjName()" style="width:16px;height:16px"><span>招商事業部</span></label>
+      </div>
+    </div>
     <div class="form-group"><label class="form-label">專案描述 *</label>
       <input class="form-input" id="pNameSuffix" placeholder="例：外牆+橫招" oninput="updateProjName()"></div>
     <div class="form-group fg-full">
@@ -476,8 +475,12 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
   <div class="modal-handle"></div>
   <div class="modal-title"><span id="itemModalTitle">➕ 新增細項</span><button class="modal-close" onclick="closeModal('itemModal')">✕</button></div>
   <div class="form-grid">
-    <div class="form-group fg-full"><label class="form-label">所屬專案 *</label>
-      <select class="form-select" id="iProjId"><option value="">— 選擇專案 —</option></select></div>
+    <div class="form-group fg-full">
+      <label class="form-label">所屬專案 *（輸入關鍵字搜尋）</label>
+      <input class="form-input" id="iProjSearch" list="iProjList" placeholder="輸入店名或關鍵字搜尋…" oninput="onProjSearch()" autocomplete="off">
+      <datalist id="iProjList"></datalist>
+      <input type="hidden" id="iProjId">
+    </div>
     <div class="form-group fg-full"><label class="form-label">具體內容 *</label><input class="form-input" id="iContent" placeholder="例：柱子貼圖設計"></div>
     <div class="form-group"><label class="form-label">事業部</label>
       <select class="form-select" id="iBiz">
@@ -556,6 +559,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
   </div>
   <div class="modal-actions" style="margin-top:14px">
     <button class="btn-cancel" onclick="closeModal('detailModal')">關閉</button>
+    <button class="t-btn" onclick="closeModal('detailModal');jumpToItems(detailProjId)" style="background:var(--jc-l);color:var(--jc);padding:13px 16px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;border:none">📋 查看細項</button>
     <button class="btn-save" id="detailEditBtn" onclick="editFromDetail()" style="display:none">✏️ 編輯</button>
   </div>
 </div>
@@ -769,7 +773,8 @@ window.renderBoss = function(){
     const ds=p.date?p.date.replace('2026-',''):'—';
     return `<tr class="${ia?'alert-tr':''}" onclick="openDetail('${p.id}')">
       <td><span class="grade grade-${p.grade}">${p.grade}</span></td>
-      <td style="font-weight:700;color:${ia?'var(--alert)':'var(--ink)'}">${p.name||''}</td>
+      <td style="font-weight:700;color:${ia?'var(--alert)':'var(--ink)'};white-space:normal;word-break:break-all">${p.name||''}</td>
+      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems('${p.id}')" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
       <td><span class="biz-badge ${bizC(p.biz)}">${bizL(p.biz)}</span></td>
       <td><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:${p._pct}%;background:${col}"></div></div><span class="prog-pct" style="color:${col}">${p._pct}%</span></div></td>
       <td><span class="status-badge s-${p._status}">${p._status}</span></td>
@@ -783,7 +788,7 @@ window.renderBoss = function(){
         if(al==='需追蹤') return '<span class="alert-badge a-yes">⚠️ 需追蹤</span>';
         return '<span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;background:#fef3c7;color:#b45309">持續推進</span>';
       })()}</td>
-      <td style="font-size:11px;color:var(--ink3);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${lastLog(p)}</td>
+      <td style="font-size:11px;color:var(--ink3);max-width:150px;white-space:normal;word-break:break-all;line-height:1.4">${lastLog(p)}</td>
     </tr>`;
   }).join(''):'<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--ink4)">此篩選無專案</td></tr>';
 
@@ -829,6 +834,17 @@ document.querySelectorAll('[data-bf]').forEach(b=>b.addEventListener('click',()=
 }));
 
 // ── DETAIL ──
+window.jumpToItems = id => {
+  const tabs = document.querySelectorAll('.ttab');
+  tabs.forEach(t=>t.classList.remove('active'));
+  tabs[1].classList.add('active');
+  showScreen('items', tabs[1]);
+  setTimeout(()=>{
+    const sel=document.getElementById('filterProj');
+    if(sel){ sel.value=id; renderItems(); }
+  },200);
+};
+
 window.openDetail = id => {
   detailProjId=id;
   const p=getProj(id); if(!p) return;
@@ -909,7 +925,7 @@ window.openAddProj = () => {
   document.getElementById('projDelBtn').style.display='none';
   document.getElementById('projLogSection').style.display='none';
   ['pName','pDoneDate','pNameSuffix'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('pStore').value='';
+  document.querySelectorAll('.store-cb').forEach(cb=>cb.checked=false);
   document.getElementById('pGrade').value='中';
   document.getElementById('pBiz').value='佳';
   document.getElementById('pDate').value='';
@@ -929,18 +945,18 @@ function openEditProj(id){
   document.getElementById('pName').value=p.name||'';
   document.getElementById('pDate').value=p.date||'';
   document.getElementById('pDoneDate').value=p.doneDate||'';
-  // Parse name back to store + suffix
-  const storeParts = p.name ? p.name.split('_') : [];
-  const storeOpts = [...document.getElementById('pStore').options].map(o=>o.value);
-  const matchedStore = storeParts.length>=2 ? storeParts.slice(0,-1).join('_') : '';
-  const matchedSuffix = storeParts.length>=2 ? storeParts[storeParts.length-1] : p.name||'';
-  if(storeOpts.includes(matchedStore)){
-    document.getElementById('pStore').value=matchedStore;
-    document.getElementById('pNameSuffix').value=matchedSuffix;
-  } else {
-    document.getElementById('pStore').value=p.store||'';
-    document.getElementById('pNameSuffix').value=p.name||'';
+  // Parse name back to stores + suffix
+  document.querySelectorAll('.store-cb').forEach(cb=>cb.checked=false);
+  const allStoreVals = [...document.querySelectorAll('.store-cb')].map(c=>c.value);
+  const nameParts=(p.name||'').split('_');
+  let storeVals=[],suffixVal='';
+  for(let i=nameParts.length-1;i>=1;i--){
+    const possible=nameParts.slice(0,i).join('_').split('+');
+    if(possible.every(s=>allStoreVals.includes(s))){storeVals=possible;suffixVal=nameParts.slice(i).join('_');break;}
   }
+  if(!storeVals.length) suffixVal=p.name||'';
+  document.querySelectorAll('.store-cb').forEach(cb=>{cb.checked=storeVals.includes(cb.value);});
+  document.getElementById('pNameSuffix').value=suffixVal;
   // alert is now auto-calculated
   renderProjLogList();
   document.getElementById('projModal').classList.add('open');
@@ -988,7 +1004,7 @@ window.saveProj = async () => {
   const obj={grade:document.getElementById('pGrade').value,name,biz:document.getElementById('pBiz').value,
     date:document.getElementById('pDate').value,
     doneDate:document.getElementById('pDoneDate').value||'',
-    store:document.getElementById('pStore').value||'',
+    store:[...document.querySelectorAll('.store-cb:checked')].map(c=>c.value).join('+'),
     alert:editProjId?autoAlert(editProjId):'-',logs:tempProjLogs};
   try{ await db.collection('projects').doc(editProjId||newId('p')).set(obj); showToast('✅ 已儲存'); closeModal('projModal'); }
   catch(e){ showToast('❌ 儲存失敗'); }
@@ -1015,10 +1031,17 @@ function populateFilters(){
   sel.innerHTML='<option value="">全部專案</option>';
   projects.forEach(p=>{ const o=document.createElement('option'); o.value=p.id; o.textContent=`${p.grade}｜${p.name}`; sel.appendChild(o); });
   if(cur) sel.value=cur;
-  const iSel=document.getElementById('iProjId'),iCur=iSel.value;
-  iSel.innerHTML='<option value="">— 選擇專案 —</option>';
-  projects.forEach(p=>{ const o=document.createElement('option'); o.value=p.id; o.textContent=`${p.grade}｜${p.name}`; iSel.appendChild(o); });
-  if(iCur) iSel.value=iCur;
+  // Populate datalist for item proj search
+  const dl=document.getElementById('iProjList');
+  if(dl){
+    dl.innerHTML='';
+    projects.forEach(p=>{
+      const o=document.createElement('option');
+      o.value=`${p.grade}｜${p.name}`;
+      o.dataset.id=p.id;
+      dl.appendChild(o);
+    });
+  }
 }
 
 window.renderItems = function(){
@@ -1055,9 +1078,9 @@ window.renderItems = function(){
     const rawUrl=item.imgUrl||'';
     const imgCell=rawUrl?`<a href="${rawUrl}" target="_blank" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;background:var(--jia-l);color:var(--jia);font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;text-decoration:none">🖼 開啟</a>`:`<span style="color:var(--ink4);font-size:12px">—</span>`;
     return `<tr class="row-${item.status}" onclick="${isEdit?`openEditItem('${item.id}')`:''}" style="${!isEdit?'cursor:default':''}">
-      <td style="font-size:12px;white-space:nowrap"><span class="biz-badge ${bizC(p.biz)}" style="font-size:10px;margin-bottom:2px;display:inline-block">${bizL(p.biz)}</span><br><span style="color:var(--ink2)">${p.name||'—'}</span></td>
+      <td style="font-size:12px"><span class="biz-badge ${bizC(p.biz)}" style="font-size:10px;margin-bottom:2px;display:inline-block">${bizL(p.biz)}</span><br><span style="color:var(--ink2)">${p.name||'—'}</span></td>
       <td>${item.biz?`<span class="biz-badge ${bizC(item.biz)}" style="font-size:10px">${bizL(item.biz)}</span>`:`<span style="color:var(--ink4);font-size:11px">依大項</span>`}</td>
-      <td style="font-weight:600">${item.content||''}</td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px">${item.content||''}</td>
       <td style="color:var(--ink3);font-size:12px">${item.category||'—'}</td>
       <td><span class="status-badge s-${item.status}">${item.status}</span></td>
       <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
@@ -1087,10 +1110,14 @@ window.openAddItem = () => {
   document.getElementById('itemDelBtn').style.display='none';
   ['iContent','iCategory','iStart','iEnd','iDone','iImgUrl'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('iBiz').value='';
-  document.getElementById('iStore').value='';
+  [...document.getElementById('iStore').options].forEach(o=>o.selected=false);
   document.getElementById('iQty').value='1';
   document.getElementById('iStatus').value='待執行';
-  document.getElementById('iProjId').value=document.getElementById('filterProj').value||'';
+  document.getElementById('iProjSearch').value='';
+  document.getElementById('iProjId').value='';
+  // pre-fill if filter proj selected
+  const fp=document.getElementById('filterProj').value;
+  if(fp){const p=projects.find(x=>x.id===fp);if(p){document.getElementById('iProjSearch').value=`${p.grade}｜${p.name}`;document.getElementById('iProjId').value=fp;}}
   renderItemLogList();
   document.getElementById('itemModal').classList.add('open');
 };
@@ -1101,6 +1128,8 @@ window.openEditItem = id => {
   tempItemLogs=[...(item.logs||[])];
   document.getElementById('itemModalTitle').textContent='✏️ 編輯細項';
   document.getElementById('itemDelBtn').style.display='block';
+  const ep=projects.find(x=>x.id===(item.projId||''));
+  document.getElementById('iProjSearch').value=ep?`${ep.grade}｜${ep.name}`:''; 
   document.getElementById('iProjId').value=item.projId||'';
   document.getElementById('iContent').value=item.content||'';
   document.getElementById('iCategory').value=item.category||'';
@@ -1111,7 +1140,7 @@ window.openEditItem = id => {
   document.getElementById('iImgUrl').value=item.imgUrl||'';
   document.getElementById('iQty').value=item.qty||1;
   document.getElementById('iBiz').value=item.biz||'';
-  document.getElementById('iStore').value=item.store||'';
+  const storeArr=(item.store||'').split('+');[...document.getElementById('iStore').options].forEach(o=>o.selected=storeArr.includes(o.value));
   renderItemLogList();
   document.getElementById('itemModal').classList.add('open');
 };
@@ -1149,7 +1178,7 @@ window.addItemLog = () => {
 
 window.saveItem = async () => {
   const content=document.getElementById('iContent').value.trim();
-  const projId=document.getElementById('iProjId').value;
+  const projId=document.getElementById('iProjId').value||'';
   if(!content){showToast('請填寫具體內容');return}
   if(!projId){showToast('請選擇所屬專案');return}
   const status=document.getElementById('iStatus').value;
@@ -1161,7 +1190,7 @@ window.saveItem = async () => {
     doneDate,imgUrl:document.getElementById('iImgUrl').value.trim(),
     qty:parseInt(document.getElementById('iQty').value)||1,
     biz:document.getElementById('iBiz').value||'',
-    store:document.getElementById('iStore').value||'',
+    store:[...document.getElementById('iStore').selectedOptions].map(o=>o.value).join('+'),
     logs:tempItemLogs};
   try{ await db.collection('items').doc(editItemId||newId('i')).set(obj); showToast('✅ 已儲存'); closeModal('itemModal'); }
   catch(e){ showToast('❌ 儲存失敗'); }
@@ -1262,16 +1291,18 @@ window.renderDash = function(){
   });
 
   // 事業部件數
-  const bizQtyTotal={佳瑪:0,艾瑪特:0,JCPARK:0,事業部:0};
-  const bizQtyDone={佳瑪:0,艾瑪特:0,JCPARK:0,事業部:0};
+  const bizQtyTotal={佳瑪:0,艾瑪特:0,JCPARK:0,事業部:0,招商事業部:0};
+  const bizQtyDone={佳瑪:0,艾瑪特:0,JCPARK:0,事業部:0,招商事業部:0};
   filtItems.forEach(i=>{
     const p=getProj(i.projId)||{};
+    const biz=i.biz||p.biz||'';
     const qty=parseInt(i.qty)||1;
     const isDone=i.status==='已完成';
-    if(p.biz==='佳'||p.biz==='佳艾'){ bizQtyTotal['佳瑪']+=qty; if(isDone) bizQtyDone['佳瑪']+=qty; }
-    if(p.biz==='艾'||p.biz==='佳艾'){ bizQtyTotal['艾瑪特']+=qty; if(isDone) bizQtyDone['艾瑪特']+=qty; }
-    if(p.biz==='JC'){ bizQtyTotal['JCPARK']+=qty; if(isDone) bizQtyDone['JCPARK']+=qty; }
-    if(p.biz==='事業'){ bizQtyTotal['事業部']+=qty; if(isDone) bizQtyDone['事業部']+=qty; }
+    if(biz==='佳'||biz==='佳艾'){ bizQtyTotal['佳瑪']+=qty; if(isDone) bizQtyDone['佳瑪']+=qty; }
+    if(biz==='艾'||biz==='佳艾'){ bizQtyTotal['艾瑪特']+=qty; if(isDone) bizQtyDone['艾瑪特']+=qty; }
+    if(biz==='JC'){ bizQtyTotal['JCPARK']+=qty; if(isDone) bizQtyDone['JCPARK']+=qty; }
+    if(biz==='事業'){ bizQtyTotal['事業部']+=qty; if(isDone) bizQtyDone['事業部']+=qty; }
+    if(biz==='招商'){ bizQtyTotal['招商事業部']+=qty; if(isDone) bizQtyDone['招商事業部']+=qty; }
   });
   const maxBizQty=Math.max(...Object.values(bizQtyTotal),1);
 
@@ -1284,6 +1315,18 @@ window.renderDash = function(){
   const filterLabel=[_yr!=='all'?_yr:'',_pd!=='all'?pdName[_pd]:''].filter(Boolean).join('・')||'全部';
   const lbl=document.getElementById('dashFilterLabel');
   if(lbl) lbl.textContent=filterLabel!=='全部'?'篩選：'+filterLabel:'';
+
+  // 店別件數統計（從專案名稱或store欄位抓）
+  const storeQty={};
+  filtItems.forEach(i=>{
+    const p=getProj(i.projId)||{};
+    const store=i.store||p.store||'';
+    if(!store) return;
+    const qty=parseInt(i.qty)||1;
+    if(!storeQty[store]) storeQty[store]=0;
+    storeQty[store]+=qty;
+  });
+  const storeRanking=Object.entries(storeQty).sort((a,b)=>b[1]-a[1]).slice(0,10);
 
   document.getElementById('dashContent').innerHTML=`
     <div style="padding:10px 0 4px 0;font-size:11px;color:var(--ink4);font-weight:600;text-align:center">
@@ -1355,6 +1398,7 @@ window.renderDash = function(){
     <!-- 件數總覽 -->
     <div class="dash-section">
       <div class="dash-section-title">✏️ 設計件數總覽</div>
+      <div style="font-size:11px;color:var(--ink4);margin-bottom:10px">💡 件數以各細項填寫數量加總，計算方式依實際情況自訂</div>
       <div class="dash-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:12px">
         <div class="dash-card"><div class="dash-card-num" style="color:var(--ink2)">${totalQty}</div><div class="dash-card-lbl">總件數</div></div>
         <div class="dash-card"><div class="dash-card-num" style="color:var(--done)">${doneQty}</div><div class="dash-card-lbl">已完成件數</div></div>
@@ -1410,7 +1454,9 @@ window.renderDash = function(){
       </div>
     </div>
 
-    <div style="text-align:center;padding:8px 0 16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+
+
+        <div style="text-align:center;padding:8px 0 16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
       <button onclick="exportPDF()" style="background:var(--jia);color:white;border:none;border-radius:10px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">📄 匯出 PDF 報告</button>
       <button onclick="exportExcel()" style="background:#16a34a;color:white;border:none;border-radius:10px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">📊 下載 Excel</button>
     </div>`;
@@ -1440,12 +1486,13 @@ window.exportPDF = () => {
   });
   const maxQ=Math.max(...Object.values(quarters),1);
 
-  const bizCount={佳瑪:0,艾瑪特:0,JCPARK:0,事業部:0};
+  const bizCount={佳瑪:0,艾瑪特:0,JCPARK:0,事業部:0,招商事業部:0};
   filtProjs.forEach(p=>{
     if(p.biz==='佳'||p.biz==='佳艾') bizCount['佳瑪']++;
     if(p.biz==='艾'||p.biz==='佳艾') bizCount['艾瑪特']++;
     if(p.biz==='JC') bizCount['JCPARK']++;
     if(p.biz==='事業') bizCount['事業部']++;
+    if(p.biz==='招商') bizCount['招商事業部']++;
   });
 
   const totalQty=filtItems.reduce((a,i)=>a+(parseInt(i.qty)||1),0);
@@ -1467,17 +1514,7 @@ window.exportPDF = () => {
     if(biz==='招商'){bizQtyTotal['招商事業部']+=qty;if(isDone)bizQtyDone['招商事業部']+=qty;}
   });
 
-  // 店別件數統計（從專案名稱或store欄位抓）
-  const storeQty={};
-  filtItems.forEach(i=>{
-    const p=getProj(i.projId)||{};
-    const store=i.store||p.store||'';
-    if(!store) return;
-    const qty=parseInt(i.qty)||1;
-    if(!storeQty[store]) storeQty[store]=0;
-    storeQty[store]+=qty;
-  });
-  const storeRanking=Object.entries(storeQty).sort((a,b)=>b[1]-a[1]).slice(0,10);
+
 
   const gradeCount={急:0,大:0,中:0,小:0};
   filtProjs.forEach(p=>{if(gradeCount[p.grade]!==undefined)gradeCount[p.grade]++;});
@@ -1510,7 +1547,7 @@ window.exportPDF = () => {
     </div>`).join('');
 
   const bizProjBars=Object.entries(bizCount).filter(([,n])=>n>0).map(([b,n])=>{
-    const col={佳瑪:'#2563eb',艾瑪特:'#7c3aed',JCPARK:'#0891b2',事業部:'#0f766e'}[b];
+    const col={佳瑪:'#2563eb',艾瑪特:'#7c3aed',JCPARK:'#0891b2',事業部:'#0f766e',招商事業部:'#9333ea'}[b]||'#64748b';
     return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
       <div style="min-width:48px;font-size:11px;font-weight:700;color:#334155;text-align:right">${b}</div>
       <div style="flex:1;height:16px;background:#f1f5f9;border-radius:4px;overflow:hidden"><div style="width:${Math.round(n/total*100)}%;height:100%;background:${col};border-radius:4px"></div></div>
@@ -1519,7 +1556,7 @@ window.exportPDF = () => {
   }).join('');
 
   const bizQtyBars=Object.entries(bizQtyTotal).filter(([,n])=>n>0).map(([b,n])=>{
-    const col={佳瑪:'#2563eb',艾瑪特:'#7c3aed',JCPARK:'#0891b2',事業部:'#0f766e'}[b];
+    const col={佳瑪:'#2563eb',艾瑪特:'#7c3aed',JCPARK:'#0891b2',事業部:'#0f766e',招商事業部:'#9333ea'}[b]||'#64748b';
     const d=bizQtyDone[b]||0;
     const pct=n>0?Math.round(d/n*100):0;
     return `<div style="margin-bottom:10px">
@@ -1612,6 +1649,7 @@ window.exportPDF = () => {
 
   <div class="divider"></div>
   <div class="section-title">✏️ 設計件數統計</div>
+  <div style="font-size:11px;color:#94a3b8;margin-bottom:10px">💡 件數以各細項填寫數量加總，計算方式依實際情況自訂</div>
   <div class="item-kpi">
     <div class="kpi-box"><div class="kpi-num" style="color:#334155">${totalQty}</div><div class="kpi-lbl">總件數</div></div>
     <div class="kpi-box"><div class="kpi-num" style="color:#16a34a">${doneQty}</div><div class="kpi-lbl">已完成件數</div></div>
@@ -1843,12 +1881,21 @@ window.exportExcel = async () => {
 };
 
 // auto combine proj name
+window.onProjSearch = () => {
+  const val = document.getElementById('iProjSearch').value;
+  const dl = document.getElementById('iProjList');
+  const match = [...dl.options].find(o=>o.value===val);
+  if(match) document.getElementById('iProjId').value=match.dataset.id||'';
+  else document.getElementById('iProjId').value='';
+};
+
 window.updateProjName = () => {
-  const store = document.getElementById('pStore').value;
+  const cbs = [...document.querySelectorAll('.store-cb:checked')].map(c=>c.value);
   const suffix = document.getElementById('pNameSuffix').value.trim();
   const nameEl = document.getElementById('pName');
-  if(store && suffix) nameEl.value = store + '_' + suffix;
-  else if(store) nameEl.value = store + '_';
+  const storeStr = cbs.join('+');
+  if(storeStr && suffix) nameEl.value = storeStr + '_' + suffix;
+  else if(storeStr) nameEl.value = storeStr + '_';
   else nameEl.value = suffix;
 };
 
