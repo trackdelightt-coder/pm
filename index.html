@@ -283,6 +283,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
     <button class="chip" data-bf="佳">佳瑪</button>
     <button class="chip" data-bf="艾">艾瑪特</button>
     <button class="chip" data-bf="JC">JCPARK</button>
+    <button class="chip" data-bf="招商">招商</button>
     <button class="chip" data-bf="急" style="color:var(--alert);border-color:var(--alert-l)">急件</button>
     <button class="chip" data-bf="大">大型</button>
     <button class="chip" data-bf="中">中型</button>
@@ -396,8 +397,58 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
     <div class="form-group"><label class="form-label">等級</label>
       <select class="form-select" id="pGrade"><option value="急">急件</option><option value="大">大型</option><option value="中" selected>中型</option><option value="小">小型</option></select></div>
     <div class="form-group"><label class="form-label">事業部</label>
-      <select class="form-select" id="pBiz"><option value="佳">佳瑪</option><option value="艾">艾瑪特</option><option value="JC">JCPARK</option><option value="佳艾">佳瑪＋艾瑪特</option><option value="事業">事業部</option></select></div>
-    <div class="form-group fg-full"><label class="form-label">專案名稱 *</label><input class="form-input" id="pName" placeholder="例：蘆洲外牆+橫招"></div>
+      <select class="form-select" id="pBiz"><option value="佳">佳瑪</option><option value="艾">艾瑪特</option><option value="JC">JCPARK</option><option value="佳艾">佳瑪＋艾瑪特</option><option value="事業">事業部</option><option value="招商">招商事業部</option></select></div>
+    <div class="form-group"><label class="form-label">店別</label>
+      <select class="form-select" id="pStore" onchange="updateProjName()">
+        <option value="">— 選擇店別 —</option>
+        <optgroup label="── 佳瑪 ──">
+        <option value="佳瑪_樹林店1001">佳瑪_樹林店1001</option>
+        <option value="佳瑪_蘆洲店1002">佳瑪_蘆洲店1002</option>
+        <option value="佳瑪_楊梅店1005">佳瑪_楊梅店1005</option>
+        <option value="佳瑪_新莊店1006">佳瑪_新莊店1006</option>
+        <option value="佳瑪_南崁店1007">佳瑪_南崁店1007</option>
+        <option value="佳瑪_新店店1009">佳瑪_新店店1009</option>
+        <option value="佳瑪_三重店1010">佳瑪_三重店1010</option>
+        <option value="佳瑪_竹南店1011">佳瑪_竹南店1011</option>
+        <option value="佳瑪_博愛店1013">佳瑪_博愛店1013</option>
+        <option value="佳瑪_龍潭店1016">佳瑪_龍潭店1016</option>
+        </optgroup>
+        <optgroup label="── 艾瑪特 ──">
+        <option value="艾瑪特_三樹店601">艾瑪特_三樹店601</option>
+        <option value="艾瑪特_沙鹿店602">艾瑪特_沙鹿店602</option>
+        <option value="艾瑪特_員林店603">艾瑪特_員林店603</option>
+        <option value="艾瑪特_新莊店604">艾瑪特_新莊店604</option>
+        <option value="艾瑪特_三富店605">艾瑪特_三富店605</option>
+        <option value="艾瑪特_丹比店606">艾瑪特_丹比店606</option>
+        <option value="艾瑪特_三百店607">艾瑪特_三百店607</option>
+        <option value="艾瑪特_大甲店608">艾瑪特_大甲店608</option>
+        <option value="艾瑪特_新竹店609">艾瑪特_新竹店609</option>
+        <option value="艾瑪特_板橋店611">艾瑪特_板橋店611</option>
+        <option value="艾瑪特_蘆洲店613">艾瑪特_蘆洲店613</option>
+        <option value="艾瑪特_幸福店616">艾瑪特_幸福店616</option>
+        <option value="艾瑪特_南崁店617">艾瑪特_南崁店617</option>
+        <option value="艾瑪特_彰化店618">艾瑪特_彰化店618</option>
+        <option value="艾瑪特_竹南店501">艾瑪特_竹南店501</option>
+        <option value="艾瑪特_楊梅店502">艾瑪特_楊梅店502</option>
+        <option value="艾瑪特_樹林店505">艾瑪特_樹林店505</option>
+        <option value="艾瑪特_景美店622">艾瑪特_景美店622</option>
+        <option value="艾瑪特_北埔店623">艾瑪特_北埔店623</option>
+        </optgroup>
+        <optgroup label="── JCPARK ──">
+        <option value="JC_幸福館1301">JC_幸福館1301</option>
+        <option value="JC_中正館1302">JC_中正館1302</option>
+        <option value="JC_春日館1303">JC_春日館1303</option>
+        </optgroup>
+        <optgroup label="── 招商事業部 ──">
+        <option value="招商事業部">招商事業部</option>
+        </optgroup>
+      </select></div>
+    <div class="form-group"><label class="form-label">專案描述 *</label>
+      <input class="form-input" id="pNameSuffix" placeholder="例：外牆+橫招" oninput="updateProjName()"></div>
+    <div class="form-group fg-full">
+      <label class="form-label">專案名稱（自動組合）</label>
+      <input class="form-input" id="pName" placeholder="選店別並填描述後自動產生" style="background:#f8fafc;color:var(--ink2)" readonly>
+    </div>
     <div class="form-group"><label class="form-label">預計完成日</label><input class="form-input" type="date" id="pDate"></div>
     <div class="form-group"><label class="form-label">實際完成日</label><input class="form-input" type="date" id="pDoneDate"></div>
     <div class="form-group"><label class="form-label">關注</label>
@@ -435,6 +486,20 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
         <option value="艾">艾瑪特</option>
         <option value="JC">JCPARK</option>
         <option value="事業">事業部</option>
+        <option value="招商">招商事業部</option>
+      </select></div>
+    <div class="form-group"><label class="form-label">店別</label>
+      <select class="form-select" id="iStore">
+        <option value="">— 選擇店別 —</option>
+        <optgroup label="── 佳瑪 ──">
+        <option value="佳瑪-樹林店1001">佳瑪-樹林店1001</option><option value="佳瑪-蘆洲店1002">佳瑪-蘆洲店1002</option><option value="佳瑪-楊梅店1005">佳瑪-楊梅店1005</option><option value="佳瑪-新莊店1006">佳瑪-新莊店1006</option><option value="佳瑪-南崁店1007">佳瑪-南崁店1007</option><option value="佳瑪-新店店1009">佳瑪-新店店1009</option><option value="佳瑪-三重店1010">佳瑪-三重店1010</option><option value="佳瑪-竹南店1011">佳瑪-竹南店1011</option><option value="佳瑪-博愛店1013">佳瑪-博愛店1013</option><option value="佳瑪-龍潭店1016">佳瑪-龍潭店1016</option>
+        </optgroup>
+        <optgroup label="── 艾瑪特 ──">
+        <option value="艾瑪特-三樹店601">艾瑪特-三樹店601</option><option value="艾瑪特-沙鹿店602">艾瑪特-沙鹿店602</option><option value="艾瑪特-員林店603">艾瑪特-員林店603</option><option value="艾瑪特-新莊店604">艾瑪特-新莊店604</option><option value="艾瑪特-三富店605">艾瑪特-三富店605</option><option value="艾瑪特-丹比店606">艾瑪特-丹比店606</option><option value="艾瑪特-三百店607">艾瑪特-三百店607</option><option value="艾瑪特-大甲店608">艾瑪特-大甲店608</option><option value="艾瑪特-新竹店609">艾瑪特-新竹店609</option><option value="艾瑪特-板橋店611">艾瑪特-板橋店611</option><option value="艾瑪特-蘆洲店613">艾瑪特-蘆洲店613</option><option value="艾瑪特-幸福店616">艾瑪特-幸福店616</option><option value="艾瑪特-南崁店617">艾瑪特-南崁店617</option><option value="艾瑪特-彰化店618">艾瑪特-彰化店618</option><option value="艾瑪特-竹南店501">艾瑪特-竹南店501</option><option value="艾瑪特-楊梅店502">艾瑪特-楊梅店502</option><option value="艾瑪特-樹林店505">艾瑪特-樹林店505</option><option value="艾瑪特-景美店622">艾瑪特-景美店622</option><option value="艾瑪特-北埔店623">艾瑪特-北埔店623</option>
+        </optgroup>
+        <optgroup label="── JCPARK ──">
+        <option value="JC-幸福館1301">JC-幸福館1301</option><option value="JC-中正館1302">JC-中正館1302</option><option value="JC-春日館1303">JC-春日館1303</option>
+        </optgroup>
       </select></div>
     <div class="form-group"><label class="form-label">項目分類</label><input class="form-input" id="iCategory" placeholder="例：視覺設計"></div>
     <div class="form-group"><label class="form-label">狀態</label>
@@ -615,8 +680,8 @@ function getStatus(p){
   return auto||p.status||'待執行';
 }
 function sc(s){ return {待執行:'var(--wait)',執行中:'var(--prog)',已完成:'var(--done)'}[s]||'var(--wait)'; }
-function bizL(b){ return {佳:'佳瑪',艾:'艾瑪特',JC:'JCPARK',佳艾:'佳＋艾',事業:'事業部'}[b]||b||'—'; }
-function bizC(b){ return 'biz-'+(b==='佳艾'?'佳艾':b||'事業'); }
+function bizL(b){ return {佳:'佳瑪',艾:'艾瑪特',JC:'JCPARK',佳艾:'佳＋艾',事業:'事業部',招商:'招商事業部'}[b]||b||'—'; }
+function bizC(b){ return 'biz-'+(b==='佳艾'?'佳艾':b==='招商'?'事業':b||'事業'); }
 function newId(p){ return p+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,6); }
 function today(){ return new Date().toISOString().slice(0,10); }
 function now(){ return new Date().toLocaleString('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}); }
@@ -659,18 +724,20 @@ window.renderBoss = function(){
   document.getElementById('kDone').textContent=statuses.filter(s=>s==='已完成').length;
   document.getElementById('kProg').textContent=statuses.filter(s=>s==='執行中').length;
   document.getElementById('kAlert').textContent=projects.filter(p=>autoAlert(p.id)==='需追蹤').length;
-  const c={佳:0,艾:0,JC:0};
-  projects.forEach(p=>{if(p.biz==='佳'||p.biz==='佳艾')c['佳']++;if(p.biz==='艾'||p.biz==='佳艾')c['艾']++;if(p.biz==='JC')c['JC']++;});
+  const c={佳:0,艾:0,JC:0,招商:0};
+  projects.forEach(p=>{if(p.biz==='佳'||p.biz==='佳艾')c['佳']++;if(p.biz==='艾'||p.biz==='佳艾')c['艾']++;if(p.biz==='JC')c['JC']++;if(p.biz==='招商')c['招商']++;});
   document.getElementById('bizChips').innerHTML=`
     <div class="biz-chip" style="background:var(--jia-l);color:var(--jia)"><span>佳瑪</span><strong>${c['佳']}</strong></div>
     <div class="biz-chip" style="background:var(--ai-l);color:var(--ai)"><span>艾瑪特</span><strong>${c['艾']}</strong></div>
-    <div class="biz-chip" style="background:var(--jc-l);color:var(--jc)"><span>JCPARK</span><strong>${c['JC']}</strong></div>`;
+    <div class="biz-chip" style="background:var(--jc-l);color:var(--jc)"><span>JCPARK</span><strong>${c['JC']}</strong></div>
+    <div class="biz-chip" style="background:var(--biz-l);color:var(--biz)"><span>招商</span><strong>${c['招商']}</strong></div>`;
 
   const q=(document.getElementById('bossSearch').value||'').toLowerCase();
   let list=projects.map(p=>({...p,_status:getStatus(p),_pct:pctNum(p.id)}));
   if(bossFilter==='需追蹤') list=list.filter(p=>p.alert==='需追蹤');
   else if(bossFilter==='佳') list=list.filter(p=>p.biz==='佳'||p.biz==='佳艾');
   else if(bossFilter==='艾') list=list.filter(p=>p.biz==='艾'||p.biz==='佳艾');
+  else if(bossFilter==='招商') list=list.filter(p=>p.biz==='招商');
   else if(bossFilter!=='all') list=list.filter(p=>p._status===bossFilter||p.biz===bossFilter||p.grade===bossFilter);
   if(q) list=list.filter(p=>(p.name||'').toLowerCase().includes(q));
   // 年度＋月份篩選（依實際完成日）
@@ -747,6 +814,7 @@ window.renderBoss = function(){
       </div>
       <div class="bc-meta">
         <span class="bc-meta-item"><span class="biz-badge ${bizC(p.biz)}">${bizL(p.biz)}</span></span>
+
         <span class="bc-meta-item">📅 ${ds}${isPast?' ⚠️':''}</span>
         ${ia?'<span class="bc-meta-item" style="color:var(--alert);font-weight:600">⚠️ 需追蹤</span>':''}
       </div>
@@ -840,7 +908,8 @@ window.openAddProj = () => {
   document.getElementById('projModalTitle').textContent='➕ 新增專案';
   document.getElementById('projDelBtn').style.display='none';
   document.getElementById('projLogSection').style.display='none';
-  ['pName','pDoneDate'].forEach(id=>document.getElementById(id).value='');
+  ['pName','pDoneDate','pNameSuffix'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('pStore').value='';
   document.getElementById('pGrade').value='中';
   document.getElementById('pBiz').value='佳';
   document.getElementById('pDate').value='';
@@ -860,6 +929,18 @@ function openEditProj(id){
   document.getElementById('pName').value=p.name||'';
   document.getElementById('pDate').value=p.date||'';
   document.getElementById('pDoneDate').value=p.doneDate||'';
+  // Parse name back to store + suffix
+  const storeParts = p.name ? p.name.split('_') : [];
+  const storeOpts = [...document.getElementById('pStore').options].map(o=>o.value);
+  const matchedStore = storeParts.length>=2 ? storeParts.slice(0,-1).join('_') : '';
+  const matchedSuffix = storeParts.length>=2 ? storeParts[storeParts.length-1] : p.name||'';
+  if(storeOpts.includes(matchedStore)){
+    document.getElementById('pStore').value=matchedStore;
+    document.getElementById('pNameSuffix').value=matchedSuffix;
+  } else {
+    document.getElementById('pStore').value=p.store||'';
+    document.getElementById('pNameSuffix').value=p.name||'';
+  }
   // alert is now auto-calculated
   renderProjLogList();
   document.getElementById('projModal').classList.add('open');
@@ -907,6 +988,7 @@ window.saveProj = async () => {
   const obj={grade:document.getElementById('pGrade').value,name,biz:document.getElementById('pBiz').value,
     date:document.getElementById('pDate').value,
     doneDate:document.getElementById('pDoneDate').value||'',
+    store:document.getElementById('pStore').value||'',
     alert:editProjId?autoAlert(editProjId):'-',logs:tempProjLogs};
   try{ await db.collection('projects').doc(editProjId||newId('p')).set(obj); showToast('✅ 已儲存'); closeModal('projModal'); }
   catch(e){ showToast('❌ 儲存失敗'); }
@@ -1005,6 +1087,7 @@ window.openAddItem = () => {
   document.getElementById('itemDelBtn').style.display='none';
   ['iContent','iCategory','iStart','iEnd','iDone','iImgUrl'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('iBiz').value='';
+  document.getElementById('iStore').value='';
   document.getElementById('iQty').value='1';
   document.getElementById('iStatus').value='待執行';
   document.getElementById('iProjId').value=document.getElementById('filterProj').value||'';
@@ -1028,6 +1111,7 @@ window.openEditItem = id => {
   document.getElementById('iImgUrl').value=item.imgUrl||'';
   document.getElementById('iQty').value=item.qty||1;
   document.getElementById('iBiz').value=item.biz||'';
+  document.getElementById('iStore').value=item.store||'';
   renderItemLogList();
   document.getElementById('itemModal').classList.add('open');
 };
@@ -1077,6 +1161,7 @@ window.saveItem = async () => {
     doneDate,imgUrl:document.getElementById('iImgUrl').value.trim(),
     qty:parseInt(document.getElementById('iQty').value)||1,
     biz:document.getElementById('iBiz').value||'',
+    store:document.getElementById('iStore').value||'',
     logs:tempItemLogs};
   try{ await db.collection('items').doc(editItemId||newId('i')).set(obj); showToast('✅ 已儲存'); closeModal('itemModal'); }
   catch(e){ showToast('❌ 儲存失敗'); }
@@ -1167,12 +1252,13 @@ window.renderDash = function(){
   const maxQ=Math.max(...Object.values(quarters),1);
 
   // 事業部專案數
-  const bizProjCount={佳瑪:0,艾瑪特:0,JCPARK:0,事業部:0};
+  const bizProjCount={佳瑪:0,艾瑪特:0,JCPARK:0,事業部:0,招商事業部:0};
   filtProjs.forEach(p=>{
     if(p.biz==='佳'||p.biz==='佳艾') bizProjCount['佳瑪']++;
     if(p.biz==='艾'||p.biz==='佳艾') bizProjCount['艾瑪特']++;
     if(p.biz==='JC') bizProjCount['JCPARK']++;
     if(p.biz==='事業') bizProjCount['事業部']++;
+    if(p.biz==='招商') bizProjCount['招商事業部']++;
   });
 
   // 事業部件數
@@ -1226,8 +1312,8 @@ window.renderDash = function(){
     <div class="dash-section">
       <div class="dash-section-title">🏢 事業部分布（專案數）</div>
       ${Object.entries(bizProjCount).filter(([,n])=>n>0).map(([b,n])=>{
-        const col={佳瑪:'var(--jia)',艾瑪特:'var(--ai)',JCPARK:'var(--jc)',事業部:'var(--biz)'}[b];
-        return `<div class="bar-row"><div class="bar-label" style="min-width:64px;font-size:11px">${b}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/total*100)}%;background:${col}"></div></div><div class="bar-val" style="color:${col}">${n}</div></div>`;
+        const col={佳瑪:'var(--jia)',艾瑪特:'var(--ai)',JCPARK:'var(--jc)',事業部:'var(--biz)',招商事業部:'#9333ea'}[b]||'var(--ink3)';
+        return `<div class="bar-row"><div class="bar-label" style="min-width:70px;font-size:11px">${b}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/total*100)}%;background:${col}"></div></div><div class="bar-val" style="color:${col}">${n}</div></div>`;
       }).join('')}
     </div>
 
@@ -1284,7 +1370,7 @@ window.renderDash = function(){
     <div class="dash-section">
       <div class="dash-section-title">🏢 各事業部設計件數</div>
       ${Object.entries(bizQtyTotal).filter(([,n])=>n>0).map(([b,n])=>{
-        const col={佳瑪:'var(--jia)',艾瑪特:'var(--ai)',JCPARK:'var(--jc)',事業部:'var(--biz)'}[b];
+        const col={佳瑪:'var(--jia)',艾瑪特:'var(--ai)',JCPARK:'var(--jc)',事業部:'var(--biz)',招商事業部:'#9333ea'}[b]||'var(--ink3)';
         const d=bizQtyDone[b]||0;
         const pct=n>0?Math.round(d/n*100):0;
         return `<div style="margin-bottom:12px">
@@ -1367,18 +1453,31 @@ window.exportPDF = () => {
   const qtyPct=totalQty>0?Math.round(doneQty/totalQty*100):0;
   // 已完成件數依狀態計算
 
-  const bizQtyTotal={佳瑪:0,艾瑪特:0,JCPARK:0,事業部:0};
-  const bizQtyDone={佳瑪:0,艾瑪特:0,JCPARK:0,事業部:0};
+  const bizQtyTotal={佳瑪:0,艾瑪特:0,JCPARK:0,事業部:0,招商事業部:0};
+  const bizQtyDone={佳瑪:0,艾瑪特:0,JCPARK:0,事業部:0,招商事業部:0};
   filtItems.forEach(i=>{
     const p=getProj(i.projId)||{};
-    const biz=i.biz||p.biz||''; // 細項自己的事業部優先，否則用大項
+    const biz=i.biz||p.biz||'';
     const qty=parseInt(i.qty)||1;
     const isDone=i.status==='已完成';
     if(biz==='佳'||biz==='佳艾'){bizQtyTotal['佳瑪']+=qty;if(isDone)bizQtyDone['佳瑪']+=qty;}
     if(biz==='艾'||biz==='佳艾'){bizQtyTotal['艾瑪特']+=qty;if(isDone)bizQtyDone['艾瑪特']+=qty;}
     if(biz==='JC'){bizQtyTotal['JCPARK']+=qty;if(isDone)bizQtyDone['JCPARK']+=qty;}
     if(biz==='事業'){bizQtyTotal['事業部']+=qty;if(isDone)bizQtyDone['事業部']+=qty;}
+    if(biz==='招商'){bizQtyTotal['招商事業部']+=qty;if(isDone)bizQtyDone['招商事業部']+=qty;}
   });
+
+  // 店別件數統計（從專案名稱或store欄位抓）
+  const storeQty={};
+  filtItems.forEach(i=>{
+    const p=getProj(i.projId)||{};
+    const store=i.store||p.store||'';
+    if(!store) return;
+    const qty=parseInt(i.qty)||1;
+    if(!storeQty[store]) storeQty[store]=0;
+    storeQty[store]+=qty;
+  });
+  const storeRanking=Object.entries(storeQty).sort((a,b)=>b[1]-a[1]).slice(0,10);
 
   const gradeCount={急:0,大:0,中:0,小:0};
   filtProjs.forEach(p=>{if(gradeCount[p.grade]!==undefined)gradeCount[p.grade]++;});
@@ -1741,6 +1840,16 @@ window.exportExcel = async () => {
     console.error(e);
     showToast('❌ 下載失敗：'+e.message);
   }
+};
+
+// auto combine proj name
+window.updateProjName = () => {
+  const store = document.getElementById('pStore').value;
+  const suffix = document.getElementById('pNameSuffix').value.trim();
+  const nameEl = document.getElementById('pName');
+  if(store && suffix) nameEl.value = store + '_' + suffix;
+  else if(store) nameEl.value = store + '_';
+  else nameEl.value = suffix;
 };
 
 // toggle proj table in dash
