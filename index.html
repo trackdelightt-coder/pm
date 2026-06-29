@@ -90,6 +90,14 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
 .s-待執行{background:var(--wait-l);color:var(--wait)}
 .s-執行中{background:var(--prog-l);color:var(--prog)}
 .s-已完成{background:var(--done-l);color:var(--done)}
+.s-設計中{background:#f0fdf4;color:#16a34a}
+.s-提案{background:#eff6ff;color:#2563eb}
+.s-修改中{background:#fff7ed;color:#ea580c}
+.s-已簽核{background:#faf5ff;color:#9333ea}
+.s-製作檔{background:#f0f9ff;color:#0891b2}
+.s-給檔完成{background:#dcfce7;color:#16a34a;font-weight:800}
+.s-待執行{background:var(--wait-l);color:var(--wait)}
+.s-流標{background:#f1f5f9;color:#94a3b8;text-decoration:line-through}
 .alert-badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px}
 .a-yes{background:var(--alert-l);color:var(--alert)}
 .prog-wrap{display:flex;align-items:center;gap:8px}
@@ -278,9 +286,10 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
   <div class="alert-banner" id="alertBanner"></div>
   <div class="filter-bar">
     <button class="chip active" data-bf="all">全部</button>
-    <button class="chip" data-bf="執行中">執行中</button>
     <button class="chip" data-bf="待執行">待執行</button>
-    <button class="chip" data-bf="已完成">已完成</button>
+    <button class="chip" data-bf="進行中">進行中</button>
+    <button class="chip" data-bf="給檔完成">給檔完成</button>
+    <button class="chip" data-bf="流標" style="color:#94a3b8">流標</button>
     <button class="chip" data-bf="需追蹤">需追蹤</button>
     <button class="chip" data-bf="佳">佳瑪</button>
     <button class="chip" data-bf="艾">艾瑪特</button>
@@ -326,9 +335,14 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
     <select class="items-select" id="filterProj" onchange="renderItems()"><option value="">全部專案</option></select>
     <select class="items-select" id="filterStatus" onchange="renderItems()">
       <option value="">全部狀態</option>
-      <option value="執行中">執行中</option>
       <option value="待執行">待執行</option>
-      <option value="已完成">已完成</option>
+      <option value="設計中">設計中</option>
+      <option value="提案中">提案中</option>
+      <option value="修改中">修改中</option>
+      <option value="已簽核">已簽核</option>
+      <option value="製作檔">製作檔</option>
+      <option value="給檔完成">給檔完成</option>
+      <option value="流標">流標</option>
     </select>
     <select class="items-select" id="filterYear" onchange="renderItems()">
       <option value="all">所有年度</option>
@@ -449,7 +463,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
       <input class="form-input" id="pName" placeholder="選店別並填描述後自動產生" style="background:#f8fafc;color:var(--ink2)" readonly>
     </div>
     <div class="form-group"><label class="form-label">預計完成日</label><input class="form-input" type="date" id="pDate"></div>
-    <div class="form-group"><label class="form-label">實際完成日</label><input class="form-input" type="date" id="pDoneDate"></div>
+    <div class="form-group"><label class="form-label">實際完成日<span style="font-size:10px;color:var(--ink4);font-weight:400">（自動從細項抓最晚日）</span></label><input class="form-input" type="date" id="pDoneDate" style="background:#f8fafc;color:var(--ink3)" readonly></div>
     <div class="form-group"><label class="form-label">關注</label>
       <div style="padding:10px 12px;background:var(--bg);border-radius:10px;font-size:13px;color:var(--ink3)">依完成率自動計算</div></div>
   </div>
@@ -508,8 +522,13 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
     <div class="form-group"><label class="form-label">狀態</label>
       <select class="form-select" id="iStatus" onchange="handleStatusChange()">
         <option value="待執行">待執行</option>
-        <option value="執行中">執行中</option>
-        <option value="已完成">已完成</option>
+        <option value="設計中">設計中</option>
+        <option value="提案中">提案中</option>
+        <option value="修改中">修改中</option>
+        <option value="已簽核">已簽核</option>
+        <option value="製作檔">製作檔</option>
+        <option value="給檔完成">給檔完成</option>
+        <option value="流標">流標</option>
       </select></div>
     <div class="form-group"><label class="form-label">起始日</label><input class="form-input" type="date" id="iStart"></div>
     <div class="form-group"><label class="form-label">預計完成日</label><input class="form-input" type="date" id="iEnd"></div>
@@ -586,7 +605,7 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-const PASS = '951753';
+const PASS = '1234';
 
 let isEdit = false;
 let projects = [];
@@ -650,40 +669,71 @@ function loadData(){
 const getProj = id => projects.find(p=>p.id===id);
 const projItems = pid => items.filter(i=>i.projId===pid);
 
+const DONE_STATUS='給檔完成';
+const VOID_STATUS='流標';
+const IN_PROGRESS=['待執行','設計中','提案中','修改中','已簽核','製作檔'];
+const ALL_STAGES=[...IN_PROGRESS,DONE_STATUS,VOID_STATUS];
 function autoStatus(pid){
   const its=projItems(pid);
   if(!its.length) return null;
-  if(its.every(i=>i.status==='已完成')) return '已完成';
-  if(its.some(i=>i.status==='執行中'||i.status==='已完成')) return '執行中';
+  const active=its.filter(i=>i.status!==VOID_STATUS);
+  if(!active.length) return '流標';
+  if(active.every(i=>i.status===DONE_STATUS)) return '已完成';
+  if(active.some(i=>i.status!=='待執行')) return '執行中';
   return '待執行';
 }
 function autoAlert(pid){
   const p=projects.find(x=>x.id===pid)||{};
   const st=getStatus(p);
-  if(st==='已完成') return '-';
+  if(st==='已完成'||st==='流標') return '-';
+  const d=parseDate(p.date);
+  if(d && d<new Date()) return '需追蹤';
   const pc=pctNum(pid);
   if(pc<50) return '需追蹤';
   return '持續推進';
 }
 function calcPct(pid){
-  const its=projItems(pid); if(!its.length) return null;
-  return Math.round(its.filter(i=>i.status==='已完成').length/its.length*100);
+  const its=projItems(pid).filter(i=>i.status!==VOID_STATUS);
+  if(!its.length) return null;
+  return Math.round(its.filter(i=>i.status===DONE_STATUS).length/its.length*100);
 }
 function pctNum(pid){ const p=calcPct(pid); return p!==null?p:0; }
 function autoDoneDate(pid){
-  const its=projItems(pid);
+  const its=projItems(pid).filter(i=>i.status!==VOID_STATUS);
   if(!its.length) return null;
-  if(!its.every(i=>i.status==='已完成')) return null;
+  if(!its.every(i=>i.status===DONE_STATUS)) return null;
   const dates=its.map(i=>i.doneDate).filter(Boolean);
   if(!dates.length) return null;
-  return dates.sort().reverse()[0]; // 最晚的實際完成日
+  return dates.sort().reverse()[0];
 }
 function getStatus(p){
   if(!p) return '待執行';
   const auto=autoStatus(p.id);
-  return auto||p.status||'待執行';
+  if(auto) return auto;
+  // Map stage to display status
+  const s=p.status||'待執行';
+  if(s===DONE_STATUS) return '已完成';
+  if(s===VOID_STATUS) return '流標';
+  if(s==='待執行') return '待執行';
+  return '執行中';
 }
-function sc(s){ return {待執行:'var(--wait)',執行中:'var(--prog)',已完成:'var(--done)'}[s]||'var(--wait)'; }
+function sc(s){
+  if(s==='已完成'||s===DONE_STATUS) return 'var(--done)';
+  if(s==='執行中') return 'var(--prog)';
+  return 'var(--wait)';
+}
+function stageColor(s){
+  return {
+    '待執行':'#64748b','設計中':'#16a34a','提案中':'#2563eb','修改中':'#ea580c',
+    '已簽核':'#9333ea','製作檔':'#0891b2','給檔完成':'#16a34a','流標':'#94a3b8'
+  }[s]||'#64748b';
+}
+function stageBg(s){
+  return {
+    '待執行':'#f1f5f9','設計中':'#f0fdf4','提案中':'#eff6ff','修改中':'#fff7ed',
+    '已簽核':'#faf5ff','製作檔':'#f0f9ff','給檔完成':'#dcfce7','流標':'#f8fafc'
+  }[s]||'#f1f5f9';
+}
 function bizL(b){ return {佳:'佳瑪',艾:'艾瑪特',JC:'JCPARK',佳艾:'佳＋艾',事業:'事業部',招商:'招商事業部'}[b]||b||'—'; }
 function bizC(b){ return 'biz-'+(b==='佳艾'?'佳艾':b==='招商'?'事業':b||'事業'); }
 function newId(p){ return p+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,6); }
@@ -701,7 +751,7 @@ function checkDeadlines(){
   const today7=new Date(); today7.setDate(today7.getDate()+7);
   projects.forEach(p=>{
     const st=getStatus(p);
-    if(st==='已完成') return;
+    if(st==='已完成'||st==='流標') return;
     const d=parseDate(p.date);
     if(d&&d<=today7) soon.push(`${p.name}（${p.date}）`);
   });
@@ -742,6 +792,10 @@ window.renderBoss = function(){
   else if(bossFilter==='佳') list=list.filter(p=>p.biz==='佳'||p.biz==='佳艾');
   else if(bossFilter==='艾') list=list.filter(p=>p.biz==='艾'||p.biz==='佳艾');
   else if(bossFilter==='招商') list=list.filter(p=>p.biz==='招商');
+  else if(bossFilter==='進行中') list=list.filter(p=>getStatus(p)==='執行中');
+  else if(bossFilter==='給檔完成') list=list.filter(p=>getStatus(p)==='已完成');
+  else if(bossFilter==='流標') list=list.filter(p=>getStatus(p)==='流標');
+  else if(bossFilter==='待執行') list=list.filter(p=>getStatus(p)==='待執行');
   else if(bossFilter!=='all') list=list.filter(p=>p._status===bossFilter||p.biz===bossFilter||p.grade===bossFilter);
   if(q) list=list.filter(p=>(p.name||'').toLowerCase().includes(q));
   // 年度＋月份篩選（依實際完成日）
@@ -852,6 +906,7 @@ window.openDetail = id => {
   document.getElementById('dmName').textContent=p.name;
   document.getElementById('dmPct').textContent=pc+'%';
   document.getElementById('dmFill').style.cssText=`width:${pc}%;background:${col}`;
+  // auto update doneDate display
   document.getElementById('dmBadges').innerHTML=`
     <span class="grade grade-${p.grade}" style="width:auto;padding:3px 10px;border-radius:8px">${p.grade}型</span>
     <span class="biz-badge ${bizC(p.biz)}">${bizL(p.biz)}</span>
@@ -944,7 +999,8 @@ function openEditProj(id){
   document.getElementById('pBiz').value=p.biz||'佳';
   document.getElementById('pName').value=p.name||'';
   document.getElementById('pDate').value=p.date||'';
-  document.getElementById('pDoneDate').value=p.doneDate||'';
+  const autoD=autoDoneDate(id)||p.doneDate||'';
+  document.getElementById('pDoneDate').value=autoD;
   // Parse name back to stores + suffix
   document.querySelectorAll('.store-cb').forEach(cb=>cb.checked=false);
   const allStoreVals = [...document.querySelectorAll('.store-cb')].map(c=>c.value);
@@ -1100,7 +1156,14 @@ window.renderItems = function(){
 // ── ITEM CRUD ──
 window.handleStatusChange = () => {
   const s=document.getElementById('iStatus').value;
-  if(s==='已完成'&&!document.getElementById('iDone').value) document.getElementById('iDone').value=today();
+  if(s===DONE_STATUS){
+    if(!document.getElementById('iDone').value) document.getElementById('iDone').value=today();
+  } else {
+    document.getElementById('iDone').value='';
+  }
+  // 流標時顯示灰色提示
+  const wrap=document.getElementById('iDoneWrap');
+  if(wrap) wrap.style.opacity=s===VOID_STATUS?'0.3':'1';
 };
 
 window.openAddItem = () => {
@@ -1183,8 +1246,11 @@ window.saveItem = async () => {
   if(!projId){showToast('請選擇所屬專案');return}
   const status=document.getElementById('iStatus').value;
   let doneDate=document.getElementById('iDone').value;
-  if(status==='已完成'&&!doneDate) doneDate=today();
-  if(status!=='已完成') doneDate='';
+  if(status===DONE_STATUS){
+    if(!doneDate) doneDate=today();
+  } else {
+    doneDate='';
+  }
   const obj={projId,content,category:document.getElementById('iCategory').value,
     status,start:document.getElementById('iStart').value,end:document.getElementById('iEnd').value,
     doneDate,imgUrl:document.getElementById('iImgUrl').value.trim(),
@@ -1264,7 +1330,7 @@ window.renderDash = function(){
 
   // 件數統計
   const totalQty=filtItems.reduce((a,i)=>a+(parseInt(i.qty)||1),0);
-  const doneQty=filtItems.filter(i=>i.status==='已完成').reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+  const doneQty=filtItems.filter(i=>i.status===DONE_STATUS).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
   const undoneQty=totalQty-doneQty;
   const qtyPct=totalQty>0?Math.round(doneQty/totalQty*100):0;
   // Note: 已完成件數 = 狀態已完成的細項件數加總
@@ -1297,7 +1363,7 @@ window.renderDash = function(){
     const p=getProj(i.projId)||{};
     const biz=i.biz||p.biz||'';
     const qty=parseInt(i.qty)||1;
-    const isDone=i.status==='已完成';
+    const isDone=i.status===DONE_STATUS;
     if(biz==='佳'||biz==='佳艾'){ bizQtyTotal['佳瑪']+=qty; if(isDone) bizQtyDone['佳瑪']+=qty; }
     if(biz==='艾'||biz==='佳艾'){ bizQtyTotal['艾瑪特']+=qty; if(isDone) bizQtyDone['艾瑪特']+=qty; }
     if(biz==='JC'){ bizQtyTotal['JCPARK']+=qty; if(isDone) bizQtyDone['JCPARK']+=qty; }
@@ -1496,7 +1562,7 @@ window.exportPDF = () => {
   });
 
   const totalQty=filtItems.reduce((a,i)=>a+(parseInt(i.qty)||1),0);
-  const doneQty=filtItems.filter(i=>i.status==='已完成').reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+  const doneQty=filtItems.filter(i=>i.status===DONE_STATUS).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
   const qtyPct=totalQty>0?Math.round(doneQty/totalQty*100):0;
   // 已完成件數依狀態計算
 
@@ -1506,7 +1572,7 @@ window.exportPDF = () => {
     const p=getProj(i.projId)||{};
     const biz=i.biz||p.biz||'';
     const qty=parseInt(i.qty)||1;
-    const isDone=i.status==='已完成';
+    const isDone=i.status===DONE_STATUS;
     if(biz==='佳'||biz==='佳艾'){bizQtyTotal['佳瑪']+=qty;if(isDone)bizQtyDone['佳瑪']+=qty;}
     if(biz==='艾'||biz==='佳艾'){bizQtyTotal['艾瑪特']+=qty;if(isDone)bizQtyDone['艾瑪特']+=qty;}
     if(biz==='JC'){bizQtyTotal['JCPARK']+=qty;if(isDone)bizQtyDone['JCPARK']+=qty;}
