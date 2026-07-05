@@ -230,6 +230,16 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
 }
 @media(min-width:769px){.boss-cards{display:none}}
 .items-cards-m{display:none!important}
+
+/* Kanban */
+.kanban-col{flex-shrink:0;width:220px}
+.kanban-col-header{display:flex;justify-content:space-between;align-items:center;padding:8px 0 10px;border-bottom:3px solid;margin-bottom:10px}
+.kanban-col-title{font-size:13px;font-weight:800}
+.kanban-col-count{font-size:12px;font-weight:700;background:rgba(0,0,0,.07);padding:2px 8px;border-radius:20px}
+.kanban-card{background:white;border-radius:10px;padding:12px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.08);cursor:pointer;border:1.5px solid var(--line);transition:box-shadow .15s}
+.kanban-card:hover{box-shadow:0 3px 10px rgba(0,0,0,.13)}
+.kanban-card-name{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:8px;line-height:1.4;word-break:break-all}
+.kanban-card-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 </style>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -284,6 +294,10 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
     <div class="biz-chips" id="bizChips"></div>
   </div>
   <div class="alert-banner" id="alertBanner"></div>
+  <div style="display:flex;justify-content:flex-end;padding:8px 0 4px;gap:6px">
+    <button id="btnTableView" onclick="switchBossView('table')" style="padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;border:1.5px solid var(--jia);background:var(--jia);color:white">☰ 表格</button>
+    <button id="btnKanbanView" onclick="switchBossView('kanban')" style="padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;border:1.5px solid var(--line);background:white;color:var(--ink2)">⊞ 看板</button>
+  </div>
   <div class="filter-bar">
     <button class="chip active" data-bf="all">全部</button>
     <button class="chip" data-bf="待執行">待執行</button>
@@ -317,13 +331,17 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
     </select>
     <button id="collapseBtn" onclick="toggleCollapse()" style="flex-shrink:0;padding:8px 12px;border:1.5px solid var(--line);border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;background:white;color:var(--ink3);font-family:inherit;white-space:nowrap">已完成收合 ✓</button>
   </div>
-  <div class="table-wrap">
+  <div class="table-wrap" id="bossTable">
     <table class="boss-table"><thead><tr>
       <th>等級</th><th>專案名稱</th><th style="width:40px"></th><th>事業部</th><th style="min-width:120px">進度</th>
       <th>狀態</th><th>預計完工</th><th>實際完成</th><th>關注</th><th>最新備註</th>
     </tr></thead><tbody id="bossTableBody"></tbody></table>
   </div>
   <div class="boss-cards" id="bossCards"></div>
+  <!-- 看板視圖 -->
+  <div id="kanbanView" style="display:none;overflow-x:auto;padding:8px 0 16px">
+    <div id="kanbanBoard" style="display:flex;gap:12px;min-width:max-content;padding:4px 2px 8px"></div>
+  </div>
   <div style="padding:0 16px 16px;display:none" id="mobileAddProj">
     <button onclick="openAddProj()" style="width:100%;padding:13px;background:var(--jia);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">＋ 新增專案</button>
   </div>
@@ -880,6 +898,7 @@ window.renderBoss = function(){
       <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:${p._pct}%;background:${col}"></div></div><span class="prog-pct" style="color:${col}">${p._pct}%</span></div>
     </div>`;
   }).join(''):'<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-txt">此篩選無專案</div></div>';
+  if(bossView==='kanban') renderKanban();
 };
 
 document.querySelectorAll('[data-bf]').forEach(b=>b.addEventListener('click',()=>{
@@ -888,6 +907,113 @@ document.querySelectorAll('[data-bf]').forEach(b=>b.addEventListener('click',()=
 }));
 
 // ── DETAIL ──
+// ── KANBAN VIEW ──
+let bossView = 'table'; // 'table' or 'kanban'
+
+window.switchBossView = (view) => {
+  bossView = view;
+  const tableEl = document.getElementById('bossTable');
+  const cardsEl = document.getElementById('bossCards');
+  const kanbanEl = document.getElementById('kanbanView');
+  const btnT = document.getElementById('btnTableView');
+  const btnK = document.getElementById('btnKanbanView');
+  if(!btnT||!btnK) return;
+
+  if(view === 'kanban'){
+    if(tableEl) tableEl.style.display='none';
+    if(cardsEl) cardsEl.style.display='none';
+    if(kanbanEl) kanbanEl.style.display='block';
+    btnT.style.cssText='padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;border:1.5px solid var(--line);background:white;color:var(--ink2)';
+    btnK.style.cssText='padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;border:1.5px solid var(--jia);background:var(--jia);color:white';
+    renderKanban();
+  } else {
+    if(tableEl) tableEl.style.display='';
+    if(cardsEl) cardsEl.style.display='';
+    if(kanbanEl) kanbanEl.style.display='none';
+    btnT.style.cssText='padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;border:1.5px solid var(--jia);background:var(--jia);color:white';
+    btnK.style.cssText='padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;border:1.5px solid var(--line);background:white;color:var(--ink2)';
+    renderBoss();
+  }
+};
+
+function renderKanban(){
+  const stages=['待執行','設計中','提案中','修改中','已簽核','製作檔','給檔完成','流標'];
+  const stageColors={
+    '待執行':'#94a3b8','設計中':'#16a34a','提案中':'#2563eb',
+    '修改中':'#ea580c','已簽核':'#9333ea','製作檔':'#0891b2',
+    '給檔完成':'#16a34a','流標':'#cbd5e1'
+  };
+
+  // Use same filter as renderBoss
+  let list=[...projects];
+  const yr=document.getElementById('yearFilter')?.value||'all';
+  const mo=document.getElementById('monthFilter')?.value||'all';
+  const q=(document.getElementById('bossSearch')?.value||'').toLowerCase();
+
+  if(yr!=='all') list=list.filter(p=>(p.date||p.doneDate||'').startsWith(yr));
+  if(mo!=='all') list=list.filter(p=>{const d=p.date||p.doneDate||'';return d.split('-')[1]===mo;});
+  if(q) list=list.filter(p=>(p.name||'').toLowerCase().includes(q));
+
+  if(bossFilter&&bossFilter!=='all'){
+    if(bossFilter==='佳') list=list.filter(p=>p.biz==='佳'||p.biz==='佳艾');
+    else if(bossFilter==='艾') list=list.filter(p=>p.biz==='艾'||p.biz==='佳艾');
+    else if(bossFilter==='JC') list=list.filter(p=>p.biz==='JC');
+    else if(bossFilter==='事業') list=list.filter(p=>p.biz==='事業');
+    else if(bossFilter==='招商') list=list.filter(p=>p.biz==='招商');
+    else if(bossFilter==='急') list=list.filter(p=>p.grade==='急');
+    else if(bossFilter==='大') list=list.filter(p=>p.grade==='大');
+    else if(bossFilter==='中') list=list.filter(p=>p.grade==='中');
+    else if(bossFilter==='小') list=list.filter(p=>p.grade==='小');
+    else if(bossFilter==='進行中') list=list.filter(p=>getStatus(p)==='執行中');
+    else if(bossFilter==='給檔完成') list=list.filter(p=>getStatus(p)==='已完成');
+    else if(bossFilter==='流標') list=list.filter(p=>getStatus(p)==='流標');
+    else if(bossFilter==='待執行') list=list.filter(p=>getStatus(p)==='待執行');
+    else if(bossFilter==='需追蹤') list=list.filter(p=>autoAlert(p.id)==='需追蹤');
+  }
+
+  // Group by proj dominant stage
+  const grouped={};
+  stages.forEach(s=>grouped[s]=[]);
+  list.forEach(p=>{
+    const its=projItems(p.id);
+    let stage='待執行';
+    if(its.length){
+      const stageOrder=['流標','給檔完成','製作檔','已簽核','修改中','提案中','設計中','待執行'];
+      for(const s of stageOrder){
+        if(its.some(i=>i.status===s)){stage=s;break;}
+      }
+    } else {
+      // Use proj's own status if no items
+      stage=p.status||'待執行';
+    }
+    if(grouped[stage]!==undefined) grouped[stage].push(p);
+    else grouped['待執行'].push(p);
+  });
+
+  const board=document.getElementById('kanbanBoard');
+  board.innerHTML=stages.map(s=>{
+    const col=stageColors[s]||'#94a3b8';
+    const cards=grouped[s]||[];
+    return `<div class="kanban-col">
+      <div class="kanban-col-header" style="border-color:${col}">
+        <span class="kanban-col-title" style="color:${col}">${s}</span>
+        <span class="kanban-col-count" style="color:${col}">${cards.length}</span>
+      </div>
+      ${cards.map(p=>{
+        const qty=projItems(p.id).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+        return `<div class="kanban-card" onclick="openDetail('${p.id}')">
+          <div class="kanban-card-name">${p.name||''}</div>
+          <div class="kanban-card-meta">
+            <span class="grade grade-${p.grade}">${p.grade}</span>
+            <span class="biz-badge ${bizC(p.biz)}" style="font-size:10px">${bizL(p.biz)}</span>
+            ${qty?`<span style="font-size:10px;color:var(--ink4);margin-left:auto">×${qty}</span>`:''}
+          </div>
+        </div>`;
+      }).join('')||`<div style="font-size:12px;color:var(--ink4);text-align:center;padding:16px 0">—</div>`}
+    </div>`;
+  }).join('');
+}
+
 window.jumpToItems = id => {
   const tabs = document.querySelectorAll('.ttab');
   tabs.forEach(t=>t.classList.remove('active'));
@@ -1660,7 +1786,17 @@ window.exportPDF = () => {
     .grade-box{flex:1;border-radius:8px;padding:10px;text-align:center}
     .print-btn{margin-top:20px;padding:10px 24px;background:#0f172a;color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
     @media print{.print-btn{display:none}body{padding:12px 16px}}
-  </style>
+  
+/* Kanban */
+.kanban-col{flex-shrink:0;width:220px}
+.kanban-col-header{display:flex;justify-content:space-between;align-items:center;padding:8px 0 10px;border-bottom:3px solid;margin-bottom:10px}
+.kanban-col-title{font-size:13px;font-weight:800}
+.kanban-col-count{font-size:12px;font-weight:700;background:rgba(0,0,0,.07);padding:2px 8px;border-radius:20px}
+.kanban-card{background:white;border-radius:10px;padding:12px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.08);cursor:pointer;border:1.5px solid var(--line);transition:box-shadow .15s}
+.kanban-card:hover{box-shadow:0 3px 10px rgba(0,0,0,.13)}
+.kanban-card-name{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:8px;line-height:1.4;word-break:break-all}
+.kanban-card-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+</style>
 </head><body>
 
   <div class="header">
