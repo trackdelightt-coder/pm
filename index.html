@@ -978,41 +978,87 @@ function renderKanban(){
     const its=projItems(p.id);
     let stage='待執行';
     if(its.length){
-      const stageOrder=['流標','給檔完成','製作檔','已簽核','修改中','提案中','設計中','待執行'];
-      for(const s of stageOrder){
-        if(its.some(i=>i.status===s)){stage=s;break;}
+      const active=its.filter(i=>i.status!==VOID_STATUS);
+      if(!active.length){
+        stage='流標';
+      } else if(active.every(i=>i.status===DONE_STATUS)){
+        // 所有細項都給檔完成 → 給檔完成欄
+        stage=DONE_STATUS;
+      } else {
+        // 用最多細項的階段
+        const stageCounts={};
+        active.forEach(i=>{
+          const s=i.status||'待執行';
+          stageCounts[s]=(stageCounts[s]||0)+1;
+        });
+        stage=Object.entries(stageCounts).sort((a,b)=>b[1]-a[1])[0][0];
       }
     } else {
-      // Use proj's own status if no items
       stage=p.status||'待執行';
     }
     if(grouped[stage]!==undefined) grouped[stage].push(p);
     else grouped['待執行'].push(p);
   });
 
+  const CARDS_LIMIT = 8;
   const board=document.getElementById('kanbanBoard');
   board.innerHTML=stages.map(s=>{
     const col=stageColors[s]||'#94a3b8';
-    const cards=grouped[s]||[];
-    return `<div class="kanban-col">
-      <div class="kanban-col-header" style="border-color:${col}">
-        <span class="kanban-col-title" style="color:${col}">${s}</span>
-        <span class="kanban-col-count" style="color:${col}">${cards.length}</span>
-      </div>
-      ${cards.map(p=>{
-        const qty=projItems(p.id).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
-        return `<div class="kanban-card" onclick="openDetail('${p.id}')">
-          <div class="kanban-card-name">${p.name||''}</div>
-          <div class="kanban-card-meta">
-            <span class="grade grade-${p.grade}">${p.grade}</span>
-            <span class="biz-badge ${bizC(p.biz)}" style="font-size:10px">${bizL(p.biz)}</span>
-            ${qty?`<span style="font-size:10px;color:var(--ink4);margin-left:auto">×${qty}</span>`:''}
-          </div>
-        </div>`;
-      }).join('')||`<div style="font-size:12px;color:var(--ink4);text-align:center;padding:16px 0">—</div>`}
-    </div>`;
+    let cards=grouped[s]||[];
+
+    // Sort: 待執行 by date asc, others by updatedAt desc (use Firebase id as proxy)
+    if(s==='待執行'){
+      cards=[...cards].sort((a,b)=>{
+        const da=parseDate(a.date)||new Date(9999,0);
+        const db=parseDate(b.date)||new Date(9999,0);
+        return da-db;
+      });
+    } else {
+      // Sort by most recently modified (use id as proxy - larger id = newer in Firestore)
+      cards=[...cards].sort((a,b)=>(b.id||'').localeCompare(a.id||''));
+    }
+
+    const isExpanded=window._kanbanExpanded&&window._kanbanExpanded[s];
+    const showCards = (cards.length>CARDS_LIMIT&&!isExpanded) ? cards.slice(0,CARDS_LIMIT) : cards;
+    const hiddenCount = cards.length - showCards.length;
+
+    const cardHtml = showCards.map(p=>{
+      const qty=projItems(p.id).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+      const ia=autoAlert(p.id)==='需追蹤';
+      const nameC=ia?'var(--alert)':'var(--ink)';
+      return '<div class="kanban-card'+(ia?' alert-card':'')+'" data-pid="'+p.id+'" onclick="openDetail(this.dataset.pid)">'
+        +'<div class="kanban-card-name" style="color:'+nameC+'">'+(p.name||'')+'</div>'
+        +'<div class="kanban-card-meta">'
+        +'<span class="grade grade-'+p.grade+'">'+p.grade+'</span>'
+        +'<span class="biz-badge '+bizC(p.biz)+'" style="font-size:10px">'+bizL(p.biz)+'</span>'
+        +(qty?'<span style="font-size:10px;color:var(--ink4);margin-left:auto">×'+qty+'</span>':'')
+        +'</div></div>';
+    }).join('')||'<div style="font-size:12px;color:var(--ink4);text-align:center;padding:16px 0">—</div>';
+
+    const moreBtn = hiddenCount>0
+      ? '<div data-stage="'+s+'" onclick="expandKanbanCol(this.dataset.stage)" style="text-align:center;padding:8px;font-size:12px;color:var(--ink3);cursor:pointer;border:1px dashed var(--line);border-radius:8px;margin-top:4px">還有 '+hiddenCount+' 個 ▼</div>'
+      : (isExpanded&&cards.length>CARDS_LIMIT ? '<div data-stage="'+s+'" onclick="collapseKanbanCol(this.dataset.stage)" style="text-align:center;padding:8px;font-size:12px;color:var(--ink3);cursor:pointer;border:1px dashed var(--line);border-radius:8px;margin-top:4px">收合 ▲</div>' : '');
+
+    return '<div class="kanban-col">'
+      +'<div class="kanban-col-header" style="border-color:'+col+'">'
+      +'<span class="kanban-col-title" style="color:'+col+'">'+s+'</span>'
+      +'<span class="kanban-col-count" style="color:'+col+'">'+cards.length+'</span>'
+      +'</div>'
+      +cardHtml+moreBtn
+      +'</div>';
   }).join('');
 }
+
+window.expandKanbanCol = (stage) => {
+  if(!window._kanbanExpanded) window._kanbanExpanded={};
+  window._kanbanExpanded[stage] = true;
+  renderKanban();
+};
+window.collapseKanbanCol = (stage) => {
+  if(!window._kanbanExpanded) window._kanbanExpanded={};
+  window._kanbanExpanded[stage] = false;
+  renderKanban();
+};
 
 window.jumpToItems = id => {
   const tabs = document.querySelectorAll('.ttab');
