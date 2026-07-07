@@ -44,8 +44,8 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
 /* TOPBAR */
 .topbar{background:var(--ink);height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;position:sticky;top:0;z-index:200}
 .topbar-title{font-size:14px;font-weight:900;color:white;white-space:nowrap}
-.topbar-tabs{display:flex;gap:2px}
-.ttab{background:none;border:none;color:#94a3b8;font-size:13px;font-weight:700;padding:6px 14px;border-radius:20px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.topbar-tabs{display:flex;gap:2px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ttab{background:none;border:none;color:#94a3b8;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer;font-family:inherit;white-space:nowrap}
 .ttab.active{background:rgba(255,255,255,.15);color:white}
 .t-btn{background:rgba(255,255,255,.1);border:none;color:white;font-size:12px;font-weight:600;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:inherit;white-space:nowrap}
 .t-btn.primary{background:var(--jia)}
@@ -240,6 +240,8 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
 .kanban-card:hover{box-shadow:0 3px 10px rgba(0,0,0,.13)}
 .kanban-card-name{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:8px;line-height:1.4;word-break:break-all}
 .kanban-card-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.report-range-btn{padding:6px 14px;border-radius:20px;border:1.5px solid var(--line);background:white;color:var(--ink3);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.report-range-btn.active{background:var(--jia);color:white;border-color:var(--jia)}
 </style>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -274,6 +276,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
     <button class="ttab active" onclick="showScreen('boss',this)">大項目</button>
     <button class="ttab" onclick="showScreen('items',this)">細項</button>
     <button class="ttab" onclick="showScreen('dash',this)">統計</button>
+    <button class="ttab" onclick="showScreen('report',this)">📋 進度報告</button>
   </div>
   <div style="display:flex;align-items:center;gap:6px">
     <span class="mode-tag" id="modeTag"></span>
@@ -390,6 +393,22 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
   <div style="padding:0 16px 16px;display:none" id="mobileAddItem">
     <button onclick="openAddItem()" style="width:100%;padding:13px;background:var(--jia);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">＋ 新增細項</button>
   </div>
+</div>
+
+<!-- 進度報告 -->
+<div class="screen" id="screen-report">
+  <div class="screen-header">
+    <div class="screen-title">📋 進度報告</div>
+  </div>
+  <div style="padding:8px 16px;display:flex;gap:8px;flex-wrap:wrap;background:white;border-bottom:1px solid var(--line)">
+    <button class="report-range-btn" data-range="week" onclick="setReportRange(this)">本週</button>
+    <button class="report-range-btn active" data-range="month" onclick="setReportRange(this)">本月</button>
+    <button class="report-range-btn" data-range="lastmonth" onclick="setReportRange(this)">上月</button>
+    <button class="report-range-btn" data-range="quarter" onclick="setReportRange(this)">本季</button>
+    <button class="report-range-btn" data-range="year" onclick="setReportRange(this)">本年</button>
+    <button class="report-range-btn" data-range="all" onclick="setReportRange(this)">全部</button>
+  </div>
+  <div id="reportContent" style="padding:0 0 24px"></div>
 </div>
 
 <!-- 統計 -->
@@ -705,9 +724,10 @@ function autoAlert(pid){
   const st=getStatus(p);
   if(st==='已完成'||st==='流標') return '-';
   const d=parseDate(p.date);
-  if(d && d<new Date()) return '需追蹤';
-  const pc=pctNum(pid);
-  if(pc<50) return '需追蹤';
+  if(!d) return '-';
+  const now=new Date();
+  const diff=(d-now)/(1000*60*60*24);
+  if(diff<=7) return '需追蹤'; // 7天內或已逾期
   return '持續推進';
 }
 function calcPct(pid){
@@ -908,6 +928,11 @@ document.querySelectorAll('[data-bf]').forEach(b=>b.addEventListener('click',()=
 
 // ── DETAIL ──
 // ── KANBAN VIEW ──
+const stageColors={
+  '待執行':'#94a3b8','設計中':'#16a34a','提案中':'#2563eb',
+  '修改中':'#ea580c','已簽核':'#9333ea','製作檔':'#0891b2',
+  '給檔完成':'#16a34a','流標':'#cbd5e1'
+};
 let bossView = 'table'; // 'table' or 'kanban'
 
 window.switchBossView = (view) => {
@@ -938,11 +963,7 @@ window.switchBossView = (view) => {
 
 function renderKanban(){
   const stages=['待執行','設計中','提案中','修改中','已簽核','製作檔','給檔完成','流標'];
-  const stageColors={
-    '待執行':'#94a3b8','設計中':'#16a34a','提案中':'#2563eb',
-    '修改中':'#ea580c','已簽核':'#9333ea','製作檔':'#0891b2',
-    '給檔完成':'#16a34a','流標':'#cbd5e1'
-  };
+  // stageColors defined globally below
 
   // Use same filter as renderBoss
   let list=[...projects];
@@ -2185,6 +2206,196 @@ window.toggleProjTable = () => {
   icon.textContent = isOpen ? '▶ 展開' : '▼ 收合';
 };
 
+// ── REPORT ──
+let reportRange = 'month';
+window.setReportRange = function(btn){
+  document.querySelectorAll('.report-range-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  reportRange = btn.dataset.range;
+  renderReport();
+};
+
+window.renderReport = function(){
+  const el = document.getElementById('reportContent');
+  if(!el){ console.error('reportContent not found'); return; }
+  console.log('renderReport called');
+  try {
+    const now = new Date();
+    const yr = now.getFullYear();
+    const mo = String(now.getMonth()+1).padStart(2,'0');
+    const todayStr = now.toLocaleDateString('zh-TW',{year:'numeric',month:'long',day:'numeric'});
+    const rangeLabel = {week:'本週',month:'本月',lastmonth:'上月',quarter:'本季',year:'本年',all:'全部'}[reportRange]||'本月';
+
+    // 篩選範圍
+    function inRange(p){
+      const d = p.date || p.doneDate || '';
+      if(!d) return reportRange==='all';
+      const pDate = new Date(d);
+      if(reportRange==='week'){
+        const weekStart=new Date(now); weekStart.setDate(now.getDate()-now.getDay()+1); weekStart.setHours(0,0,0,0);
+        const weekEnd=new Date(weekStart); weekEnd.setDate(weekStart.getDate()+6); weekEnd.setHours(23,59,59,999);
+        return pDate>=weekStart && pDate<=weekEnd;
+      }
+      if(reportRange==='month') return d.startsWith(yr+'-'+mo);
+      if(reportRange==='lastmonth'){
+        const lm = now.getMonth()===0 ? (yr-1)+'-12' : yr+'-'+String(now.getMonth()).padStart(2,'0');
+        return d.startsWith(lm);
+      }
+      if(reportRange==='quarter'){
+        const q=Math.floor(now.getMonth()/3);
+        const qMos=[q*3+1,q*3+2,q*3+3].map(m=>yr+'-'+String(m).padStart(2,'0'));
+        return qMos.some(m=>d.startsWith(m));
+      }
+      if(reportRange==='year') return d.startsWith(String(yr));
+      return true;
+    }
+
+    const filtP = reportRange==='all' ? projects : projects.filter(inRange);
+    const filtI = reportRange==='all' ? items : items.filter(i=>{ const p=getProj(i.projId)||{}; return inRange(p); });
+
+    const total=filtP.length;
+    const done=filtP.filter(p=>getStatus(p)==='已完成').length;
+    const prog=filtP.filter(p=>getStatus(p)==='執行中').length;
+    const totalQty=filtI.reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+    const doneQty=filtI.filter(i=>i.status===DONE_STATUS).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+    const qtyPct=totalQty>0?Math.round(doneQty/totalQty*100):0;
+
+    const urgentProjs=filtP.filter(p=>p.grade==='急'&&getStatus(p)!=='已完成'&&getStatus(p)!=='流標');
+    const needAlert=filtP.filter(p=>autoAlert(p.id)==='需追蹤').sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+    const thisMonth=filtP.filter(p=>{ const st=getStatus(p); return st!=='已完成'&&st!=='流標'; }).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+    const doneList=filtP.filter(p=>getStatus(p)==='已完成');
+
+    let html = '';
+
+    // 標題
+    html += '<div style="background:linear-gradient(135deg,#1e3a5f,#2563eb);color:white;padding:20px 16px 16px;margin-bottom:0">';
+    html += '<div style="font-size:11px;opacity:.7;margin-bottom:4px">設計專案課</div>';
+    html += '<div style="font-size:20px;font-weight:900;margin-bottom:4px">專案進度週報</div>';
+    html += '<div style="font-size:12px;opacity:.8">報告日期：'+todayStr+'　範圍：'+rangeLabel+'</div>';
+    html += '</div>';
+
+    // 快速數字列
+    html += '<div style="display:flex;gap:0;background:#f8fafc;border-bottom:1px solid var(--line);padding:12px 16px;gap:20px">';
+    html += '<div style="text-align:center"><div style="font-size:20px;font-weight:900;color:var(--ink)">'+total+'</div><div style="font-size:10px;color:var(--ink4)">總專案</div></div>';
+    html += '<div style="text-align:center"><div style="font-size:20px;font-weight:900;color:var(--done)">'+done+'</div><div style="font-size:10px;color:var(--ink4)">已完成</div></div>';
+    html += '<div style="text-align:center"><div style="font-size:20px;font-weight:900;color:var(--prog)">'+prog+'</div><div style="font-size:10px;color:var(--ink4)">進行中</div></div>';
+    html += '<div style="text-align:center"><div style="font-size:20px;font-weight:900;color:var(--alert)">'+urgentProjs.length+'</div><div style="font-size:10px;color:var(--ink4)">急件</div></div>';
+    html += '<div style="text-align:center"><div style="font-size:20px;font-weight:900;color:var(--alert)">'+needAlert.length+'</div><div style="font-size:10px;color:var(--ink4)">需追蹤</div></div>';
+    html += '</div>';
+
+    html += '<div style="padding:16px">';
+
+    // 📝 文字摘要（放最上面）
+    html += '<div style="background:white;border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)">';
+    html += '<div style="font-size:13px;font-weight:800;color:var(--ink2);margin-bottom:10px">📝 整體摘要</div>';
+    let summary = rangeLabel+'共執行 <strong>'+total+'</strong> 個專案，';
+    summary += '已完成 <strong style="color:var(--done)">'+done+'</strong> 個';
+    if(total>0) summary += '（完成率 <strong>'+(Math.round(done/total*100))+'%</strong>）';
+    summary += '，目前進行中 <strong>'+prog+'</strong> 個。';
+    if(totalQty>0) summary += '<br>設計件數共 <strong>'+totalQty+'</strong> 件，已給檔 <strong style="color:var(--done)">'+doneQty+'</strong> 件（<strong>'+qtyPct+'%</strong>）。';
+    if(urgentProjs.length) summary += '<br>⚠️ 目前有 <strong style="color:#dc2626">'+urgentProjs.length+'</strong> 個急件需優先處理。';
+    if(needAlert.length) summary += '<br>⚠️ 共 <strong style="color:var(--alert)">'+needAlert.length+'</strong> 個專案需追蹤關注。';
+    if(done>0&&urgentProjs.length===0&&needAlert.length===0) summary += '<br>✅ 目前無急件及需追蹤項目，進度良好。';
+    html += '<p style="margin:0;line-height:1.8;font-size:13px;color:var(--ink)">'+summary+'</p>';
+    html += '</div>';
+
+    // 🚨 急件
+    html += '<div style="margin-bottom:16px">';
+    html += '<div style="font-size:13px;font-weight:800;color:#dc2626;margin-bottom:8px">🚨 急件（'+urgentProjs.length+'個）</div>';
+    if(urgentProjs.length){
+      urgentProjs.forEach(function(p){
+        const st=getStatus(p);
+        const lastLog=(p.logs&&p.logs.length)?p.logs[p.logs.length-1].text:'';
+        html += '<div style="background:white;border-left:3px solid #dc2626;border-radius:0 10px 10px 0;padding:12px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.06)">';
+        html += '<div style="font-weight:700;color:#dc2626;margin-bottom:4px">'+p.name+'</div>';
+        html += '<div style="font-size:12px;color:var(--ink3);display:flex;gap:8px;align-items:center;flex-wrap:wrap">';
+        html += '<span class="biz-badge '+bizC(p.biz)+'" style="font-size:10px">'+bizL(p.biz)+'</span>';
+        html += '<span class="status-badge s-'+st+'" style="font-size:10px">'+st+'</span>';
+        html += '<span>預計完工：'+(p.date||'未填')+'</span>';
+        html += '</div>';
+        if(lastLog) html += '<div style="font-size:12px;color:var(--ink2);margin-top:6px;background:#fff5f5;padding:6px 8px;border-radius:6px">📌 '+lastLog+'</div>';
+        html += '</div>';
+      });
+    } else {
+      html += '<div style="color:var(--ink4);font-size:13px;padding:8px 0">目前無急件 ✅</div>';
+    }
+    html += '</div>';
+
+    // ⚠️ 需關注
+    html += '<div style="margin-bottom:16px">';
+    html += '<div style="font-size:13px;font-weight:800;color:var(--alert);margin-bottom:8px">⚠️ 需關注（'+needAlert.length+'個）</div>';
+    if(needAlert.length){
+      needAlert.forEach(function(p){
+        const st=getStatus(p);
+        const d=parseDate(p.date);
+        const overdue=d&&d<now;
+        const daysLeft=d?Math.ceil((d-now)/(1000*60*60*24)):null;
+        const lastLog=(p.logs&&p.logs.length)?p.logs[p.logs.length-1].text:'';
+        html += '<div style="background:white;border-left:3px solid var(--alert);border-radius:0 10px 10px 0;padding:12px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.06)">';
+        html += '<div style="display:flex;justify-content:space-between;align-items:flex-start">';
+        html += '<div style="font-weight:700;color:var(--alert)">'+p.name+'</div>';
+        if(overdue) html += '<span style="font-size:11px;color:#dc2626;font-weight:700;white-space:nowrap;margin-left:8px">逾期'+(daysLeft?Math.abs(daysLeft)+'天':'')+'</span>';
+        else if(daysLeft!==null) html += '<span style="font-size:11px;color:var(--alert);white-space:nowrap;margin-left:8px">還剩'+daysLeft+'天</span>';
+        html += '</div>';
+        html += '<div style="font-size:12px;color:var(--ink3);display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px">';
+        html += '<span class="biz-badge '+bizC(p.biz)+'" style="font-size:10px">'+bizL(p.biz)+'</span>';
+        html += '<span class="status-badge s-'+st+'" style="font-size:10px">'+st+'</span>';
+        html += '<span>預計完工：'+(p.date||'未填')+'</span>';
+        html += '</div>';
+        if(lastLog) html += '<div style="font-size:12px;color:var(--ink2);margin-top:6px;background:#fff8f0;padding:6px 8px;border-radius:6px">📌 '+lastLog+'</div>';
+        else html += '<div style="font-size:12px;color:var(--ink4);margin-top:6px">尚無備註</div>';
+        html += '</div>';
+      });
+    } else {
+      html += '<div style="color:var(--ink4);font-size:13px;padding:8px 0">目前無需關注項目 ✅</div>';
+    }
+    html += '</div>';
+
+    // 📋 進行中專案
+    html += '<div style="margin-bottom:16px">';
+    html += '<div style="font-size:13px;font-weight:800;color:var(--ink2);margin-bottom:8px">📋 進行中（'+thisMonth.length+'個）</div>';
+    if(thisMonth.length){
+      thisMonth.forEach(function(p){
+        const st=getStatus(p);
+        const pc=pctNum(p.id);
+        const col=sc(st);
+        html += '<div style="background:white;border-radius:10px;padding:12px;margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,.06)">';
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
+        html += '<div style="font-weight:700;font-size:13px">'+p.name+'</div>';
+        html += '<span style="font-size:11px;color:var(--ink4);white-space:nowrap;margin-left:8px">'+(p.date||'—')+'</span>';
+        html += '</div>';
+        html += '<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px">';
+        html += '<span class="biz-badge '+bizC(p.biz)+'" style="font-size:10px">'+bizL(p.biz)+'</span>';
+        html += '<span class="status-badge s-'+st+'" style="font-size:10px">'+st+'</span>';
+        html += '</div>';
+        html += '<div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:'+pc+'%;background:'+col+'"></div></div><span class="prog-pct" style="color:'+col+'">'+pc+'%</span></div>';
+        html += '</div>';
+      });
+    } else {
+      html += '<div style="color:var(--ink4);font-size:13px;padding:8px 0">無進行中專案</div>';
+    }
+    html += '</div>';
+
+    // ✅ 已完成
+    if(doneList.length){
+      html += '<div style="margin-bottom:16px">';
+      html += '<div style="font-size:13px;font-weight:800;color:var(--done);margin-bottom:8px">✅ 已完成（'+doneList.length+'個）</div>';
+      doneList.forEach(function(p){
+        const doneD=autoDoneDate(p.id)||p.doneDate||'';
+        html += '<div style="background:white;border-left:3px solid var(--done);border-radius:0 10px 10px 0;padding:10px 12px;margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,.06)">';
+        html += '<div style="font-weight:700;color:var(--done)">'+p.name+'</div>';
+        html += '<div style="font-size:12px;color:var(--ink3);margin-top:4px;display:flex;gap:8px">';
+        html += '<span class="biz-badge '+bizC(p.biz)+'" style="font-size:10px">'+bizL(p.biz)+'</span>';
+        if(doneD) html += '<span>完成日：'+doneD+'</span>';
+        html += '</div></div>';
+      });
+      html += '</div>';
+    }
+
+    html += '</div>';
+    el.innerHTML = html;
+  } catch(e){ console.error('renderReport error:', e); el.innerHTML = '<div style="padding:20px;color:red">錯誤：'+e.message+'</div>'; }
+}
 window.showScreen = (name, btn) => {
   curScreen=name;
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -2202,6 +2413,11 @@ window.showScreen = (name, btn) => {
     document.getElementById('mobileAddItem').style.display=isEdit?'block':'none';
     document.getElementById('mobileAddProj').style.display='none';
     populateFilters(); renderItems();
+  } else if(name==='report'){
+    ab.style.display='none';
+    document.getElementById('mobileAddProj').style.display='none';
+    document.getElementById('mobileAddItem').style.display='none';
+    renderReport();
   } else {
     ab.style.display='none';
     document.getElementById('mobileAddProj').style.display='none';
