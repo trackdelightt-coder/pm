@@ -2228,26 +2228,31 @@ window.renderReport = function(){
 
     // 篩選範圍
     function inRange(p){
-      const d = p.date || p.doneDate || '';
-      if(!d) return reportRange==='all';
-      const pDate = new Date(d);
-      if(reportRange==='week'){
-        const weekStart=new Date(now); weekStart.setDate(now.getDate()-now.getDay()+1); weekStart.setHours(0,0,0,0);
-        const weekEnd=new Date(weekStart); weekEnd.setDate(weekStart.getDate()+6); weekEnd.setHours(23,59,59,999);
-        return pDate>=weekStart && pDate<=weekEnd;
+      // 用預計完成日或實際完成日，只要其中一個符合就算
+      const dates = [p.date, autoDoneDate(p.id)||p.doneDate].filter(Boolean);
+      if(!dates.length) return reportRange==='all';
+
+      function dateMatches(d){
+        const pDate = new Date(d);
+        if(reportRange==='week'){
+          const weekStart=new Date(now); weekStart.setDate(now.getDate()-now.getDay()+1); weekStart.setHours(0,0,0,0);
+          const weekEnd=new Date(weekStart); weekEnd.setDate(weekStart.getDate()+6); weekEnd.setHours(23,59,59,999);
+          return pDate>=weekStart && pDate<=weekEnd;
+        }
+        if(reportRange==='month') return d.startsWith(yr+'-'+mo);
+        if(reportRange==='lastmonth'){
+          const lm = now.getMonth()===0 ? (yr-1)+'-12' : yr+'-'+String(now.getMonth()).padStart(2,'0');
+          return d.startsWith(lm);
+        }
+        if(reportRange==='quarter'){
+          const q=Math.floor(now.getMonth()/3);
+          const qMos=[q*3+1,q*3+2,q*3+3].map(m=>yr+'-'+String(m).padStart(2,'0'));
+          return qMos.some(m=>d.startsWith(m));
+        }
+        if(reportRange==='year') return d.startsWith(String(yr));
+        return true;
       }
-      if(reportRange==='month') return d.startsWith(yr+'-'+mo);
-      if(reportRange==='lastmonth'){
-        const lm = now.getMonth()===0 ? (yr-1)+'-12' : yr+'-'+String(now.getMonth()).padStart(2,'0');
-        return d.startsWith(lm);
-      }
-      if(reportRange==='quarter'){
-        const q=Math.floor(now.getMonth()/3);
-        const qMos=[q*3+1,q*3+2,q*3+3].map(m=>yr+'-'+String(m).padStart(2,'0'));
-        return qMos.some(m=>d.startsWith(m));
-      }
-      if(reportRange==='year') return d.startsWith(String(yr));
-      return true;
+      return dates.some(dateMatches);
     }
 
     const filtP = reportRange==='all' ? projects : projects.filter(inRange);
