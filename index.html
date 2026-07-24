@@ -389,7 +389,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
   <div class="items-stats" id="itemsStats"></div>
   <div class="items-table-wrap">
     <table class="items-table"><thead><tr>
-      <th>專案名稱</th><th>事業部</th><th>具體內容</th><th>分類</th><th>狀態</th><th>件數</th><th>已給檔</th><th>起始日</th><th>預計完成</th><th>實際完成</th><th>簽核圖</th><th>備註</th>
+      <th>專案名稱</th><th>事業部</th><th>具體內容</th><th>分類</th><th>狀態</th><th>件數</th><th>交件次數</th><th>起始日</th><th>預計完成</th><th>實際完成</th><th>簽核圖</th><th>備註</th>
     </tr></thead><tbody id="itemsTableBody"></tbody></table>
   </div>
   <div class="empty-state" id="itemsEmpty" style="display:none">
@@ -560,7 +560,12 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
         <option value="JC-幸福館1301">JC-幸福館1301</option><option value="JC-中正館1302">JC-中正館1302</option><option value="JC-春日館1303">JC-春日館1303</option>
         </optgroup>
       </select></div>
-    <div class="form-group"><label class="form-label">項目分類</label><input class="form-input" id="iCategory" placeholder="例：視覺設計"></div>
+    <div class="form-group"><label class="form-label">項目分類</label>
+      <select class="form-select" id="iCategory">
+        <option value="">— 選擇分類 —</option>
+        <option value="模擬">模擬</option>
+        <option value="設計">設計</option>
+      </select></div>
     <div class="form-group"><label class="form-label">狀態</label>
       <select class="form-select" id="iStatus" onchange="handleStatusChange()">
         <option value="待執行">待執行</option>
@@ -578,7 +583,8 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
     <div class="form-group"><label class="form-label">預計完成日</label><input class="form-input" type="date" id="iEnd"></div>
     <div class="form-group fg-full" id="iDoneWrap">
       <label class="form-label">實際完成日</label><input class="form-input" type="date" id="iDone"></div>
-    <div class="form-group"><label class="form-label">總件數</label><input class="form-input" type="number" id="iQty" placeholder="1" min="1"></div>
+    <div class="form-group"><label class="form-label">專案件數（給老闆）</label><input class="form-input" type="number" id="iQty" placeholder="1" min="1"></div>
+    <div class="form-group"><label class="form-label">交件次數（自動累計）</label><input class="form-input" type="number" id="iDeliveryCount" placeholder="0" min="0" readonly style="background:#f8fafc;color:var(--ink3)"></div>
     <div class="form-group" style="justify-content:center;padding-top:16px">
       <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:700;color:var(--done)">
         <input type="checkbox" id="iDelivered" style="width:18px;height:18px;cursor:pointer;accent-color:#16a34a">
@@ -748,7 +754,7 @@ function calcPct(pid){
   const its=projItems(pid).filter(i=>i.status!==VOID_STATUS);
   if(!its.length) return null;
   const totalQty=its.reduce((a,i)=>a+(parseInt(i.qty)||1),0);
-  const doneQty=its.filter(i=>i.delivered===true||i.status===DONE_STATUS).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+  const doneQty=its.filter(i=>i.delivered===true||i.status===DONE_STATUS||i.status===CLOSED_STATUS).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
   return totalQty>0?Math.round(doneQty/totalQty*100):0;
 }
 function pctNum(pid){ const p=calcPct(pid); return p!==null?p:0; }
@@ -1017,18 +1023,24 @@ function renderKanban(){
     if(its.length){
       const active=its.filter(i=>i.status!==VOID_STATUS);
       if(!active.length){
+        // 全部流標
         stage='流標';
-      } else if(active.every(i=>i.status===DONE_STATUS)){
-        // 所有細項都給檔完成 → 給檔完成欄
+      } else if(active.every(i=>i.status===DONE_STATUS||i.status===CLOSED_STATUS)){
+        // 全部細項都給檔完成或結案 → 才放給檔完成欄
         stage=DONE_STATUS;
       } else {
-        // 用最多細項的階段
-        const stageCounts={};
-        active.forEach(i=>{
-          const s=i.status||'待執行';
-          stageCounts[s]=(stageCounts[s]||0)+1;
-        });
-        stage=Object.entries(stageCounts).sort((a,b)=>b[1]-a[1])[0][0];
+        // 排除已給檔完成的，看剩下的細項最多是哪個階段
+        const inProgress=active.filter(i=>i.status!==DONE_STATUS&&i.status!==CLOSED_STATUS);
+        if(inProgress.length){
+          const stageCounts={};
+          inProgress.forEach(i=>{
+            const s=i.status||'待執行';
+            stageCounts[s]=(stageCounts[s]||0)+1;
+          });
+          stage=Object.entries(stageCounts).sort((a,b)=>b[1]-a[1])[0][0];
+        } else {
+          stage=DONE_STATUS;
+        }
       }
     } else {
       stage=p.status||'待執行';
@@ -1401,12 +1413,15 @@ window.handleStatusChange = () => {
   if(s===DONE_STATUS){
     document.getElementById('iDelivered').checked=true;
     if(!document.getElementById('iDone').value) document.getElementById('iDone').value=today();
+    // 自動累計交件次數
+    const currentCount=parseInt(document.getElementById('iDeliveryCount').value)||0;
+    document.getElementById('iDeliveryCount').value=currentCount+1;
     // 自動加給檔紀錄
     const qty=parseInt(document.getElementById('iQty').value)||1;
     const todayStr=today();
     const alreadyLogged=tempItemLogs.some(l=>l.text.startsWith('[給檔]')&&l.time.startsWith(todayStr));
     if(!alreadyLogged){
-      tempItemLogs.push({time:now(),text:'[給檔] '+qty+'件 — 自動記錄'});
+      tempItemLogs.push({time:now(),text:'[給檔] '+qty+'件（第'+(currentCount+1)+'次）— 自動記錄'});
       renderItemLogList();
     }
   }
@@ -1454,6 +1469,7 @@ window.openEditItem = id => {
   document.getElementById('iDone').value=item.doneDate||'';
   document.getElementById('iImgUrl').value=item.imgUrl||'';
   document.getElementById('iQty').value=item.qty||1;
+  document.getElementById('iDeliveryCount').value=item.deliveryCount||0;
   document.getElementById('iDelivered').checked=item.delivered===true;
   document.getElementById('iBiz').value=item.biz||'';
   const storeArr=(item.store||'').split('+');[...document.getElementById('iStore').options].forEach(o=>o.selected=storeArr.includes(o.value));
@@ -1510,6 +1526,7 @@ window.saveItem = async () => {
     status,start:document.getElementById('iStart').value,end:document.getElementById('iEnd').value,
     doneDate,imgUrl:document.getElementById('iImgUrl').value.trim(),
     qty:parseInt(document.getElementById('iQty').value)||1,
+    deliveryCount:parseInt(document.getElementById('iDeliveryCount').value)||0,
     delivered:document.getElementById('iDelivered').checked||autoDelivered,
     biz:document.getElementById('iBiz').value||'',
     store:[...document.getElementById('iStore').selectedOptions].map(o=>o.value).join('+'),
@@ -1586,7 +1603,8 @@ window.renderDash = function(){
 
   // 件數統計
   const totalQty=filtItems.reduce((a,i)=>a+(parseInt(i.qty)||1),0);
-  const doneQty=filtItems.filter(i=>i.delivered===true||i.status===DONE_STATUS).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+  const doneQty=filtItems.filter(i=>i.delivered===true||i.status===DONE_STATUS||i.status===CLOSED_STATUS).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+  const totalDeliveryCount=filtItems.reduce((a,i)=>a+(parseInt(i.deliveryCount)||0),0);
   const undoneQty=totalQty-doneQty;
   const qtyPct=totalQty>0?Math.round(doneQty/totalQty*100):0;
   // Note: 已完成件數 = 狀態已完成的細項件數加總
@@ -1619,7 +1637,7 @@ window.renderDash = function(){
     const p=getProj(i.projId)||{};
     const biz=i.biz||p.biz||'';
     const qty=parseInt(i.qty)||1;
-    const isDone=i.delivered===true||i.status===DONE_STATUS;
+    const isDone=i.delivered===true||i.status===DONE_STATUS||i.status===CLOSED_STATUS;
     if(biz==='佳'||biz==='佳艾'){ bizQtyTotal['佳瑪']+=qty; if(isDone) bizQtyDone['佳瑪']+=qty; }
     if(biz==='艾'||biz==='佳艾'){ bizQtyTotal['艾瑪特']+=qty; if(isDone) bizQtyDone['艾瑪特']+=qty; }
     if(biz==='JC'){ bizQtyTotal['JCPARK']+=qty; if(isDone) bizQtyDone['JCPARK']+=qty; }
@@ -1818,7 +1836,8 @@ window.exportPDF = () => {
   });
 
   const totalQty=filtItems.reduce((a,i)=>a+(parseInt(i.qty)||1),0);
-  const doneQty=filtItems.filter(i=>i.delivered===true||i.status===DONE_STATUS).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+  const doneQty=filtItems.filter(i=>i.delivered===true||i.status===DONE_STATUS||i.status===CLOSED_STATUS).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+  const totalDeliveryCount=filtItems.reduce((a,i)=>a+(parseInt(i.deliveryCount)||0),0);
   const qtyPct=totalQty>0?Math.round(doneQty/totalQty*100):0;
   // 已完成件數依狀態計算
 
@@ -1828,7 +1847,7 @@ window.exportPDF = () => {
     const p=getProj(i.projId)||{};
     const biz=i.biz||p.biz||'';
     const qty=parseInt(i.qty)||1;
-    const isDone=i.delivered===true||i.status===DONE_STATUS;
+    const isDone=i.delivered===true||i.status===DONE_STATUS||i.status===CLOSED_STATUS;
     if(biz==='佳'||biz==='佳艾'){bizQtyTotal['佳瑪']+=qty;if(isDone)bizQtyDone['佳瑪']+=qty;}
     if(biz==='艾'||biz==='佳艾'){bizQtyTotal['艾瑪特']+=qty;if(isDone)bizQtyDone['艾瑪特']+=qty;}
     if(biz==='JC'){bizQtyTotal['JCPARK']+=qty;if(isDone)bizQtyDone['JCPARK']+=qty;}
@@ -2326,7 +2345,7 @@ window.renderReport = function(){
     const done=filtP.filter(p=>getStatus(p)==='已完成').length;
     const prog=filtP.filter(p=>getStatus(p)==='執行中').length;
     const totalQty=filtI.reduce((a,i)=>a+(parseInt(i.qty)||1),0);
-    const doneQty=filtI.filter(i=>i.delivered===true||i.status===DONE_STATUS).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+    const doneQty=filtI.filter(i=>i.delivered===true||i.status===DONE_STATUS||i.status===CLOSED_STATUS).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
     const qtyPct=totalQty>0?Math.round(doneQty/totalQty*100):0;
 
     // 給檔統計
