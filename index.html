@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -98,6 +99,8 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
 .s-給檔完成{background:#dcfce7;color:#16a34a;font-weight:800}
 .s-待執行{background:var(--wait-l);color:var(--wait)}
 .s-流標{background:#f1f5f9;color:#94a3b8;text-decoration:line-through}
+.s-主單位確認中{background:#fefce8;color:#a16207;border:1px solid #fde047}
+.s-結案{background:#f0fdf4;color:#15803d;font-weight:900;border:1px solid #86efac}
 .alert-badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px}
 .a-yes{background:var(--alert-l);color:var(--alert)}
 .prog-wrap{display:flex;align-items:center;gap:8px}
@@ -363,6 +366,8 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
       <option value="已簽核">已簽核</option>
       <option value="製作檔">製作檔</option>
       <option value="給檔完成">給檔完成</option>
+      <option value="主單位確認中">主單位確認中</option>
+      <option value="結案">結案</option>
       <option value="流標">流標</option>
     </select>
     <select class="items-select" id="filterYear" onchange="renderItems()">
@@ -384,7 +389,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
   <div class="items-stats" id="itemsStats"></div>
   <div class="items-table-wrap">
     <table class="items-table"><thead><tr>
-      <th>專案名稱</th><th>事業部</th><th>具體內容</th><th>分類</th><th>狀態</th><th>件數</th><th>起始日</th><th>預計完成</th><th>實際完成</th><th>簽核圖</th><th>備註</th>
+      <th>專案名稱</th><th>事業部</th><th>具體內容</th><th>分類</th><th>狀態</th><th>件數</th><th>已給檔</th><th>起始日</th><th>預計完成</th><th>實際完成</th><th>簽核圖</th><th>備註</th>
     </tr></thead><tbody id="itemsTableBody"></tbody></table>
   </div>
   <div class="empty-state" id="itemsEmpty" style="display:none">
@@ -565,6 +570,8 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
         <option value="已簽核">已簽核</option>
         <option value="製作檔">製作檔</option>
         <option value="給檔完成">給檔完成</option>
+        <option value="主單位確認中">主單位確認中</option>
+        <option value="結案">結案</option>
         <option value="流標">流標</option>
       </select></div>
     <div class="form-group"><label class="form-label">起始日</label><input class="form-input" type="date" id="iStart"></div>
@@ -572,6 +579,12 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
     <div class="form-group fg-full" id="iDoneWrap">
       <label class="form-label">實際完成日</label><input class="form-input" type="date" id="iDone"></div>
     <div class="form-group"><label class="form-label">總件數</label><input class="form-input" type="number" id="iQty" placeholder="1" min="1"></div>
+    <div class="form-group" style="justify-content:center;padding-top:16px">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:700;color:var(--done)">
+        <input type="checkbox" id="iDelivered" style="width:18px;height:18px;cursor:pointer;accent-color:#16a34a">
+        ✅ 已給檔（勾選後件數計入完成統計）
+      </label>
+    </div>
     <div class="form-group fg-full">
       <label class="form-label">📎 簽核圖連結（Google Drive）</label>
       <input class="form-input" id="iImgUrl" placeholder="https://drive.google.com/…">
@@ -708,14 +721,15 @@ const projItems = pid => items.filter(i=>i.projId===pid);
 
 const DONE_STATUS='給檔完成';
 const VOID_STATUS='流標';
-const IN_PROGRESS=['待執行','設計中','提案中','修改中','已簽核','製作檔'];
+const IN_PROGRESS=['待執行','設計中','提案中','修改中','已簽核','製作檔','給檔完成','主單位確認中'];
+const CLOSED_STATUS='結案';
 const ALL_STAGES=[...IN_PROGRESS,DONE_STATUS,VOID_STATUS];
 function autoStatus(pid){
   const its=projItems(pid);
   if(!its.length) return null;
   const active=its.filter(i=>i.status!==VOID_STATUS);
   if(!active.length) return '流標';
-  if(active.every(i=>i.status===DONE_STATUS)) return '已完成';
+  if(active.every(i=>i.status===CLOSED_STATUS||i.status===DONE_STATUS)) return '已完成';
   if(active.some(i=>i.status!=='待執行')) return '執行中';
   return '待執行';
 }
@@ -733,7 +747,9 @@ function autoAlert(pid){
 function calcPct(pid){
   const its=projItems(pid).filter(i=>i.status!==VOID_STATUS);
   if(!its.length) return null;
-  return Math.round(its.filter(i=>i.status===DONE_STATUS).length/its.length*100);
+  const totalQty=its.reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+  const doneQty=its.filter(i=>i.delivered===true||i.status===DONE_STATUS).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+  return totalQty>0?Math.round(doneQty/totalQty*100):0;
 }
 function pctNum(pid){ const p=calcPct(pid); return p!==null?p:0; }
 function autoDoneDate(pid){
@@ -931,7 +947,7 @@ document.querySelectorAll('[data-bf]').forEach(b=>b.addEventListener('click',()=
 const stageColors={
   '待執行':'#94a3b8','設計中':'#16a34a','提案中':'#2563eb',
   '修改中':'#ea580c','已簽核':'#9333ea','製作檔':'#0891b2',
-  '給檔完成':'#16a34a','流標':'#cbd5e1'
+  '給檔完成':'#16a34a','主單位確認中':'#a16207','結案':'#15803d','流標':'#cbd5e1'
 };
 let bossView = 'table'; // 'table' or 'kanban'
 
@@ -1080,6 +1096,38 @@ window.collapseKanbanCol = (stage) => {
   window._kanbanExpanded[stage] = false;
   renderKanban();
 };
+
+// ── DELIVERY STATS ──
+function getDeliveryQty(itemList, startDate, endDate){
+  // Count qty from delivery log entries within date range
+  let total = 0;
+  itemList.forEach(i=>{
+    const qty=parseInt(i.qty)||1;
+    const logs=i.logs||[];
+    logs.forEach(l=>{
+      if(!l.text.startsWith('[給檔]')) return;
+      const d=parseDate(l.time.split(' ')[0]);
+      if(!d) return;
+      if(d>=startDate && d<=endDate) total+=qty;
+    });
+  });
+  return total;
+}
+
+function getDeliveredItems(itemList){
+  // Items that have been delivered (have delivery log OR delivered flag)
+  return itemList.filter(i=>{
+    if(i.delivered) return true;
+    return (i.logs||[]).some(l=>l.text.startsWith('[給檔]'));
+  });
+}
+
+function getPendingItems(itemList){
+  // Items delivered but not yet closed (status != 結案 and != 流標)
+  return getDeliveredItems(itemList).filter(i=>
+    i.status!==CLOSED_STATUS && i.status!==VOID_STATUS && i.status!==DONE_STATUS
+  );
+}
 
 window.jumpToItems = id => {
   const tabs = document.querySelectorAll('.ttab');
@@ -1349,12 +1397,22 @@ window.renderItems = function(){
 // ── ITEM CRUD ──
 window.handleStatusChange = () => {
   const s=document.getElementById('iStatus').value;
+  // 選給檔完成時自動記錄給檔
   if(s===DONE_STATUS){
+    document.getElementById('iDelivered').checked=true;
     if(!document.getElementById('iDone').value) document.getElementById('iDone').value=today();
-  } else {
+    // 自動加給檔紀錄
+    const qty=parseInt(document.getElementById('iQty').value)||1;
+    const todayStr=today();
+    const alreadyLogged=tempItemLogs.some(l=>l.text.startsWith('[給檔]')&&l.time.startsWith(todayStr));
+    if(!alreadyLogged){
+      tempItemLogs.push({time:now(),text:'[給檔] '+qty+'件 — 自動記錄'});
+      renderItemLogList();
+    }
+  }
+  if(['修改中','設計中','待執行','提案中','已簽核','製作檔'].includes(s)){
     document.getElementById('iDone').value='';
   }
-  // 流標時顯示灰色提示
   const wrap=document.getElementById('iDoneWrap');
   if(wrap) wrap.style.opacity=s===VOID_STATUS?'0.3':'1';
 };
@@ -1368,6 +1426,7 @@ window.openAddItem = () => {
   document.getElementById('iBiz').value='';
   [...document.getElementById('iStore').options].forEach(o=>o.selected=false);
   document.getElementById('iQty').value='1';
+  document.getElementById('iDelivered').checked=false;
   document.getElementById('iStatus').value='待執行';
   document.getElementById('iProjSearch').value='';
   document.getElementById('iProjId').value='';
@@ -1395,6 +1454,7 @@ window.openEditItem = id => {
   document.getElementById('iDone').value=item.doneDate||'';
   document.getElementById('iImgUrl').value=item.imgUrl||'';
   document.getElementById('iQty').value=item.qty||1;
+  document.getElementById('iDelivered').checked=item.delivered===true;
   document.getElementById('iBiz').value=item.biz||'';
   const storeArr=(item.store||'').split('+');[...document.getElementById('iStore').options].forEach(o=>o.selected=storeArr.includes(o.value));
   renderItemLogList();
@@ -1439,15 +1499,18 @@ window.saveItem = async () => {
   if(!projId){showToast('請選擇所屬專案');return}
   const status=document.getElementById('iStatus').value;
   let doneDate=document.getElementById('iDone').value;
-  if(status===DONE_STATUS){
+  const autoDeliverStages=[DONE_STATUS,'主單位確認中','結案'];
+  const autoDelivered=autoDeliverStages.includes(status);
+  if(status===DONE_STATUS||status==='結案'){
     if(!doneDate) doneDate=today();
-  } else {
+  } else if(!['主單位確認中'].includes(status)){
     doneDate='';
   }
   const obj={projId,content,category:document.getElementById('iCategory').value,
     status,start:document.getElementById('iStart').value,end:document.getElementById('iEnd').value,
     doneDate,imgUrl:document.getElementById('iImgUrl').value.trim(),
     qty:parseInt(document.getElementById('iQty').value)||1,
+    delivered:document.getElementById('iDelivered').checked||autoDelivered,
     biz:document.getElementById('iBiz').value||'',
     store:[...document.getElementById('iStore').selectedOptions].map(o=>o.value).join('+'),
     logs:tempItemLogs};
@@ -1523,7 +1586,7 @@ window.renderDash = function(){
 
   // 件數統計
   const totalQty=filtItems.reduce((a,i)=>a+(parseInt(i.qty)||1),0);
-  const doneQty=filtItems.filter(i=>i.status===DONE_STATUS).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+  const doneQty=filtItems.filter(i=>i.delivered===true||i.status===DONE_STATUS).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
   const undoneQty=totalQty-doneQty;
   const qtyPct=totalQty>0?Math.round(doneQty/totalQty*100):0;
   // Note: 已完成件數 = 狀態已完成的細項件數加總
@@ -1556,7 +1619,7 @@ window.renderDash = function(){
     const p=getProj(i.projId)||{};
     const biz=i.biz||p.biz||'';
     const qty=parseInt(i.qty)||1;
-    const isDone=i.status===DONE_STATUS;
+    const isDone=i.delivered===true||i.status===DONE_STATUS;
     if(biz==='佳'||biz==='佳艾'){ bizQtyTotal['佳瑪']+=qty; if(isDone) bizQtyDone['佳瑪']+=qty; }
     if(biz==='艾'||biz==='佳艾'){ bizQtyTotal['艾瑪特']+=qty; if(isDone) bizQtyDone['艾瑪特']+=qty; }
     if(biz==='JC'){ bizQtyTotal['JCPARK']+=qty; if(isDone) bizQtyDone['JCPARK']+=qty; }
@@ -1755,7 +1818,7 @@ window.exportPDF = () => {
   });
 
   const totalQty=filtItems.reduce((a,i)=>a+(parseInt(i.qty)||1),0);
-  const doneQty=filtItems.filter(i=>i.status===DONE_STATUS).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+  const doneQty=filtItems.filter(i=>i.delivered===true||i.status===DONE_STATUS).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
   const qtyPct=totalQty>0?Math.round(doneQty/totalQty*100):0;
   // 已完成件數依狀態計算
 
@@ -1765,7 +1828,7 @@ window.exportPDF = () => {
     const p=getProj(i.projId)||{};
     const biz=i.biz||p.biz||'';
     const qty=parseInt(i.qty)||1;
-    const isDone=i.status===DONE_STATUS;
+    const isDone=i.delivered===true||i.status===DONE_STATUS;
     if(biz==='佳'||biz==='佳艾'){bizQtyTotal['佳瑪']+=qty;if(isDone)bizQtyDone['佳瑪']+=qty;}
     if(biz==='艾'||biz==='佳艾'){bizQtyTotal['艾瑪特']+=qty;if(isDone)bizQtyDone['艾瑪特']+=qty;}
     if(biz==='JC'){bizQtyTotal['JCPARK']+=qty;if(isDone)bizQtyDone['JCPARK']+=qty;}
@@ -2013,6 +2076,7 @@ window.exportExcel = async () => {
       {header:'分類',key:'cat',width:10},
       {header:'狀態',key:'status',width:8},
       {header:'件數',key:'qty',width:6},
+      {header:'已給檔',key:'delivered',width:8},
       {header:'起始日',key:'start',width:12},
       {header:'預計完成',key:'end',width:12},
       {header:'實際完成',key:'done',width:12},
@@ -2262,8 +2326,34 @@ window.renderReport = function(){
     const done=filtP.filter(p=>getStatus(p)==='已完成').length;
     const prog=filtP.filter(p=>getStatus(p)==='執行中').length;
     const totalQty=filtI.reduce((a,i)=>a+(parseInt(i.qty)||1),0);
-    const doneQty=filtI.filter(i=>i.status===DONE_STATUS).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+    const doneQty=filtI.filter(i=>i.delivered===true||i.status===DONE_STATUS).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
     const qtyPct=totalQty>0?Math.round(doneQty/totalQty*100):0;
+
+    // 給檔統計
+    const now2=new Date();
+    let rangeStart, rangeEnd;
+    if(reportRange==='week'){
+      rangeStart=new Date(now2); rangeStart.setDate(now2.getDate()-now2.getDay()+1); rangeStart.setHours(0,0,0,0);
+      rangeEnd=new Date(rangeStart); rangeEnd.setDate(rangeStart.getDate()+6); rangeEnd.setHours(23,59,59,999);
+    } else if(reportRange==='month'){
+      rangeStart=new Date(yr,now2.getMonth(),1);
+      rangeEnd=new Date(yr,now2.getMonth()+1,0,23,59,59);
+    } else if(reportRange==='lastmonth'){
+      const lm=now2.getMonth()===0?11:now2.getMonth()-1;
+      const ly=now2.getMonth()===0?yr-1:yr;
+      rangeStart=new Date(ly,lm,1);
+      rangeEnd=new Date(ly,lm+1,0,23,59,59);
+    } else if(reportRange==='quarter'){
+      const q=Math.floor(now2.getMonth()/3);
+      rangeStart=new Date(yr,q*3,1);
+      rangeEnd=new Date(yr,q*3+3,0,23,59,59);
+    } else {
+      rangeStart=new Date(2000,0,1); rangeEnd=new Date(2099,11,31);
+    }
+    const deliveredQty=getDeliveryQty(filtI, rangeStart, rangeEnd);
+    const pendingItems=getPendingItems(filtI);
+    const pendingQty=pendingItems.reduce((a,i)=>a+(parseInt(i.qty)||1),0);
+    const closedQty=filtI.filter(i=>i.status===CLOSED_STATUS||i.status===DONE_STATUS).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
 
     const urgentProjs=filtP.filter(p=>p.grade==='急'&&getStatus(p)!=='已完成'&&getStatus(p)!=='流標');
     const needAlert=filtP.filter(p=>autoAlert(p.id)==='需追蹤').sort((a,b)=>(a.date||'').localeCompare(b.date||''));
@@ -2297,7 +2387,7 @@ window.renderReport = function(){
     summary += '已完成 <strong style="color:var(--done)">'+done+'</strong> 個';
     if(total>0) summary += '（完成率 <strong>'+(Math.round(done/total*100))+'%</strong>）';
     summary += '，目前進行中 <strong>'+prog+'</strong> 個。';
-    if(totalQty>0) summary += '<br>設計件數共 <strong>'+totalQty+'</strong> 件，已給檔 <strong style="color:var(--done)">'+doneQty+'</strong> 件（<strong>'+qtyPct+'%</strong>）。';
+    if(totalQty>0) summary += '<br>設計件數共 <strong>'+totalQty+'</strong> 件，'+rangeLabel+'給檔 <strong style="color:var(--jia)">'+deliveredQty+'</strong> 件，等待主單位確認 <strong style="color:var(--prog)">'+pendingQty+'</strong> 件，已結案 <strong style="color:var(--done)">'+closedQty+'</strong> 件。';
     if(urgentProjs.length) summary += '<br>⚠️ 目前有 <strong style="color:#dc2626">'+urgentProjs.length+'</strong> 個急件需優先處理。';
     if(needAlert.length) summary += '<br>⚠️ 共 <strong style="color:var(--alert)">'+needAlert.length+'</strong> 個專案需追蹤關注。';
     if(done>0&&urgentProjs.length===0&&needAlert.length===0) summary += '<br>✅ 目前無急件及需追蹤項目，進度良好。';
