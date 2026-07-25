@@ -1395,6 +1395,7 @@ window.renderItems = function(){
       <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
         ${parseInt(item.qty)||1}
       </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">${parseInt(item.deliveryCount)||0}</td>
       <td style="font-size:12px;color:var(--ink3)">${item.start||'—'}</td>
       <td style="font-size:12px;color:var(--ink3)">${item.end||'—'}</td>
       <td style="font-size:12px;color:${item.doneDate?'var(--done)':'var(--ink4)'}">${item.doneDate||'—'}</td>
