@@ -1,12 +1,11 @@
 
-
 <!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0041)https://trackdelightt-coder.github.io/pm/ -->
+<html lang="zh-TW"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="mobile-web-app-capable" content="yes">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✏️</text></svg>">
+<link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=&#39;http://www.w3.org/2000/svg&#39; viewBox=&#39;0 0 100 100&#39;&gt;&lt;text y=&#39;.9em&#39; font-size=&#39;90&#39;&gt;%E2%9C%8F%EF%B8%8F&lt;/text&gt;&lt;/svg&gt;">
 <meta name="theme-color" content="#0f172a">
 <title>設計專案執行總覽</title>
 <style>
@@ -247,20 +246,20 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
 .report-range-btn{padding:6px 14px;border-radius:20px;border:1.5px solid var(--line);background:white;color:var(--ink3);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
 .report-range-btn.active{background:var(--jia);color:white;border-color:var(--jia)}
 </style>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="./設計專案執行總覽_files/firebase-app.js.下載"></script>
+<script src="./設計專案執行總覽_files/firebase-firestore.js.下載"></script>
 </head>
 <body>
-<script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+<script src="./設計專案執行總覽_files/exceljs.min.js.下載"></script>
 
 <!-- LOGIN -->
-<div class="login-screen" id="loginScreen">
+<div class="login-screen hide" id="loginScreen">
   <div style="font-size:36px;margin-bottom:10px">📋</div>
   <div style="font-size:22px;font-weight:900;color:white;margin-bottom:4px;text-align:center">設計專案執行總覽</div>
   <div style="font-size:13px;color:#64748b;margin-bottom:40px">設計專案課</div>
   <button class="login-view-btn" onclick="enterViewMode()">👁 查看進度</button>
   <div class="login-edit-wrap">
-    <input class="login-edit-input" type="password" id="pwInput" placeholder="編輯密碼" onkeydown="if(event.key==='Enter')checkPw()">
+    <input class="login-edit-input" type="password" id="pwInput" placeholder="編輯密碼" onkeydown="if(event.key===&#39;Enter&#39;)checkPw()">
     <button class="login-edit-btn" onclick="checkPw()">進入</button>
   </div>
   <div class="login-err" id="pwErr"></div>
@@ -277,33 +276,37 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
 <div class="topbar">
   <div class="topbar-title">📋 設計專案執行總覽</div>
   <div class="topbar-tabs">
-    <button class="ttab active" onclick="showScreen('boss',this)">大項目</button>
-    <button class="ttab" onclick="showScreen('items',this)">細項</button>
-    <button class="ttab" onclick="showScreen('dash',this)">統計</button>
-    <button class="ttab" onclick="showScreen('report',this)">📋 進度報告</button>
+    <button class="ttab" onclick="showScreen(&#39;boss&#39;,this)">大項目</button>
+    <button class="ttab" onclick="showScreen(&#39;items&#39;,this)">細項</button>
+    <button class="ttab" onclick="showScreen(&#39;dash&#39;,this)">統計</button>
+    <button class="ttab active" onclick="showScreen(&#39;report&#39;,this)">📋 進度報告</button>
   </div>
   <div style="display:flex;align-items:center;gap:6px">
-    <span class="mode-tag" id="modeTag"></span>
-    <button class="t-btn primary hide-mobile" id="addBtnTop" onclick="handleAddBtn()" style="display:none">＋ 新增</button>
+    <span class="mode-tag" id="modeTag">👁 查看</span>
+    <button class="t-btn primary hide-mobile" id="addBtnTop" onclick="handleAddBtn()" style="display:none">＋ 新增專案</button>
   </div>
 </div>
 
 <!-- 大項目 -->
-<div class="screen active" id="screen-boss">
+<div class="screen" id="screen-boss">
   <div class="kpi-bar">
-    <div class="kpi"><div class="kpi-num" id="kTotal" style="color:var(--ink)">0</div><div><div class="kpi-lbl">總專案</div></div></div>
+    <div class="kpi"><div class="kpi-num" id="kTotal" style="color:var(--ink)">22</div><div><div class="kpi-lbl">總專案</div></div></div>
     <div class="kpi-div"></div>
-    <div class="kpi"><div class="kpi-num" id="kDone" style="color:var(--done)">0</div><div><div class="kpi-lbl">已完成</div></div></div>
+    <div class="kpi"><div class="kpi-num" id="kDone" style="color:var(--done)">12</div><div><div class="kpi-lbl">已完成</div></div></div>
     <div class="kpi-div"></div>
-    <div class="kpi"><div class="kpi-num" id="kProg" style="color:var(--prog)">0</div><div><div class="kpi-lbl">執行中</div></div></div>
+    <div class="kpi"><div class="kpi-num" id="kProg" style="color:var(--prog)">5</div><div><div class="kpi-lbl">執行中</div></div></div>
     <div class="kpi-div"></div>
-    <div class="kpi"><div class="kpi-num" id="kAlert" style="color:var(--alert)">0</div><div><div class="kpi-lbl">需追蹤</div></div></div>
-    <div class="biz-chips" id="bizChips"></div>
+    <div class="kpi"><div class="kpi-num" id="kAlert" style="color:var(--alert)">4</div><div><div class="kpi-lbl">需追蹤</div></div></div>
+    <div class="biz-chips" id="bizChips">
+    <div class="biz-chip" style="background:var(--jia-l);color:var(--jia)"><span>佳瑪</span><strong>10</strong></div>
+    <div class="biz-chip" style="background:var(--ai-l);color:var(--ai)"><span>艾瑪特</span><strong>9</strong></div>
+    <div class="biz-chip" style="background:var(--jc-l);color:var(--jc)"><span>JCPARK</span><strong>1</strong></div>
+    <div class="biz-chip" style="background:var(--biz-l);color:var(--biz)"><span>招商</span><strong>3</strong></div></div>
   </div>
-  <div class="alert-banner" id="alertBanner"></div>
+  <div class="alert-banner" id="alertBanner" style="display: block;">⚠️ 即將到期（7天內）：佳瑪_蘆洲店1002_外觀形象案（2026-07-31）、艾瑪特_板橋店611_縮坪改裝案（2026-07-31）、艾瑪特_新竹店609_廁所優化案（2026-07-29）、艾瑪特_蘆洲店613_櫥窗調整案（2026-07-31）</div>
   <div style="display:flex;justify-content:flex-end;padding:8px 0 4px;gap:6px">
-    <button id="btnTableView" onclick="switchBossView('table')" style="padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;border:1.5px solid var(--jia);background:var(--jia);color:white">☰ 表格</button>
-    <button id="btnKanbanView" onclick="switchBossView('kanban')" style="padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;border:1.5px solid var(--line);background:white;color:var(--ink2)">⊞ 看板</button>
+    <button id="btnTableView" onclick="switchBossView(&#39;table&#39;)" style="padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; border: 1.5px solid var(--line); background: white; color: var(--ink2);">☰ 表格</button>
+    <button id="btnKanbanView" onclick="switchBossView(&#39;kanban&#39;)" style="padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; border: 1.5px solid var(--jia); background: var(--jia); color: white;">⊞ 看板</button>
   </div>
   <div class="filter-bar">
     <button class="chip active" data-bf="all">全部</button>
@@ -325,7 +328,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
     <input class="search-box" style="flex:1" placeholder="🔍 搜尋專案…" id="bossSearch" oninput="renderBoss()">
     <select id="yearFilter" onchange="renderBoss()" style="padding:8px 10px;border:1.5px solid var(--line);border-radius:20px;font-size:12px;font-family:inherit;outline:none;background:white;color:var(--ink2);font-weight:600;flex-shrink:0">
       <option value="all">所有年度</option>
-      <option value="2026" selected>2026 年</option>
+      <option value="2026" selected="">2026 年</option>
       <option value="2025">2025 年</option>
       <option value="2024">2024 年</option>
     </select>
@@ -338,16 +341,266 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
     </select>
     <button id="collapseBtn" onclick="toggleCollapse()" style="flex-shrink:0;padding:8px 12px;border:1.5px solid var(--line);border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;background:white;color:var(--ink3);font-family:inherit;white-space:nowrap">已完成收合 ✓</button>
   </div>
-  <div class="table-wrap" id="bossTable">
+  <div class="table-wrap" id="bossTable" style="display: none;">
     <table class="boss-table"><thead><tr>
       <th>等級</th><th>專案名稱</th><th style="width:40px"></th><th>事業部</th><th style="min-width:120px">進度</th>
       <th>狀態</th><th>預計完工</th><th>實際完成</th><th>關注</th><th>最新備註</th>
-    </tr></thead><tbody id="bossTableBody"></tbody></table>
+    </tr></thead><tbody id="bossTableBody"><tr class="alert-tr" onclick="openDetail(&#39;p_1782557196844_crtt&#39;)">
+      <td><span class="grade grade-中">中</span></td>
+      <td style="font-weight:700;color:var(--alert);white-space:normal;word-break:break-all">艾瑪特_板橋店611_縮坪改裝案</td>
+      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems(&#39;p_1782557196844_crtt&#39;)" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
+      <td><span class="biz-badge biz-艾">艾瑪特</span></td>
+      <td><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:30%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">30%</span></div></td>
+      <td><span class="status-badge s-執行中">執行中</span></td>
+      <td style="font-size:12px">07-31</td>
+      <td style="font-size:12px;color:var(--ink4)">
+        —
+      </td>
+      <td><span class="alert-badge a-yes">⚠️ 需追蹤</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:150px;white-space:normal;word-break:break-all;line-height:1.4">7/17提供樓梯處+內部模擬給副總</td>
+    </tr><tr class="alert-tr" onclick="openDetail(&#39;p_1782557197344_2s7o&#39;)">
+      <td><span class="grade grade-急">急</span></td>
+      <td style="font-weight:700;color:var(--alert);white-space:normal;word-break:break-all">艾瑪特_蘆洲店613_櫥窗調整案</td>
+      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems(&#39;p_1782557197344_2s7o&#39;)" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
+      <td><span class="biz-badge biz-艾">艾瑪特</span></td>
+      <td><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:50%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">50%</span></div></td>
+      <td><span class="status-badge s-執行中">執行中</span></td>
+      <td style="font-size:12px">07-31</td>
+      <td style="font-size:12px;color:var(--ink4)">
+        —
+      </td>
+      <td><span class="alert-badge a-yes">⚠️ 需追蹤</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:150px;white-space:normal;word-break:break-all;line-height:1.4">7/17提供右邊新作櫥窗+砲管  共*3張</td>
+    </tr><tr class="alert-tr" onclick="openDetail(&#39;p_1782557196544_0mlq&#39;)">
+      <td><span class="grade grade-中">中</span></td>
+      <td style="font-weight:700;color:var(--alert);white-space:normal;word-break:break-all">艾瑪特_新竹店609_優化(追加)</td>
+      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems(&#39;p_1782557196544_0mlq&#39;)" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
+      <td><span class="biz-badge biz-艾">艾瑪特</span></td>
+      <td><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:0%;background:var(--wait)"></div></div><span class="prog-pct" style="color:var(--wait)">0%</span></div></td>
+      <td><span class="status-badge s-待執行">待執行</span></td>
+      <td style="font-size:12px">08-20</td>
+      <td style="font-size:12px;color:var(--ink4)">
+        —
+      </td>
+      <td><span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;background:#fef3c7;color:#b45309">持續推進</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:150px;white-space:normal;word-break:break-all;line-height:1.4">—</td>
+    </tr><tr class="alert-tr" onclick="openDetail(&#39;p_1782557196632_5b7n&#39;)">
+      <td><span class="grade grade-中">中</span></td>
+      <td style="font-weight:700;color:var(--alert);white-space:normal;word-break:break-all">佳瑪_蘆洲店1002_收銀台標示</td>
+      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems(&#39;p_1782557196632_5b7n&#39;)" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
+      <td><span class="biz-badge biz-佳">佳瑪</span></td>
+      <td><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:0%;background:var(--wait)"></div></div><span class="prog-pct" style="color:var(--wait)">0%</span></div></td>
+      <td><span class="status-badge s-待執行">待執行</span></td>
+      <td style="font-size:12px">08-31</td>
+      <td style="font-size:12px;color:var(--ink4)">
+        —
+      </td>
+      <td><span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;background:#fef3c7;color:#b45309">持續推進</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:150px;white-space:normal;word-break:break-all;line-height:1.4">—</td>
+    </tr><tr class="alert-tr" onclick="openDetail(&#39;p_1783342159533_31mq&#39;)">
+      <td><span class="grade grade-中">中</span></td>
+      <td style="font-weight:700;color:var(--alert);white-space:normal;word-break:break-all">艾瑪特_板橋店611_外電梯設計模擬(重啟)</td>
+      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems(&#39;p_1783342159533_31mq&#39;)" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
+      <td><span class="biz-badge biz-艾">艾瑪特</span></td>
+      <td><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:0%;background:var(--wait)"></div></div><span class="prog-pct" style="color:var(--wait)">0%</span></div></td>
+      <td><span class="status-badge s-待執行">待執行</span></td>
+      <td style="font-size:12px">08-31</td>
+      <td style="font-size:12px;color:var(--ink4)">
+        —
+      </td>
+      <td><span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;background:#fef3c7;color:#b45309">持續推進</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:150px;white-space:normal;word-break:break-all;line-height:1.4">2025/1/16總務詢價後停擺</td>
+    </tr><tr class="alert-tr" onclick="openDetail(&#39;p_1782557196724_adu3&#39;)">
+      <td><span class="grade grade-大">大</span></td>
+      <td style="font-weight:700;color:var(--alert);white-space:normal;word-break:break-all">佳瑪_蘆洲店1002+艾瑪特_蘆洲店613_櫃台+試衣間+廁所+佳瑪廁所</td>
+      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems(&#39;p_1782557196724_adu3&#39;)" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
+      <td><span class="biz-badge biz-佳艾">佳＋艾</span></td>
+      <td><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:0%;background:var(--wait)"></div></div><span class="prog-pct" style="color:var(--wait)">0%</span></div></td>
+      <td><span class="status-badge s-待執行">待執行</span></td>
+      <td style="font-size:12px">09-30</td>
+      <td style="font-size:12px;color:var(--ink4)">
+        —
+      </td>
+      <td><span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;background:#fef3c7;color:#b45309">持續推進</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:150px;white-space:normal;word-break:break-all;line-height:1.4">比照楊梅店</td>
+    </tr><tr class="" onclick="openDetail(&#39;p_1782557197010_vp88&#39;)">
+      <td><span class="grade grade-中">中</span></td>
+      <td style="font-weight:700;color:var(--ink);white-space:normal;word-break:break-all">艾瑪特_新竹店609_廁所優化案</td>
+      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems(&#39;p_1782557197010_vp88&#39;)" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
+      <td><span class="biz-badge biz-艾">艾瑪特</span></td>
+      <td><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:50%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">50%</span></div></td>
+      <td><span class="status-badge s-執行中">執行中</span></td>
+      <td style="font-size:12px">07-29</td>
+      <td style="font-size:12px;color:var(--ink4)">
+        —
+      </td>
+      <td><span class="alert-badge a-yes">⚠️ 需追蹤</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:150px;white-space:normal;word-break:break-all;line-height:1.4">7/17平面圖更新  重新模擬 已給副總</td>
+    </tr><tr class="" onclick="openDetail(&#39;p_1782557196292_2isl&#39;)">
+      <td><span class="grade grade-大">大</span></td>
+      <td style="font-weight:700;color:var(--ink);white-space:normal;word-break:break-all">佳瑪_蘆洲店1002_外觀形象案</td>
+      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems(&#39;p_1782557196292_2isl&#39;)" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
+      <td><span class="biz-badge biz-佳">佳瑪</span></td>
+      <td><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:50%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">50%</span></div></td>
+      <td><span class="status-badge s-執行中">執行中</span></td>
+      <td style="font-size:12px">07-31</td>
+      <td style="font-size:12px;color:var(--ink4)">
+        —
+      </td>
+      <td><span class="alert-badge a-yes">⚠️ 需追蹤</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:150px;white-space:normal;word-break:break-all;line-height:1.4">7/20修改貼圖+框板</td>
+    </tr><tr class="" onclick="openDetail(&#39;p_1783341817083_2bw9&#39;)">
+      <td><span class="grade grade-大">大</span></td>
+      <td style="font-weight:700;color:var(--ink);white-space:normal;word-break:break-all">JC_中正館1302_門面設計(重啟)</td>
+      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems(&#39;p_1783341817083_2bw9&#39;)" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
+      <td><span class="biz-badge biz-JC">JCPARK</span></td>
+      <td><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:50%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">50%</span></div></td>
+      <td><span class="status-badge s-執行中">執行中</span></td>
+      <td style="font-size:12px">08-31</td>
+      <td style="font-size:12px;color:var(--ink4)">
+        —
+      </td>
+      <td><span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;background:#fef3c7;color:#b45309">持續推進</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:150px;white-space:normal;word-break:break-all;line-height:1.4">2025/6/6總務詢價後停擺</td>
+    </tr><tr class="" onclick="openDetail(&#39;p_1782702729055_axuu&#39;)">
+      <td><span class="grade grade-中">中</span></td>
+      <td style="font-weight:700;color:var(--ink);white-space:normal;word-break:break-all">佳瑪_新莊店1006_停車場入口場勘錄影</td>
+      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems(&#39;p_1782702729055_axuu&#39;)" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
+      <td><span class="biz-badge biz-佳">佳瑪</span></td>
+      <td><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:0%;background:var(--wait)"></div></div><span class="prog-pct" style="color:var(--wait)">0%</span></div></td>
+      <td><span class="status-badge s-待執行">待執行</span></td>
+      <td style="font-size:12px">08-31</td>
+      <td style="font-size:12px;color:var(--ink4)">
+        —
+      </td>
+      <td><span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;background:#fef3c7;color:#b45309">持續推進</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:150px;white-space:normal;word-break:break-all;line-height:1.4">—</td>
+    </tr><tr id="doneCountRow"><td colspan="8" style="text-align:center;padding:12px;color:var(--done);font-size:13px;font-weight:600;cursor:pointer;background:var(--done-l)" onclick="toggleCollapse()">✅ 已完成 12 個專案（點此展開）</td></tr></tbody></table>
   </div>
-  <div class="boss-cards" id="bossCards"></div>
+  <div class="boss-cards" id="bossCards" style="display: none;"><div class="boss-card alert-card" onclick="openDetail(&#39;p_1782557196844_crtt&#39;)">
+      <div class="bc-top">
+        <div class="bc-name" style="color:var(--alert)">艾瑪特_板橋店611_縮坪改裝案</div>
+        <div class="bc-badges"><span class="grade grade-中">中</span><span class="status-badge s-執行中">執行中</span></div>
+      </div>
+      <div class="bc-meta">
+        <span class="bc-meta-item"><span class="biz-badge biz-艾">艾瑪特</span></span>
+
+        <span class="bc-meta-item">📅 07-31</span>
+        <span class="bc-meta-item" style="color:var(--alert);font-weight:600">⚠️ 需追蹤</span>
+      </div>
+      <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:30%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">30%</span></div>
+    </div><div class="boss-card alert-card" onclick="openDetail(&#39;p_1782557197344_2s7o&#39;)">
+      <div class="bc-top">
+        <div class="bc-name" style="color:var(--alert)">艾瑪特_蘆洲店613_櫥窗調整案</div>
+        <div class="bc-badges"><span class="grade grade-急">急</span><span class="status-badge s-執行中">執行中</span></div>
+      </div>
+      <div class="bc-meta">
+        <span class="bc-meta-item"><span class="biz-badge biz-艾">艾瑪特</span></span>
+
+        <span class="bc-meta-item">📅 07-31</span>
+        <span class="bc-meta-item" style="color:var(--alert);font-weight:600">⚠️ 需追蹤</span>
+      </div>
+      <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:50%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">50%</span></div>
+    </div><div class="boss-card alert-card" onclick="openDetail(&#39;p_1782557196544_0mlq&#39;)">
+      <div class="bc-top">
+        <div class="bc-name" style="color:var(--alert)">艾瑪特_新竹店609_優化(追加)</div>
+        <div class="bc-badges"><span class="grade grade-中">中</span><span class="status-badge s-待執行">待執行</span></div>
+      </div>
+      <div class="bc-meta">
+        <span class="bc-meta-item"><span class="biz-badge biz-艾">艾瑪特</span></span>
+
+        <span class="bc-meta-item">📅 08-20</span>
+        <span class="bc-meta-item" style="color:var(--alert);font-weight:600">⚠️ 需追蹤</span>
+      </div>
+      <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:0%;background:var(--wait)"></div></div><span class="prog-pct" style="color:var(--wait)">0%</span></div>
+    </div><div class="boss-card alert-card" onclick="openDetail(&#39;p_1782557196632_5b7n&#39;)">
+      <div class="bc-top">
+        <div class="bc-name" style="color:var(--alert)">佳瑪_蘆洲店1002_收銀台標示</div>
+        <div class="bc-badges"><span class="grade grade-中">中</span><span class="status-badge s-待執行">待執行</span></div>
+      </div>
+      <div class="bc-meta">
+        <span class="bc-meta-item"><span class="biz-badge biz-佳">佳瑪</span></span>
+
+        <span class="bc-meta-item">📅 08-31</span>
+        <span class="bc-meta-item" style="color:var(--alert);font-weight:600">⚠️ 需追蹤</span>
+      </div>
+      <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:0%;background:var(--wait)"></div></div><span class="prog-pct" style="color:var(--wait)">0%</span></div>
+    </div><div class="boss-card alert-card" onclick="openDetail(&#39;p_1783342159533_31mq&#39;)">
+      <div class="bc-top">
+        <div class="bc-name" style="color:var(--alert)">艾瑪特_板橋店611_外電梯設計模擬(重啟)</div>
+        <div class="bc-badges"><span class="grade grade-中">中</span><span class="status-badge s-待執行">待執行</span></div>
+      </div>
+      <div class="bc-meta">
+        <span class="bc-meta-item"><span class="biz-badge biz-艾">艾瑪特</span></span>
+
+        <span class="bc-meta-item">📅 08-31</span>
+        <span class="bc-meta-item" style="color:var(--alert);font-weight:600">⚠️ 需追蹤</span>
+      </div>
+      <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:0%;background:var(--wait)"></div></div><span class="prog-pct" style="color:var(--wait)">0%</span></div>
+    </div><div class="boss-card alert-card" onclick="openDetail(&#39;p_1782557196724_adu3&#39;)">
+      <div class="bc-top">
+        <div class="bc-name" style="color:var(--alert)">佳瑪_蘆洲店1002+艾瑪特_蘆洲店613_櫃台+試衣間+廁所+佳瑪廁所</div>
+        <div class="bc-badges"><span class="grade grade-大">大</span><span class="status-badge s-待執行">待執行</span></div>
+      </div>
+      <div class="bc-meta">
+        <span class="bc-meta-item"><span class="biz-badge biz-佳艾">佳＋艾</span></span>
+
+        <span class="bc-meta-item">📅 09-30</span>
+        <span class="bc-meta-item" style="color:var(--alert);font-weight:600">⚠️ 需追蹤</span>
+      </div>
+      <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:0%;background:var(--wait)"></div></div><span class="prog-pct" style="color:var(--wait)">0%</span></div>
+    </div><div class="boss-card " onclick="openDetail(&#39;p_1782557197010_vp88&#39;)">
+      <div class="bc-top">
+        <div class="bc-name" style="color:var(--ink)">艾瑪特_新竹店609_廁所優化案</div>
+        <div class="bc-badges"><span class="grade grade-中">中</span><span class="status-badge s-執行中">執行中</span></div>
+      </div>
+      <div class="bc-meta">
+        <span class="bc-meta-item"><span class="biz-badge biz-艾">艾瑪特</span></span>
+
+        <span class="bc-meta-item">📅 07-29</span>
+        
+      </div>
+      <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:50%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">50%</span></div>
+    </div><div class="boss-card " onclick="openDetail(&#39;p_1782557196292_2isl&#39;)">
+      <div class="bc-top">
+        <div class="bc-name" style="color:var(--ink)">佳瑪_蘆洲店1002_外觀形象案</div>
+        <div class="bc-badges"><span class="grade grade-大">大</span><span class="status-badge s-執行中">執行中</span></div>
+      </div>
+      <div class="bc-meta">
+        <span class="bc-meta-item"><span class="biz-badge biz-佳">佳瑪</span></span>
+
+        <span class="bc-meta-item">📅 07-31</span>
+        
+      </div>
+      <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:50%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">50%</span></div>
+    </div><div class="boss-card " onclick="openDetail(&#39;p_1783341817083_2bw9&#39;)">
+      <div class="bc-top">
+        <div class="bc-name" style="color:var(--ink)">JC_中正館1302_門面設計(重啟)</div>
+        <div class="bc-badges"><span class="grade grade-大">大</span><span class="status-badge s-執行中">執行中</span></div>
+      </div>
+      <div class="bc-meta">
+        <span class="bc-meta-item"><span class="biz-badge biz-JC">JCPARK</span></span>
+
+        <span class="bc-meta-item">📅 08-31</span>
+        
+      </div>
+      <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:50%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">50%</span></div>
+    </div><div class="boss-card " onclick="openDetail(&#39;p_1782702729055_axuu&#39;)">
+      <div class="bc-top">
+        <div class="bc-name" style="color:var(--ink)">佳瑪_新莊店1006_停車場入口場勘錄影</div>
+        <div class="bc-badges"><span class="grade grade-中">中</span><span class="status-badge s-待執行">待執行</span></div>
+      </div>
+      <div class="bc-meta">
+        <span class="bc-meta-item"><span class="biz-badge biz-佳">佳瑪</span></span>
+
+        <span class="bc-meta-item">📅 08-31</span>
+        
+      </div>
+      <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:0%;background:var(--wait)"></div></div><span class="prog-pct" style="color:var(--wait)">0%</span></div>
+    </div></div>
   <!-- 看板視圖 -->
-  <div id="kanbanView" style="display:none;overflow-x:auto;padding:8px 0 16px">
-    <div id="kanbanBoard" style="display:flex;gap:12px;min-width:max-content;padding:4px 2px 8px"></div>
+  <div id="kanbanView" style="display: block; overflow-x: auto; padding: 8px 0px 16px;">
+    <div id="kanbanBoard" style="display:flex;gap:12px;min-width:max-content;padding:4px 2px 8px"><div class="kanban-col"><div class="kanban-col-header" style="border-color:#94a3b8"><span class="kanban-col-title" style="color:#94a3b8">待執行</span><span class="kanban-col-count" style="color:#94a3b8">7</span></div><div class="kanban-card alert-card" data-pid="p_1782557197344_2s7o" onclick="openDetail(this.dataset.pid)"><div class="kanban-card-name" style="color:var(--alert)">艾瑪特_蘆洲店613_櫥窗調整案</div><div class="kanban-card-meta"><span class="grade grade-急">急</span><span class="biz-badge biz-艾" style="font-size:10px">艾瑪特</span><span style="font-size:10px;color:var(--ink4);margin-left:auto">×7</span></div></div><div class="kanban-card" data-pid="p_1782557196544_0mlq" onclick="openDetail(this.dataset.pid)"><div class="kanban-card-name" style="color:var(--ink)">艾瑪特_新竹店609_優化(追加)</div><div class="kanban-card-meta"><span class="grade grade-中">中</span><span class="biz-badge biz-艾" style="font-size:10px">艾瑪特</span><span style="font-size:10px;color:var(--ink4);margin-left:auto">×10</span></div></div><div class="kanban-card" data-pid="p_1782557196632_5b7n" onclick="openDetail(this.dataset.pid)"><div class="kanban-card-name" style="color:var(--ink)">佳瑪_蘆洲店1002_收銀台標示</div><div class="kanban-card-meta"><span class="grade grade-中">中</span><span class="biz-badge biz-佳" style="font-size:10px">佳瑪</span><span style="font-size:10px;color:var(--ink4);margin-left:auto">×1</span></div></div><div class="kanban-card" data-pid="p_1782702729055_axuu" onclick="openDetail(this.dataset.pid)"><div class="kanban-card-name" style="color:var(--ink)">佳瑪_新莊店1006_停車場入口場勘錄影</div><div class="kanban-card-meta"><span class="grade grade-中">中</span><span class="biz-badge biz-佳" style="font-size:10px">佳瑪</span></div></div><div class="kanban-card" data-pid="p_1783341817083_2bw9" onclick="openDetail(this.dataset.pid)"><div class="kanban-card-name" style="color:var(--ink)">JC_中正館1302_門面設計(重啟)</div><div class="kanban-card-meta"><span class="grade grade-大">大</span><span class="biz-badge biz-JC" style="font-size:10px">JCPARK</span><span style="font-size:10px;color:var(--ink4);margin-left:auto">×1</span></div></div><div class="kanban-card" data-pid="p_1783342159533_31mq" onclick="openDetail(this.dataset.pid)"><div class="kanban-card-name" style="color:var(--ink)">艾瑪特_板橋店611_外電梯設計模擬(重啟)</div><div class="kanban-card-meta"><span class="grade grade-中">中</span><span class="biz-badge biz-艾" style="font-size:10px">艾瑪特</span><span style="font-size:10px;color:var(--ink4);margin-left:auto">×1</span></div></div><div class="kanban-card" data-pid="p_1782557196724_adu3" onclick="openDetail(this.dataset.pid)"><div class="kanban-card-name" style="color:var(--ink)">佳瑪_蘆洲店1002+艾瑪特_蘆洲店613_櫃台+試衣間+廁所+佳瑪廁所</div><div class="kanban-card-meta"><span class="grade grade-大">大</span><span class="biz-badge biz-佳艾" style="font-size:10px">佳＋艾</span><span style="font-size:10px;color:var(--ink4);margin-left:auto">×4</span></div></div></div><div class="kanban-col"><div class="kanban-col-header" style="border-color:#16a34a"><span class="kanban-col-title" style="color:#16a34a">設計中</span><span class="kanban-col-count" style="color:#16a34a">0</span></div><div style="font-size:12px;color:var(--ink4);text-align:center;padding:16px 0">—</div></div><div class="kanban-col"><div class="kanban-col-header" style="border-color:#2563eb"><span class="kanban-col-title" style="color:#2563eb">提案中</span><span class="kanban-col-count" style="color:#2563eb">0</span></div><div style="font-size:12px;color:var(--ink4);text-align:center;padding:16px 0">—</div></div><div class="kanban-col"><div class="kanban-col-header" style="border-color:#ea580c"><span class="kanban-col-title" style="color:#ea580c">修改中</span><span class="kanban-col-count" style="color:#ea580c">3</span></div><div class="kanban-card alert-card" data-pid="p_1782557197010_vp88" onclick="openDetail(this.dataset.pid)"><div class="kanban-card-name" style="color:var(--alert)">艾瑪特_新竹店609_廁所優化案</div><div class="kanban-card-meta"><span class="grade grade-中">中</span><span class="biz-badge biz-艾" style="font-size:10px">艾瑪特</span><span style="font-size:10px;color:var(--ink4);margin-left:auto">×2</span></div></div><div class="kanban-card alert-card" data-pid="p_1782557196844_crtt" onclick="openDetail(this.dataset.pid)"><div class="kanban-card-name" style="color:var(--alert)">艾瑪特_板橋店611_縮坪改裝案</div><div class="kanban-card-meta"><span class="grade grade-中">中</span><span class="biz-badge biz-艾" style="font-size:10px">艾瑪特</span><span style="font-size:10px;color:var(--ink4);margin-left:auto">×8</span></div></div><div class="kanban-card alert-card" data-pid="p_1782557196292_2isl" onclick="openDetail(this.dataset.pid)"><div class="kanban-card-name" style="color:var(--alert)">佳瑪_蘆洲店1002_外觀形象案</div><div class="kanban-card-meta"><span class="grade grade-大">大</span><span class="biz-badge biz-佳" style="font-size:10px">佳瑪</span><span style="font-size:10px;color:var(--ink4);margin-left:auto">×8</span></div></div></div><div class="kanban-col"><div class="kanban-col-header" style="border-color:#9333ea"><span class="kanban-col-title" style="color:#9333ea">已簽核</span><span class="kanban-col-count" style="color:#9333ea">0</span></div><div style="font-size:12px;color:var(--ink4);text-align:center;padding:16px 0">—</div></div><div class="kanban-col"><div class="kanban-col-header" style="border-color:#0891b2"><span class="kanban-col-title" style="color:#0891b2">製作檔</span><span class="kanban-col-count" style="color:#0891b2">0</span></div><div style="font-size:12px;color:var(--ink4);text-align:center;padding:16px 0">—</div></div><div class="kanban-col"><div class="kanban-col-header" style="border-color:#16a34a"><span class="kanban-col-title" style="color:#16a34a">給檔完成</span><span class="kanban-col-count" style="color:#16a34a">12</span></div><div class="kanban-card" data-pid="p_1784864571118_svq9" onclick="openDetail(this.dataset.pid)"><div class="kanban-card-name" style="color:var(--ink)">公司的入口網頁調整</div><div class="kanban-card-meta"><span class="grade grade-小">小</span><span class="biz-badge biz-佳" style="font-size:10px">佳瑪</span><span style="font-size:10px;color:var(--ink4);margin-left:auto">×1</span></div></div><div class="kanban-card" data-pid="p_1783341555935_b7ji" onclick="openDetail(this.dataset.pid)"><div class="kanban-card-name" style="color:var(--ink)">水槽示意圖</div><div class="kanban-card-meta"><span class="grade grade-小">小</span><span class="biz-badge biz-艾" style="font-size:10px">艾瑪特</span><span style="font-size:10px;color:var(--ink4);margin-left:auto">×1</span></div></div><div class="kanban-card" data-pid="p_1782702659391_rqf7" onclick="openDetail(this.dataset.pid)"><div class="kanban-card-name" style="color:var(--ink)">佳瑪_新莊店1006_特力屋安全門揭露</div><div class="kanban-card-meta"><span class="grade grade-小">小</span><span class="biz-badge biz-佳" style="font-size:10px">佳瑪</span><span style="font-size:10px;color:var(--ink4);margin-left:auto">×1</span></div></div><div class="kanban-card" data-pid="p_1782623608971_iutx" onclick="openDetail(this.dataset.pid)"><div class="kanban-card-name" style="color:var(--ink)">佳瑪_蘆洲店1002_門口玻璃</div><div class="kanban-card-meta"><span class="grade grade-小">小</span><span class="biz-badge biz-佳" style="font-size:10px">佳瑪</span><span style="font-size:10px;color:var(--ink4);margin-left:auto">×1</span></div></div><div class="kanban-card" data-pid="p_1782557197722_qpe6" onclick="openDetail(this.dataset.pid)"><div class="kanban-card-name" style="color:var(--ink)">節慶圖片</div><div class="kanban-card-meta"><span class="grade grade-小">小</span><span class="biz-badge biz-事業" style="font-size:10px">事業部</span><span style="font-size:10px;color:var(--ink4);margin-left:auto">×3</span></div></div><div class="kanban-card" data-pid="p_1782557197560_claj" onclick="openDetail(this.dataset.pid)"><div class="kanban-card-name" style="color:var(--ink)">JC_春日館1303_JC春日議員勘版</div><div class="kanban-card-meta"><span class="grade grade-小">小</span><span class="biz-badge biz-事業" style="font-size:10px">招商事業部</span><span style="font-size:10px;color:var(--ink4);margin-left:auto">×1</span></div></div><div class="kanban-card" data-pid="p_1782557197477_c6zm" onclick="openDetail(this.dataset.pid)"><div class="kanban-card-name" style="color:var(--ink)">招商事業部_三重宿舍布條</div><div class="kanban-card-meta"><span class="grade grade-小">小</span><span class="biz-badge biz-事業" style="font-size:10px">招商事業部</span><span style="font-size:10px;color:var(--ink4);margin-left:auto">×1</span></div></div><div class="kanban-card" data-pid="p_1782557197255_n5hu" onclick="openDetail(this.dataset.pid)"><div class="kanban-card-name" style="color:var(--ink)">艾瑪特_板橋店611_外租櫃模擬</div><div class="kanban-card-meta"><span class="grade grade-小">小</span><span class="biz-badge biz-事業" style="font-size:10px">招商事業部</span><span style="font-size:10px;color:var(--ink4);margin-left:auto">×2</span></div></div><div data-stage="給檔完成" onclick="expandKanbanCol(this.dataset.stage)" style="text-align:center;padding:8px;font-size:12px;color:var(--ink3);cursor:pointer;border:1px dashed var(--line);border-radius:8px;margin-top:4px">還有 4 個 ▼</div></div><div class="kanban-col"><div class="kanban-col-header" style="border-color:#cbd5e1"><span class="kanban-col-title" style="color:#cbd5e1">流標</span><span class="kanban-col-count" style="color:#cbd5e1">0</span></div><div style="font-size:12px;color:var(--ink4);text-align:center;padding:16px 0">—</div></div></div>
   </div>
   <div style="padding:0 16px 16px;display:none" id="mobileAddProj">
     <button onclick="openAddProj()" style="width:100%;padding:13px;background:var(--jia);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">＋ 新增專案</button>
@@ -357,7 +610,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
 <!-- 細項 -->
 <div class="screen" id="screen-items">
   <div class="items-filter">
-    <select class="items-select" id="filterProj" onchange="renderItems()"><option value="">全部專案</option></select>
+    <select class="items-select" id="filterProj" onchange="renderItems()"><option value="">全部專案</option><option value="p_1782557194704_3fce">大｜楊梅店擴大</option><option value="p_1782557195140_ibpx">大｜艾瑪特_新竹店609_優化1-2階段</option><option value="p_1782557195660_v9zw">大｜佳瑪_新莊店1006_新莊店電梯+廁所+哺乳室</option><option value="p_1782557196010_jix8">大｜佳瑪_蘆洲店1002_服務台</option><option value="p_1782557196292_2isl">大｜佳瑪_蘆洲店1002_外觀形象案</option><option value="p_1782557196544_0mlq">中｜艾瑪特_新竹店609_優化(追加)</option><option value="p_1782557196632_5b7n">中｜佳瑪_蘆洲店1002_收銀台標示</option><option value="p_1782557196724_adu3">大｜佳瑪_蘆洲店1002+艾瑪特_蘆洲店613_櫃台+試衣間+廁所+佳瑪廁所</option><option value="p_1782557196844_crtt">中｜艾瑪特_板橋店611_縮坪改裝案</option><option value="p_1782557197010_vp88">中｜艾瑪特_新竹店609_廁所優化案</option><option value="p_1782557197255_n5hu">小｜艾瑪特_板橋店611_外租櫃模擬</option><option value="p_1782557197344_2s7o">急｜艾瑪特_蘆洲店613_櫥窗調整案</option><option value="p_1782557197477_c6zm">小｜招商事業部_三重宿舍布條</option><option value="p_1782557197560_claj">小｜JC_春日館1303_JC春日議員勘版</option><option value="p_1782557197722_qpe6">小｜節慶圖片</option><option value="p_1782623608971_iutx">小｜佳瑪_蘆洲店1002_門口玻璃</option><option value="p_1782702659391_rqf7">小｜佳瑪_新莊店1006_特力屋安全門揭露</option><option value="p_1782702729055_axuu">中｜佳瑪_新莊店1006_停車場入口場勘錄影</option><option value="p_1783341555935_b7ji">小｜水槽示意圖</option><option value="p_1783341817083_2bw9">大｜JC_中正館1302_門面設計(重啟)</option><option value="p_1783342159533_31mq">中｜艾瑪特_板橋店611_外電梯設計模擬(重啟)</option><option value="p_1784864571118_svq9">小｜公司的入口網頁調整</option></select>
     <select class="items-select" id="filterStatus" onchange="renderItems()">
       <option value="">全部狀態</option>
       <option value="待執行">待執行</option>
@@ -373,7 +626,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
     </select>
     <select class="items-select" id="filterYear" onchange="renderItems()">
       <option value="all">所有年度</option>
-      <option value="2026" selected>2026 年</option>
+      <option value="2026" selected="">2026 年</option>
       <option value="2025">2025 年</option>
       <option value="2024">2024 年</option>
     </select>
@@ -387,11 +640,881 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
     <input class="search-box" style="flex:1;min-width:100px;padding:7px 12px" placeholder="🔍 搜尋…" id="itemSearch" oninput="renderItems()">
     <button class="t-btn primary" id="addItemBtn" onclick="openAddItem()" style="display:none;flex-shrink:0">＋ 新增</button>
   </div>
-  <div class="items-stats" id="itemsStats"></div>
-  <div class="items-table-wrap">
+  <div class="items-stats" id="itemsStats">共 <strong>58</strong> 筆　執行中 <strong style="color:var(--prog)">0</strong>　待執行 <strong style="color:var(--wait)">9</strong>　已完成 <strong style="color:var(--done)">0</strong></div>
+  <div class="items-table-wrap" style="display: block;">
     <table class="items-table"><thead><tr>
       <th>專案名稱</th><th>事業部</th><th>具體內容</th><th>分類</th><th>狀態</th><th>件數</th><th>交件次數</th><th>起始日</th><th>預計完成</th><th>實際完成</th><th>簽核圖</th><th>備註</th>
-    </tr></thead><tbody id="itemsTableBody"></tbody></table>
+    </tr></thead><tbody id="itemsTableBody"><tr class="row-待執行" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳" style="font-size:10px;margin-bottom:2px;display:inline-block">佳瑪</span><br><span style="color:var(--ink2)">佳瑪_蘆洲店1002_收銀台標示</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">新增小燈箱</td>
+      <td style="color:var(--ink3);font-size:12px">—</td>
+      <td><span class="status-badge s-待執行">待執行</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">—</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-15</td>
+      <td style="font-size:12px;color:var(--ink4)">—</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-待執行" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_新竹店609_優化(追加)</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">置物櫃貼圖</td>
+      <td style="color:var(--ink3);font-size:12px">視覺設計</td>
+      <td><span class="status-badge s-待執行">待執行</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">—</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-31</td>
+      <td style="font-size:12px;color:var(--ink4)">—</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-待執行" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_新竹店609_優化(追加)</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">2-3F壁面消防門貼圖</td>
+      <td style="color:var(--ink3);font-size:12px">視覺設計</td>
+      <td><span class="status-badge s-待執行">待執行</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        7
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">—</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-31</td>
+      <td style="font-size:12px;color:var(--ink4)">—</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-待執行" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_新竹店609_優化(追加)</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">追加試衣間</td>
+      <td style="color:var(--ink3);font-size:12px">—</td>
+      <td><span class="status-badge s-待執行">待執行</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        2
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">—</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-31</td>
+      <td style="font-size:12px;color:var(--ink4)">—</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-待執行" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳" style="font-size:10px;margin-bottom:2px;display:inline-block">佳瑪</span><br><span style="color:var(--ink2)">佳瑪_蘆洲店1002_外觀形象案</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">停車場外牆上方</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-待執行">待執行</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-23</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-31</td>
+      <td style="font-size:12px;color:var(--ink4)">—</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-待執行" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_板橋店611_外電梯設計模擬(重啟)</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">模擬</td>
+      <td style="color:var(--ink3);font-size:12px">—</td>
+      <td><span class="status-badge s-待執行">待執行</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-06</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-08-31</td>
+      <td style="font-size:12px;color:var(--ink4)">—</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-待執行" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳艾" style="font-size:10px;margin-bottom:2px;display:inline-block">佳＋艾</span><br><span style="color:var(--ink2)">佳瑪_蘆洲店1002+艾瑪特_蘆洲店613_櫃台+試衣間+廁所+佳瑪廁所</span></td>
+      <td><span class="biz-badge biz-艾" style="font-size:10px">艾瑪特</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">更新櫃台</td>
+      <td style="color:var(--ink3);font-size:12px">—</td>
+      <td><span class="status-badge s-待執行">待執行</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">—</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-09-30</td>
+      <td style="font-size:12px;color:var(--ink4)">—</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-待執行" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳艾" style="font-size:10px;margin-bottom:2px;display:inline-block">佳＋艾</span><br><span style="color:var(--ink2)">佳瑪_蘆洲店1002+艾瑪特_蘆洲店613_櫃台+試衣間+廁所+佳瑪廁所</span></td>
+      <td><span class="biz-badge biz-艾" style="font-size:10px">艾瑪特</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">試衣間+廁所</td>
+      <td style="color:var(--ink3);font-size:12px">—</td>
+      <td><span class="status-badge s-待執行">待執行</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        2
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">—</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-09-30</td>
+      <td style="font-size:12px;color:var(--ink4)">—</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-待執行" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳艾" style="font-size:10px;margin-bottom:2px;display:inline-block">佳＋艾</span><br><span style="color:var(--ink2)">佳瑪_蘆洲店1002+艾瑪特_蘆洲店613_櫃台+試衣間+廁所+佳瑪廁所</span></td>
+      <td><span class="biz-badge biz-佳" style="font-size:10px">佳瑪</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">佳瑪3F廁所</td>
+      <td style="color:var(--ink3);font-size:12px">—</td>
+      <td><span class="status-badge s-待執行">待執行</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">—</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-09-30</td>
+      <td style="font-size:12px;color:var(--ink4)">—</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳艾" style="font-size:10px;margin-bottom:2px;display:inline-block">佳＋艾</span><br><span style="color:var(--ink2)">楊梅店擴大</span></td>
+      <td><span class="biz-badge biz-佳" style="font-size:10px">佳瑪</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">4F按摩椅貼圖</td>
+      <td style="color:var(--ink3);font-size:12px">視覺設計</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-03-18</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-03-19</td>
+      <td style="font-size:12px;color:var(--done)">2026-03-19</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳艾" style="font-size:10px;margin-bottom:2px;display:inline-block">佳＋艾</span><br><span style="color:var(--ink2)">楊梅店擴大</span></td>
+      <td><span class="biz-badge biz-艾" style="font-size:10px">艾瑪特</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">直招</td>
+      <td style="color:var(--ink3);font-size:12px">視覺設計</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-03-16</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-10</td>
+      <td style="font-size:12px;color:var(--done)">2026-04-10</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳艾" style="font-size:10px;margin-bottom:2px;display:inline-block">佳＋艾</span><br><span style="color:var(--ink2)">楊梅店擴大</span></td>
+      <td><span class="biz-badge biz-艾" style="font-size:10px">艾瑪特</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">樓梯處貼圖</td>
+      <td style="color:var(--ink3);font-size:12px">視覺設計</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-03-16</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-10</td>
+      <td style="font-size:12px;color:var(--done)">2026-04-10</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳艾" style="font-size:10px;margin-bottom:2px;display:inline-block">佳＋艾</span><br><span style="color:var(--ink2)">楊梅店擴大</span></td>
+      <td><span class="biz-badge biz-艾" style="font-size:10px">艾瑪特</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">電梯貼圖</td>
+      <td style="color:var(--ink3);font-size:12px">視覺設計</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-03-16</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-10</td>
+      <td style="font-size:12px;color:var(--done)">2026-04-10</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-事業" style="font-size:10px;margin-bottom:2px;display:inline-block">招商事業部</span><br><span style="color:var(--ink2)">艾瑪特_板橋店611_外租櫃模擬</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">black OFF  大寶屋模擬</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        2
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-14</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-15</td>
+      <td style="font-size:12px;color:var(--done)">2026-04-15</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳艾" style="font-size:10px;margin-bottom:2px;display:inline-block">佳＋艾</span><br><span style="color:var(--ink2)">楊梅店擴大</span></td>
+      <td><span class="biz-badge biz-艾" style="font-size:10px">艾瑪特</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">追加更衣室貼圖</td>
+      <td style="color:var(--ink3);font-size:12px">視覺設計</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-14</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-15</td>
+      <td style="font-size:12px;color:var(--done)">2026-04-14</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_新竹店609_優化1-2階段</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">追加電梯內樓層介紹貼圖</td>
+      <td style="color:var(--ink3);font-size:12px">—</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-21</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-22</td>
+      <td style="font-size:12px;color:var(--done)">2026-04-22</td>
+      <td><a href="https://drive.google.com/drive/folders/1kNE1CTvyNvpAPx0WZcDV_uVOUtt8v3KG?usp=drive_link" target="_blank" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;background:var(--jia-l);color:var(--jia);font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;text-decoration:none">🖼 開啟</a></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳艾" style="font-size:10px;margin-bottom:2px;display:inline-block">佳＋艾</span><br><span style="color:var(--ink2)">楊梅店擴大</span></td>
+      <td><span class="biz-badge biz-艾" style="font-size:10px">艾瑪特</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">追加櫃台處理</td>
+      <td style="color:var(--ink3);font-size:12px">—</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-23</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-24</td>
+      <td style="font-size:12px;color:var(--done)">2026-04-24</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_新竹店609_優化1-2階段</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">1F/2F/3F電梯/牆面</td>
+      <td style="color:var(--ink3);font-size:12px">視覺設計</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        4
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-03-25</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-27</td>
+      <td style="font-size:12px;color:var(--done)">2026-06-29</td>
+      <td><a href="https://drive.google.com/drive/folders/1kNE1CTvyNvpAPx0WZcDV_uVOUtt8v3KG?usp=drive_link" target="_blank" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;background:var(--jia-l);color:var(--jia);font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;text-decoration:none">🖼 開啟</a></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_新竹店609_優化1-2階段</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">3F樓梯處</td>
+      <td style="color:var(--ink3);font-size:12px">—</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-03-25</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-27</td>
+      <td style="font-size:12px;color:var(--done)">2026-06-29</td>
+      <td><a href="https://drive.google.com/drive/folders/1kNE1CTvyNvpAPx0WZcDV_uVOUtt8v3KG?usp=drive_link" target="_blank" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;background:var(--jia-l);color:var(--jia);font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;text-decoration:none">🖼 開啟</a></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_新竹店609_優化1-2階段</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">追加2F天際線降下</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        2
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-03-25</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-27</td>
+      <td style="font-size:12px;color:var(--done)">2026-04-27</td>
+      <td><a href="https://drive.google.com/drive/folders/1kNE1CTvyNvpAPx0WZcDV_uVOUtt8v3KG?usp=drive_link" target="_blank" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;background:var(--jia-l);color:var(--jia);font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;text-decoration:none">🖼 開啟</a></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_新竹店609_優化1-2階段</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">騎樓鐵捲門貼圖</td>
+      <td style="color:var(--ink3);font-size:12px">—</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-03-25</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-27</td>
+      <td style="font-size:12px;color:var(--done)">2026-04-27</td>
+      <td><a href="https://drive.google.com/drive/folders/1kNE1CTvyNvpAPx0WZcDV_uVOUtt8v3KG?usp=drive_link" target="_blank" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;background:var(--jia-l);color:var(--jia);font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;text-decoration:none">🖼 開啟</a></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_新竹店609_優化1-2階段</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">騎樓NET入口處</td>
+      <td style="color:var(--ink3);font-size:12px">—</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-03-25</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-27</td>
+      <td style="font-size:12px;color:var(--done)">2026-04-27</td>
+      <td><a href="https://drive.google.com/drive/folders/1kNE1CTvyNvpAPx0WZcDV_uVOUtt8v3KG?usp=drive_link" target="_blank" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;background:var(--jia-l);color:var(--jia);font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;text-decoration:none">🖼 開啟</a></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_新竹店609_優化1-2階段</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">修改部+桌子貼圖</td>
+      <td style="color:var(--ink3);font-size:12px">—</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        2
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-03-25</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-27</td>
+      <td style="font-size:12px;color:var(--done)">2026-04-27</td>
+      <td><a href="https://drive.google.com/drive/folders/1kNE1CTvyNvpAPx0WZcDV_uVOUtt8v3KG?usp=drive_link" target="_blank" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;background:var(--jia-l);color:var(--jia);font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;text-decoration:none">🖼 開啟</a></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳艾" style="font-size:10px;margin-bottom:2px;display:inline-block">佳＋艾</span><br><span style="color:var(--ink2)">楊梅店擴大</span></td>
+      <td><span class="biz-badge biz-艾" style="font-size:10px">艾瑪特</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">外牆貼圖</td>
+      <td style="color:var(--ink3);font-size:12px">視覺設計</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-03-16</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-30</td>
+      <td style="font-size:12px;color:var(--done)">2026-04-10</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-事業" style="font-size:10px;margin-bottom:2px;display:inline-block">招商事業部</span><br><span style="color:var(--ink2)">招商事業部_三重宿舍布條</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">招租帆布</td>
+      <td style="color:var(--ink3);font-size:12px">編排</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-30</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-30</td>
+      <td style="font-size:12px;color:var(--done)">2026-06-29</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">修改3次</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳" style="font-size:10px;margin-bottom:2px;display:inline-block">佳瑪</span><br><span style="color:var(--ink2)">佳瑪_蘆洲店1002_服務台</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">服務台燈箱設計</td>
+      <td style="color:var(--ink3);font-size:12px">視覺設計</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-27</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-05-05</td>
+      <td style="font-size:12px;color:var(--done)">2026-05-06</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳" style="font-size:10px;margin-bottom:2px;display:inline-block">佳瑪</span><br><span style="color:var(--ink2)">佳瑪_蘆洲店1002_服務台</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">服務台壁面貼圖</td>
+      <td style="color:var(--ink3);font-size:12px">視覺設計</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-27</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-05-06</td>
+      <td style="font-size:12px;color:var(--done)">2026-05-06</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳" style="font-size:10px;margin-bottom:2px;display:inline-block">佳瑪</span><br><span style="color:var(--ink2)">佳瑪_新莊店1006_新莊店電梯+廁所+哺乳室</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">4F哺乳室貼圖</td>
+      <td style="color:var(--ink3);font-size:12px">視覺設計</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-04-22</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-05-19</td>
+      <td style="font-size:12px;color:var(--done)">2026-05-19</td>
+      <td><a href="https://drive.google.com/drive/folders/1LGQ4dL25urvbF_tFNSU-rGFYqNB8W4-D?usp=drive_link" target="_blank" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;background:var(--jia-l);color:var(--jia);font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;text-decoration:none">🖼 開啟</a></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳艾" style="font-size:10px;margin-bottom:2px;display:inline-block">佳＋艾</span><br><span style="color:var(--ink2)">楊梅店擴大</span></td>
+      <td><span class="biz-badge biz-艾" style="font-size:10px">艾瑪特</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">追加橫幅</td>
+      <td style="color:var(--ink3);font-size:12px">視覺設計</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        2
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-05-25</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-05-25</td>
+      <td style="font-size:12px;color:var(--done)">2026-06-29</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-事業" style="font-size:10px;margin-bottom:2px;display:inline-block">招商事業部</span><br><span style="color:var(--ink2)">JC_春日館1303_JC春日議員勘版</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">勘版模擬</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-06-05</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-06-05</td>
+      <td style="font-size:12px;color:var(--done)">2026-06-05</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_新竹店609_優化1-2階段</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">2-3F柱子貼圖</td>
+      <td style="color:var(--ink3);font-size:12px">視覺設計</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        6
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-05-18</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-06-10</td>
+      <td style="font-size:12px;color:var(--done)">2026-06-10</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">13支柱、6張施工圖</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_新竹店609_優化1-2階段</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">1~3F地貼+電梯標示</td>
+      <td style="color:var(--ink3);font-size:12px">視覺設計</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        2
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-05-18</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-06-10</td>
+      <td style="font-size:12px;color:var(--done)">2026-06-10</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳" style="font-size:10px;margin-bottom:2px;display:inline-block">佳瑪</span><br><span style="color:var(--ink2)">佳瑪_新莊店1006_新莊店電梯+廁所+哺乳室</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">B1~4F外電梯貼圖</td>
+      <td style="color:var(--ink3);font-size:12px">視覺設計</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        5
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-05-21</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-06-10</td>
+      <td style="font-size:12px;color:var(--done)">2026-06-10</td>
+      <td><a href="https://drive.google.com/drive/folders/1LGQ4dL25urvbF_tFNSU-rGFYqNB8W4-D?usp=drive_link" target="_blank" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;background:var(--jia-l);color:var(--jia);font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;text-decoration:none">🖼 開啟</a></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳" style="font-size:10px;margin-bottom:2px;display:inline-block">佳瑪</span><br><span style="color:var(--ink2)">佳瑪_新莊店1006_新莊店電梯+廁所+哺乳室</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">4F廁所牆面設計</td>
+      <td style="color:var(--ink3);font-size:12px">視覺設計</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-05-21</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-06-10</td>
+      <td style="font-size:12px;color:var(--done)">2026-06-10</td>
+      <td><a href="https://drive.google.com/drive/folders/1LGQ4dL25urvbF_tFNSU-rGFYqNB8W4-D?usp=drive_link" target="_blank" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;background:var(--jia-l);color:var(--jia);font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;text-decoration:none">🖼 開啟</a></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-事業" style="font-size:10px;margin-bottom:2px;display:inline-block">事業部</span><br><span style="color:var(--ink2)">節慶圖片</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">端午節賀卡</td>
+      <td style="color:var(--ink3);font-size:12px">影片</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        3
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-06-01</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-06-15</td>
+      <td style="font-size:12px;color:var(--done)">2026-06-16</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">水槽示意圖</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">示意圖</td>
+      <td style="color:var(--ink3);font-size:12px">—</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-03</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-03</td>
+      <td style="font-size:12px;color:var(--done)">2026-07-06</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">王經理</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳" style="font-size:10px;margin-bottom:2px;display:inline-block">佳瑪</span><br><span style="color:var(--ink2)">佳瑪_蘆洲店1002_門口玻璃</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">玻璃貼圖</td>
+      <td style="color:var(--ink3);font-size:12px">設計</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">1</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-06-29</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-08</td>
+      <td style="font-size:12px;color:var(--done)">2026-07-08</td>
+      <td><a href="https://drive.google.com/drive/folders/1ZU8v3mHME_BXIPECV6nKSoLz2h18qOiN?usp=drive_link" target="_blank" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;background:var(--jia-l);color:var(--jia);font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;text-decoration:none">🖼 開啟</a></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">[給檔] 1件（第1次）— 自動記錄</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳" style="font-size:10px;margin-bottom:2px;display:inline-block">佳瑪</span><br><span style="color:var(--ink2)">佳瑪_新莊店1006_特力屋安全門揭露</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">設計模擬</td>
+      <td style="color:var(--ink3);font-size:12px">—</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">0</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-08</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-08</td>
+      <td style="font-size:12px;color:var(--done)">2026-07-08</td>
+      <td><a href="https://drive.google.com/file/d/1kFN3uepiyXBEO90l2_X_dGS7g7Ep1aRN/view?usp=drive_link" target="_blank" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;background:var(--jia-l);color:var(--jia);font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;text-decoration:none">🖼 開啟</a></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
+    </tr><tr class="row-修改中" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_板橋店611_縮坪改裝案</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">內部氛圍設計</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-修改中">修改中</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        2
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">1</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-03</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-20</td>
+      <td style="font-size:12px;color:var(--ink4)">—</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">[給檔] 2件（第1次）— 自動記錄</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_板橋店611_縮坪改裝案</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">花盆樹蘭3株模擬</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">1</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-21</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-21</td>
+      <td style="font-size:12px;color:var(--done)">2026-07-22</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">[給檔] 1件（第1次）— 自動記錄</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_新竹店609_廁所優化案</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">外部貼圖設計</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">3</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-06-29</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-22</td>
+      <td style="font-size:12px;color:var(--done)">2026-07-25</td>
+      <td><a href="https://drive.google.com/file/d/1xPXOnCvqNBlwZjVQm_TcrFiGEmcVsEgl/view?usp=drive_link" target="_blank" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;background:var(--jia-l);color:var(--jia);font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;text-decoration:none">🖼 開啟</a></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">[給檔] 1件（第2次）— 自動記錄</td>
+    </tr><tr class="row-主單位確認中" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_板橋店611_縮坪改裝案</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">門面模擬</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-主單位確認中">主單位確認中</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">1</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-06-15</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-24</td>
+      <td style="font-size:12px;color:var(--done)">2026-07-17</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">[給檔] 1件（第1次）— 自動記錄</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_板橋店611_縮坪改裝案</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:28px"><span style="color:var(--ink4);margin-right:4px">└</span>大寶屋+螢幕模擬</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">2</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-09</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-10</td>
+      <td style="font-size:12px;color:var(--done)">2026-07-10</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">[給檔] 1件（第1次）— 自動記錄</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_板橋店611_縮坪改裝案</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:28px"><span style="color:var(--ink4);margin-right:4px">└</span>櫥窗往後</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        2
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">1</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-14</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-14</td>
+      <td style="font-size:12px;color:var(--done)">2026-07-14</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">[給檔] 2件（第1次）— 自動記錄</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳" style="font-size:10px;margin-bottom:2px;display:inline-block">佳瑪</span><br><span style="color:var(--ink2)">佳瑪_蘆洲店1002_外觀形象案</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">外牆貼圖格數重新分配</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">2</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-21</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-24</td>
+      <td style="font-size:12px;color:var(--done)">2026-07-23</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">[給檔] 1件（第2次）— 自動記錄</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳" style="font-size:10px;margin-bottom:2px;display:inline-block">佳瑪</span><br><span style="color:var(--ink2)">公司的入口網頁調整</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">使用者登入</td>
+      <td style="color:var(--ink3);font-size:12px">設計</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">1</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-24</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-24</td>
+      <td style="font-size:12px;color:var(--done)">2026-07-24</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">[給檔] 1件（第1次）— 自動記錄</td>
+    </tr><tr class="row-修改中" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_新竹店609_廁所優化案</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">3D模擬內部</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-修改中">修改中</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">2</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-06-22</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-29</td>
+      <td style="font-size:12px;color:var(--ink4)">—</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">[給檔] 1件（第2次）— 自動記錄</td>
+    </tr><tr class="row-修改中" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳" style="font-size:10px;margin-bottom:2px;display:inline-block">佳瑪</span><br><span style="color:var(--ink2)">佳瑪_蘆洲店1002_外觀形象案</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">外牆招牌</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-修改中">修改中</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        3
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">3</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-06-01</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-31</td>
+      <td style="font-size:12px;color:var(--ink4)">—</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">[給檔] 3件（第3次）— 自動記錄</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳" style="font-size:10px;margin-bottom:2px;display:inline-block">佳瑪</span><br><span style="color:var(--ink2)">佳瑪_蘆洲店1002_外觀形象案</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">門口橫招</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">3</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-06-01</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-31</td>
+      <td style="font-size:12px;color:var(--done)">2026-07-24</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">[給檔] 1件（第3次）— 自動記錄</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳" style="font-size:10px;margin-bottom:2px;display:inline-block">佳瑪</span><br><span style="color:var(--ink2)">佳瑪_蘆洲店1002_外觀形象案</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">新增騎樓小橫招</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">2</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-06-01</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-31</td>
+      <td style="font-size:12px;color:var(--done)">2026-07-25</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">[給檔] 1件（第2次）— 自動記錄</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-佳" style="font-size:10px;margin-bottom:2px;display:inline-block">佳瑪</span><br><span style="color:var(--ink2)">佳瑪_蘆洲店1002_外觀形象案</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">3F櫥窗換燈</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">1</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-06-01</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-31</td>
+      <td style="font-size:12px;color:var(--done)">2026-07-08</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">不改</td>
+    </tr><tr class="row-主單位確認中" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-JC" style="font-size:10px;margin-bottom:2px;display:inline-block">JCPARK</span><br><span style="color:var(--ink2)">JC_中正館1302_門面設計(重啟)</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">門面模擬</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-主單位確認中">主單位確認中</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">1</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-06</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-31</td>
+      <td style="font-size:12px;color:var(--ink4)">—</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">[給檔] 1件（第1次）— 自動記錄</td>
+    </tr><tr class="row-修改中" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_板橋店611_縮坪改裝案</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">樓梯處模擬</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-修改中">修改中</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">1</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-13</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-31</td>
+      <td style="font-size:12px;color:var(--ink4)">—</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">[給檔] 1件（第1次）— 自動記錄</td>
+    </tr><tr class="row-主單位確認中" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_蘆洲店613_櫥窗調整案</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:12px">門面模擬</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-主單位確認中">主單位確認中</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">1</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-06-29</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-08-31</td>
+      <td style="font-size:12px;color:var(--done)">2026-06-30</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">[給檔] 1件（第1次）— 自動記錄</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_蘆洲店613_櫥窗調整案</span></td>
+      <td><span class="biz-badge biz-事業" style="font-size:10px">招商事業部</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:28px"><span style="color:var(--ink4);margin-right:4px">└</span>大寶屋模擬</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">1</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-09</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-09</td>
+      <td style="font-size:12px;color:var(--done)">2026-07-09</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">[給檔] 1件（第1次）— 自動記錄</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_蘆洲店613_櫥窗調整案</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:28px"><span style="color:var(--ink4);margin-right:4px">└</span>右邊出租給飲料店+電動門+電梯門正模擬</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">1</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-07</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-10</td>
+      <td style="font-size:12px;color:var(--done)">2026-07-08</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">[給檔] 1件（第1次）— 自動記錄</td>
+    </tr><tr class="row-給檔完成" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_蘆洲店613_櫥窗調整案</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:28px"><span style="color:var(--ink4);margin-right:4px">└</span>右邊櫥窗+電動門+電梯側(停車場)模擬</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-給檔完成">給檔完成</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        1
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">1</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-07</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-10</td>
+      <td style="font-size:12px;color:var(--done)">2026-07-08</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">[給檔] 1件（第1次）— 自動記錄</td>
+    </tr><tr class="row-修改中" onclick="" style="cursor:default">
+      <td style="font-size:12px"><span class="biz-badge biz-艾" style="font-size:10px;margin-bottom:2px;display:inline-block">艾瑪特</span><br><span style="color:var(--ink2)">艾瑪特_蘆洲店613_櫥窗調整案</span></td>
+      <td><span style="color:var(--ink4);font-size:11px">依大項</span></td>
+      <td style="font-weight:600;white-space:normal;word-break:break-all;max-width:160px;padding-left:28px"><span style="color:var(--ink4);margin-right:4px">└</span>右櫥窗模擬+砲管</td>
+      <td style="color:var(--ink3);font-size:12px">模擬</td>
+      <td><span class="status-badge s-修改中">修改中</span></td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--ink2)">
+        3
+      </td>
+      <td style="font-size:12px;text-align:center;font-weight:700;color:var(--jia)">2</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-20</td>
+      <td style="font-size:12px;color:var(--ink3)">2026-07-24</td>
+      <td style="font-size:12px;color:var(--ink4)">—</td>
+      <td><span style="color:var(--ink4);font-size:12px">—</span></td>
+      <td style="font-size:11px;color:var(--ink3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">[給檔] 3件（第2次）— 自動記錄</td>
+    </tr></tbody></table>
   </div>
   <div class="empty-state" id="itemsEmpty" style="display:none">
     <div class="empty-icon">📝</div><div class="empty-txt">尚無細項資料</div>
@@ -402,19 +1525,19 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
 </div>
 
 <!-- 進度報告 -->
-<div class="screen" id="screen-report">
+<div class="screen active" id="screen-report">
   <div class="screen-header">
     <div class="screen-title">📋 進度報告</div>
   </div>
   <div style="padding:8px 16px;display:flex;gap:8px;flex-wrap:wrap;background:white;border-bottom:1px solid var(--line)">
-    <button class="report-range-btn" data-range="week" onclick="setReportRange(this)">本週</button>
-    <button class="report-range-btn active" data-range="month" onclick="setReportRange(this)">本月</button>
+    <button class="report-range-btn active" data-range="week" onclick="setReportRange(this)">本週</button>
+    <button class="report-range-btn" data-range="month" onclick="setReportRange(this)">本月</button>
     <button class="report-range-btn" data-range="lastmonth" onclick="setReportRange(this)">上月</button>
     <button class="report-range-btn" data-range="quarter" onclick="setReportRange(this)">本季</button>
     <button class="report-range-btn" data-range="year" onclick="setReportRange(this)">本年</button>
     <button class="report-range-btn" data-range="all" onclick="setReportRange(this)">全部</button>
   </div>
-  <div id="reportContent" style="padding:0 0 24px"></div>
+  <div id="reportContent" style="padding:0 0 24px"><div style="background:linear-gradient(135deg,#1e3a5f,#2563eb);color:white;padding:20px 16px 16px;margin-bottom:0"><div style="font-size:11px;opacity:.7;margin-bottom:4px">設計專案課</div><div style="font-size:20px;font-weight:900;margin-bottom:4px">專案進度報告</div><div style="font-size:12px;opacity:.8">報告日期：2026年7月27日　範圍：本週</div></div><div style="display:flex;gap:0;background:#f8fafc;border-bottom:1px solid var(--line);padding:12px 16px;gap:20px"><div style="text-align:center"><div style="font-size:20px;font-weight:900;color:var(--ink)">4</div><div style="font-size:10px;color:var(--ink4)">總專案</div></div><div style="text-align:center"><div style="font-size:20px;font-weight:900;color:var(--done)">0</div><div style="font-size:10px;color:var(--ink4)">已完成</div></div><div style="text-align:center"><div style="font-size:20px;font-weight:900;color:var(--prog)">4</div><div style="font-size:10px;color:var(--ink4)">進行中</div></div><div style="text-align:center"><div style="font-size:20px;font-weight:900;color:var(--alert)">1</div><div style="font-size:10px;color:var(--ink4)">急件</div></div><div style="text-align:center"><div style="font-size:20px;font-weight:900;color:var(--alert)">4</div><div style="font-size:10px;color:var(--ink4)">需追蹤</div></div></div><div style="padding:16px"><div style="background:white;border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)"><div style="font-size:13px;font-weight:800;color:var(--ink2);margin-bottom:10px">📝 整體摘要</div><p style="margin:0;line-height:1.8;font-size:13px;color:var(--ink)">本週共執行 <strong>4</strong> 個專案，已完成 <strong style="color:var(--done)">0</strong> 個（完成率 <strong>0%</strong>），目前進行中 <strong>4</strong> 個。<br>設計件數共 <strong>25</strong> 件，本週給檔 <strong style="color:var(--jia)">0</strong> 件，等待主單位確認 <strong style="color:var(--prog)">12</strong> 件，已結案 <strong style="color:var(--done)">0</strong> 件。<br>⚠️ 目前有 <strong style="color:#dc2626">1</strong> 個急件需優先處理。<br>⚠️ 共 <strong style="color:var(--alert)">4</strong> 個專案需追蹤關注。</p></div><div style="margin-bottom:16px"><div style="font-size:13px;font-weight:800;color:#dc2626;margin-bottom:8px">🚨 急件（1個）</div><div style="background:white;border-left:3px solid #dc2626;border-radius:0 10px 10px 0;padding:12px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.06)"><div style="font-weight:700;color:#dc2626;margin-bottom:4px">艾瑪特_蘆洲店613_櫥窗調整案</div><div style="font-size:12px;color:var(--ink3);display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="biz-badge biz-艾" style="font-size:10px">艾瑪特</span><span class="status-badge s-執行中" style="font-size:10px">執行中</span><span>預計完工：2026-07-31</span></div><div style="font-size:12px;color:var(--ink2);margin-top:6px;background:#fff5f5;padding:6px 8px;border-radius:6px">📌 7/17提供右邊新作櫥窗+砲管  共*3張</div></div></div><div style="margin-bottom:16px"><div style="font-size:13px;font-weight:800;color:var(--alert);margin-bottom:8px">⚠️ 需關注（4個）</div><div style="background:white;border-left:3px solid var(--alert);border-radius:0 10px 10px 0;padding:12px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.06)"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div style="font-weight:700;color:var(--alert)">艾瑪特_新竹店609_廁所優化案</div><span style="font-size:11px;color:var(--alert);white-space:nowrap;margin-left:8px">還剩2天</span></div><div style="font-size:12px;color:var(--ink3);display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px"><span class="biz-badge biz-艾" style="font-size:10px">艾瑪特</span><span class="status-badge s-執行中" style="font-size:10px">執行中</span><span>預計完工：2026-07-29</span></div><div style="font-size:12px;color:var(--ink2);margin-top:6px;background:#fff8f0;padding:6px 8px;border-radius:6px">📌 7/17平面圖更新  重新模擬 已給副總</div></div><div style="background:white;border-left:3px solid var(--alert);border-radius:0 10px 10px 0;padding:12px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.06)"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div style="font-weight:700;color:var(--alert)">佳瑪_蘆洲店1002_外觀形象案</div><span style="font-size:11px;color:var(--alert);white-space:nowrap;margin-left:8px">還剩4天</span></div><div style="font-size:12px;color:var(--ink3);display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px"><span class="biz-badge biz-佳" style="font-size:10px">佳瑪</span><span class="status-badge s-執行中" style="font-size:10px">執行中</span><span>預計完工：2026-07-31</span></div><div style="font-size:12px;color:var(--ink2);margin-top:6px;background:#fff8f0;padding:6px 8px;border-radius:6px">📌 7/20修改貼圖+框板</div></div><div style="background:white;border-left:3px solid var(--alert);border-radius:0 10px 10px 0;padding:12px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.06)"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div style="font-weight:700;color:var(--alert)">艾瑪特_板橋店611_縮坪改裝案</div><span style="font-size:11px;color:var(--alert);white-space:nowrap;margin-left:8px">還剩4天</span></div><div style="font-size:12px;color:var(--ink3);display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px"><span class="biz-badge biz-艾" style="font-size:10px">艾瑪特</span><span class="status-badge s-執行中" style="font-size:10px">執行中</span><span>預計完工：2026-07-31</span></div><div style="font-size:12px;color:var(--ink2);margin-top:6px;background:#fff8f0;padding:6px 8px;border-radius:6px">📌 7/17提供樓梯處+內部模擬給副總</div></div><div style="background:white;border-left:3px solid var(--alert);border-radius:0 10px 10px 0;padding:12px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.06)"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div style="font-weight:700;color:var(--alert)">艾瑪特_蘆洲店613_櫥窗調整案</div><span style="font-size:11px;color:var(--alert);white-space:nowrap;margin-left:8px">還剩4天</span></div><div style="font-size:12px;color:var(--ink3);display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px"><span class="biz-badge biz-艾" style="font-size:10px">艾瑪特</span><span class="status-badge s-執行中" style="font-size:10px">執行中</span><span>預計完工：2026-07-31</span></div><div style="font-size:12px;color:var(--ink2);margin-top:6px;background:#fff8f0;padding:6px 8px;border-radius:6px">📌 7/17提供右邊新作櫥窗+砲管  共*3張</div></div></div><div style="margin-bottom:16px"><div style="font-size:13px;font-weight:800;color:var(--ink2);margin-bottom:8px">📋 進行中（4個）</div><div style="background:white;border-radius:10px;padding:12px;margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,.06)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-weight:700;font-size:13px">艾瑪特_新竹店609_廁所優化案</div><span style="font-size:11px;color:var(--ink4);white-space:nowrap;margin-left:8px">2026-07-29</span></div><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px"><span class="biz-badge biz-艾" style="font-size:10px">艾瑪特</span><span class="status-badge s-執行中" style="font-size:10px">執行中</span></div><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:50%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">50%</span></div></div><div style="background:white;border-radius:10px;padding:12px;margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,.06)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-weight:700;font-size:13px">佳瑪_蘆洲店1002_外觀形象案</div><span style="font-size:11px;color:var(--ink4);white-space:nowrap;margin-left:8px">2026-07-31</span></div><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px"><span class="biz-badge biz-佳" style="font-size:10px">佳瑪</span><span class="status-badge s-執行中" style="font-size:10px">執行中</span></div><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:50%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">50%</span></div></div><div style="background:white;border-radius:10px;padding:12px;margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,.06)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-weight:700;font-size:13px">艾瑪特_板橋店611_縮坪改裝案</div><span style="font-size:11px;color:var(--ink4);white-space:nowrap;margin-left:8px">2026-07-31</span></div><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px"><span class="biz-badge biz-艾" style="font-size:10px">艾瑪特</span><span class="status-badge s-執行中" style="font-size:10px">執行中</span></div><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:30%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">30%</span></div></div><div style="background:white;border-radius:10px;padding:12px;margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,.06)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-weight:700;font-size:13px">艾瑪特_蘆洲店613_櫥窗調整案</div><span style="font-size:11px;color:var(--ink4);white-space:nowrap;margin-left:8px">2026-07-31</span></div><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px"><span class="biz-badge biz-艾" style="font-size:10px">艾瑪特</span><span class="status-badge s-執行中" style="font-size:10px">執行中</span></div><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:50%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">50%</span></div></div></div></div></div>
 </div>
 
 <!-- 統計 -->
@@ -423,7 +1546,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
   <div style="background:white;border-bottom:1px solid var(--line);padding:10px 16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
     <select id="dashYearSel" onchange="renderDash()" style="padding:7px 12px;border:1.5px solid var(--line);border-radius:20px;font-size:12px;font-family:inherit;outline:none;background:white;color:var(--ink2);font-weight:600">
       <option value="all">所有年度</option>
-      <option value="2026" selected>2026年</option>
+      <option value="2026" selected="">2026年</option>
       <option value="2025">2025年</option>
       <option value="2024">2024年</option>
     </select>
@@ -442,19 +1565,184 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
         <option value="M10">10月</option><option value="M11">11月</option><option value="M12">12月</option>
       </optgroup>
     </select>
-    <span id="dashFilterLabel" style="font-size:11px;color:var(--ink4);font-weight:600"></span>
+    <span id="dashFilterLabel" style="font-size:11px;color:var(--ink4);font-weight:600">篩選：2026</span>
   </div>
-  <div class="dash-wrap" id="dashContent"></div>
+  <div class="dash-wrap" id="dashContent">
+    <div style="padding:10px 0 4px 0;font-size:11px;color:var(--ink4);font-weight:600;text-align:center">
+      目前篩選：<strong style="color:var(--ink2)">2026</strong>
+    </div>
+
+    <!-- KPI -->
+    <div class="dash-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="dash-card"><div class="dash-card-num" style="color:var(--ink)">22</div><div class="dash-card-lbl">總專案數</div></div>
+      <div class="dash-card"><div class="dash-card-num" style="color:var(--done)">12</div><div class="dash-card-lbl">已完成</div></div>
+      <div class="dash-card"><div class="dash-card-num" style="color:var(--alert)">7</div><div class="dash-card-lbl">需追蹤</div></div>
+    </div>
+
+    <!-- 各季完成專案 -->
+    <div class="dash-section">
+      <div class="dash-section-title">📅 各季完成專案數量（依實際完成日）</div>
+      
+        <div class="bar-row">
+          <div class="bar-label">Q1</div>
+          <div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--jia)"></div></div>
+          <div class="bar-val" style="color:var(--ink4)">0</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Q2</div>
+          <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--jia)"></div></div>
+          <div class="bar-val" style="color:var(--jia)">8</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Q3</div>
+          <div class="bar-track"><div class="bar-fill" style="width:50%;background:var(--jia)"></div></div>
+          <div class="bar-val" style="color:var(--jia)">4</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Q4</div>
+          <div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--jia)"></div></div>
+          <div class="bar-val" style="color:var(--ink4)">0</div>
+        </div>
+    </div>
+
+    <!-- 事業部分布（專案數） -->
+    <div class="dash-section">
+      <div class="dash-section-title">🏢 事業部分布（專案數）</div>
+      <div class="bar-row"><div class="bar-label" style="min-width:70px;font-size:11px">佳瑪</div><div class="bar-track"><div class="bar-fill" style="width:45%;background:var(--jia)"></div></div><div class="bar-val" style="color:var(--jia)">10</div></div><div class="bar-row"><div class="bar-label" style="min-width:70px;font-size:11px">艾瑪特</div><div class="bar-track"><div class="bar-fill" style="width:41%;background:var(--ai)"></div></div><div class="bar-val" style="color:var(--ai)">9</div></div><div class="bar-row"><div class="bar-label" style="min-width:70px;font-size:11px">JCPARK</div><div class="bar-track"><div class="bar-fill" style="width:5%;background:var(--jc)"></div></div><div class="bar-val" style="color:var(--jc)">1</div></div><div class="bar-row"><div class="bar-label" style="min-width:70px;font-size:11px">事業部</div><div class="bar-track"><div class="bar-fill" style="width:5%;background:var(--biz)"></div></div><div class="bar-val" style="color:var(--biz)">1</div></div><div class="bar-row"><div class="bar-label" style="min-width:70px;font-size:11px">招商事業部</div><div class="bar-track"><div class="bar-fill" style="width:14%;background:#9333ea"></div></div><div class="bar-val" style="color:#9333ea">3</div></div>
+    </div>
+
+    <!-- 專案狀態分布 -->
+    <div class="dash-section">
+      <div class="dash-section-title">📊 專案狀態分布</div>
+      <div style="display:flex;gap:2px;margin-bottom:10px;border-radius:8px;overflow:hidden;height:18px">
+        <div style="flex:12;background:var(--done)"></div>
+        <div style="flex:5;background:var(--prog)"></div>
+        <div style="flex:5;background:var(--wait)"></div>
+      </div>
+      <div class="pie-row">
+        <div class="pie-item"><div class="pie-dot" style="background:var(--done)"></div>已完成 <strong>12</strong></div>
+        <div class="pie-item"><div class="pie-dot" style="background:var(--prog)"></div>執行中 <strong>5</strong></div>
+        <div class="pie-item"><div class="pie-dot" style="background:var(--wait)"></div>待執行 <strong>5</strong></div>
+      </div>
+    </div>
+
+    <!-- 專案等級分布 -->
+    <div class="dash-section">
+      <div class="dash-section-title">📐 專案等級分布</div>
+      <div style="display:flex;gap:10px">
+        <div style="background:#fee2e2;border-radius:10px;padding:14px;text-align:center;flex:1"><div style="font-size:24px;font-weight:900;color:#dc2626">1</div><div style="font-size:11px;color:#dc2626;margin-top:2px">急件</div></div><div style="background:#fef3c7;border-radius:10px;padding:14px;text-align:center;flex:1"><div style="font-size:24px;font-weight:900;color:#92400e">7</div><div style="font-size:11px;color:#92400e;margin-top:2px">大型</div></div><div style="background:#e0f2fe;border-radius:10px;padding:14px;text-align:center;flex:1"><div style="font-size:24px;font-weight:900;color:#075985">6</div><div style="font-size:11px;color:#075985;margin-top:2px">中型</div></div><div style="background:#f0fdf4;border-radius:10px;padding:14px;text-align:center;flex:1"><div style="font-size:24px;font-weight:900;color:#14532d">8</div><div style="font-size:11px;color:#14532d;margin-top:2px">小型</div></div>
+      </div>
+    </div>
+
+    <!-- 分隔線 -->
+    <div style="display:flex;align-items:center;gap:10px;margin:4px 0 12px">
+      <div style="flex:1;border-top:2px dashed var(--line)"></div>
+      <div style="font-size:11px;color:var(--ink4);font-weight:600;white-space:nowrap">設計件數統計</div>
+      <div style="flex:1;border-top:2px dashed var(--line)"></div>
+    </div>
+
+    <!-- 件數總覽 -->
+    <div class="dash-section">
+      <div class="dash-section-title">✏️ 設計件數總覽</div>
+      <div style="font-size:11px;color:var(--ink4);margin-bottom:10px">💡 件數以各細項填寫數量加總，計算方式依實際情況自訂</div>
+      <div class="dash-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:12px">
+        <div class="dash-card"><div class="dash-card-num" style="color:var(--ink2)">91</div><div class="dash-card-lbl">總件數</div></div>
+        <div class="dash-card"><div class="dash-card-num" style="color:var(--done)">74</div><div class="dash-card-lbl">已完成件數</div></div>
+        <div class="dash-card"><div class="dash-card-num" style="color:var(--prog)">17</div><div class="dash-card-lbl">未完成件數</div></div>
+      </div>
+      <div style="font-size:12px;font-weight:600;display:flex;justify-content:space-between;margin-bottom:6px"><span>整體完成率</span><span style="color:var(--done)">81%</span></div>
+      <div style="height:10px;background:var(--line);border-radius:10px;overflow:hidden">
+        <div style="width:81%;height:100%;background:var(--done);border-radius:10px;transition:width .6s"></div>
+      </div>
+    </div>
+
+    <!-- 各事業部件數 -->
+    <div class="dash-section">
+      <div class="dash-section-title">🏢 各事業部設計件數</div>
+      <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+            <span style="font-size:12px;font-weight:700;color:var(--jia)">佳瑪</span>
+            <span style="font-size:11px;color:var(--ink3)">共 23 件 ／ 完成 <strong style="color:var(--done)">20</strong> 件（87%）</span>
+          </div>
+          <div style="height:8px;background:var(--line);border-radius:10px;overflow:hidden">
+            <div style="width:87%;height:100%;background:var(--jia);border-radius:10px;transition:width .6s"></div>
+          </div>
+        </div><div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+            <span style="font-size:12px;font-weight:700;color:var(--ai)">艾瑪特</span>
+            <span style="font-size:11px;color:var(--ink3)">共 59 件 ／ 完成 <strong style="color:var(--done)">45</strong> 件（76%）</span>
+          </div>
+          <div style="height:8px;background:var(--line);border-radius:10px;overflow:hidden">
+            <div style="width:76%;height:100%;background:var(--ai);border-radius:10px;transition:width .6s"></div>
+          </div>
+        </div><div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+            <span style="font-size:12px;font-weight:700;color:var(--jc)">JCPARK</span>
+            <span style="font-size:11px;color:var(--ink3)">共 1 件 ／ 完成 <strong style="color:var(--done)">1</strong> 件（100%）</span>
+          </div>
+          <div style="height:8px;background:var(--line);border-radius:10px;overflow:hidden">
+            <div style="width:100%;height:100%;background:var(--jc);border-radius:10px;transition:width .6s"></div>
+          </div>
+        </div><div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+            <span style="font-size:12px;font-weight:700;color:var(--biz)">事業部</span>
+            <span style="font-size:11px;color:var(--ink3)">共 3 件 ／ 完成 <strong style="color:var(--done)">3</strong> 件（100%）</span>
+          </div>
+          <div style="height:8px;background:var(--line);border-radius:10px;overflow:hidden">
+            <div style="width:100%;height:100%;background:var(--biz);border-radius:10px;transition:width .6s"></div>
+          </div>
+        </div><div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+            <span style="font-size:12px;font-weight:700;color:#9333ea">招商事業部</span>
+            <span style="font-size:11px;color:var(--ink3)">共 5 件 ／ 完成 <strong style="color:var(--done)">5</strong> 件（100%）</span>
+          </div>
+          <div style="height:8px;background:var(--line);border-radius:10px;overflow:hidden">
+            <div style="width:100%;height:100%;background:#9333ea;border-radius:10px;transition:width .6s"></div>
+          </div>
+        </div>
+    </div>
+
+
+    <!-- 大項目完整資訊（可收合） -->
+    <div class="dash-section" style="padding:0;overflow:hidden">
+      <div onclick="toggleProjTable()" style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;cursor:pointer;user-select:none">
+        <div class="dash-section-title" style="margin:0">📋 大項目完整資訊</div>
+        <span id="projTableIcon" style="font-size:16px;color:var(--ink3)">▶ 展開</span>
+      </div>
+      <div id="projTableWrap" style="display:none;overflow-x:auto;padding:0 16px 16px">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:600px">
+          <thead><tr style="background:var(--bg)">
+            <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--ink3);border-bottom:2px solid var(--line)">等級</th>
+            <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--ink3);border-bottom:2px solid var(--line)">專案名稱</th>
+            <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--ink3);border-bottom:2px solid var(--line)">事業部</th>
+            <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--ink3);border-bottom:2px solid var(--line);min-width:100px">完成進度</th>
+            <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--ink3);border-bottom:2px solid var(--line)">狀態</th>
+            <th style="padding:8px 10px;text-align:center;font-size:10px;font-weight:700;color:var(--ink3);border-bottom:2px solid var(--line)">件數</th>
+            <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--ink3);border-bottom:2px solid var(--line)">預計完工</th>
+            <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--ink3);border-bottom:2px solid var(--line)">實際完成</th>
+            <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--ink3);border-bottom:2px solid var(--line)">關注</th>
+          </tr></thead>
+          <tbody id="dashProjTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+
+
+        <div style="text-align:center;padding:8px 0 16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button onclick="exportPDF()" style="background:var(--jia);color:white;border:none;border-radius:10px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">📄 匯出 PDF 報告</button>
+      <button onclick="exportExcel()" style="background:#16a34a;color:white;border:none;border-radius:10px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">📊 下載 Excel</button>
+    </div></div>
 </div>
 
 <!-- PROJECT MODAL -->
-<div class="modal-overlay" id="projModal" onclick="closeOuter(event,'projModal')">
+<div class="modal-overlay" id="projModal" onclick="closeOuter(event,&#39;projModal&#39;)">
 <div class="modal">
   <div class="modal-handle"></div>
-  <div class="modal-title"><span id="projModalTitle">➕ 新增專案</span><button class="modal-close" onclick="closeModal('projModal')">✕</button></div>
+  <div class="modal-title"><span id="projModalTitle">➕ 新增專案</span><button class="modal-close" onclick="closeModal(&#39;projModal&#39;)">✕</button></div>
   <div class="form-grid">
     <div class="form-group"><label class="form-label">等級</label>
-      <select class="form-select" id="pGrade"><option value="急">急件</option><option value="大">大型</option><option value="中" selected>中型</option><option value="小">小型</option></select></div>
+      <select class="form-select" id="pGrade"><option value="急">急件</option><option value="大">大型</option><option value="中" selected="">中型</option><option value="小">小型</option></select></div>
     <div class="form-group"><label class="form-label">事業部</label>
       <select class="form-select" id="pBiz"><option value="佳">佳瑪</option><option value="艾">艾瑪特</option><option value="JC">JCPARK</option><option value="佳艾">佳瑪＋艾瑪特</option><option value="事業">事業部</option><option value="招商">招商事業部</option></select></div>
     <div class="form-group fg-full">
@@ -503,10 +1791,10 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
       <input class="form-input" id="pNameSuffix" placeholder="例：外牆+橫招" oninput="updateProjName()"></div>
     <div class="form-group fg-full">
       <label class="form-label">專案名稱（自動組合）</label>
-      <input class="form-input" id="pName" placeholder="選店別並填描述後自動產生" style="background:#f8fafc;color:var(--ink2)" readonly>
+      <input class="form-input" id="pName" placeholder="選店別並填描述後自動產生" style="background:#f8fafc;color:var(--ink2)" readonly="">
     </div>
     <div class="form-group"><label class="form-label">預計完成日</label><input class="form-input" type="date" id="pDate"></div>
-    <div class="form-group"><label class="form-label">實際完成日<span style="font-size:10px;color:var(--ink4);font-weight:400">（自動從細項抓最晚日）</span></label><input class="form-input" type="date" id="pDoneDate" style="background:#f8fafc;color:var(--ink3)" readonly></div>
+    <div class="form-group"><label class="form-label">實際完成日<span style="font-size:10px;color:var(--ink4);font-weight:400">（自動從細項抓最晚日）</span></label><input class="form-input" type="date" id="pDoneDate" style="background:#f8fafc;color:var(--ink3)" readonly=""></div>
     <div class="form-group"><label class="form-label">關注</label>
       <div style="padding:10px 12px;background:var(--bg);border-radius:10px;font-size:13px;color:var(--ink3)">依完成率自動計算</div></div>
   </div>
@@ -514,12 +1802,12 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
     <div class="dm-section-title">📌 備註記錄</div>
     <div id="projLogList"></div>
     <div class="log-add">
-      <input class="log-input" id="projLogInput" placeholder="新增備註…" onkeydown="if(event.key==='Enter')addProjLog()">
+      <input class="log-input" id="projLogInput" placeholder="新增備註…" onkeydown="if(event.key===&#39;Enter&#39;)addProjLog()">
       <button class="log-btn" onclick="addProjLog()">新增</button>
     </div>
   </div>
   <div class="modal-actions">
-    <button class="btn-cancel" onclick="closeModal('projModal')">取消</button>
+    <button class="btn-cancel" onclick="closeModal(&#39;projModal&#39;)">取消</button>
     <button class="btn-del" id="projDelBtn" style="display:none" onclick="deleteProj()">刪除</button>
     <button class="btn-save" onclick="saveProj()">儲存</button>
   </div>
@@ -527,15 +1815,15 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
 </div>
 
 <!-- ITEM MODAL -->
-<div class="modal-overlay" id="itemModal" onclick="closeOuter(event,'itemModal')">
+<div class="modal-overlay" id="itemModal" onclick="closeOuter(event,&#39;itemModal&#39;)">
 <div class="modal">
   <div class="modal-handle"></div>
-  <div class="modal-title"><span id="itemModalTitle">➕ 新增細項</span><button class="modal-close" onclick="closeModal('itemModal')">✕</button></div>
+  <div class="modal-title"><span id="itemModalTitle">➕ 新增細項</span><button class="modal-close" onclick="closeModal(&#39;itemModal&#39;)">✕</button></div>
   <div class="form-grid">
     <div class="form-group fg-full">
       <label class="form-label">所屬專案 *（輸入關鍵字搜尋）</label>
       <input class="form-input" id="iProjSearch" list="iProjList" placeholder="輸入店名或關鍵字搜尋…" oninput="onProjSearch()" autocomplete="off">
-      <datalist id="iProjList"></datalist>
+      <datalist id="iProjList"><option value="大｜楊梅店擴大" data-id="p_1782557194704_3fce"></option><option value="大｜艾瑪特_新竹店609_優化1-2階段" data-id="p_1782557195140_ibpx"></option><option value="大｜佳瑪_新莊店1006_新莊店電梯+廁所+哺乳室" data-id="p_1782557195660_v9zw"></option><option value="大｜佳瑪_蘆洲店1002_服務台" data-id="p_1782557196010_jix8"></option><option value="大｜佳瑪_蘆洲店1002_外觀形象案" data-id="p_1782557196292_2isl"></option><option value="中｜艾瑪特_新竹店609_優化(追加)" data-id="p_1782557196544_0mlq"></option><option value="中｜佳瑪_蘆洲店1002_收銀台標示" data-id="p_1782557196632_5b7n"></option><option value="大｜佳瑪_蘆洲店1002+艾瑪特_蘆洲店613_櫃台+試衣間+廁所+佳瑪廁所" data-id="p_1782557196724_adu3"></option><option value="中｜艾瑪特_板橋店611_縮坪改裝案" data-id="p_1782557196844_crtt"></option><option value="中｜艾瑪特_新竹店609_廁所優化案" data-id="p_1782557197010_vp88"></option><option value="小｜艾瑪特_板橋店611_外租櫃模擬" data-id="p_1782557197255_n5hu"></option><option value="急｜艾瑪特_蘆洲店613_櫥窗調整案" data-id="p_1782557197344_2s7o"></option><option value="小｜招商事業部_三重宿舍布條" data-id="p_1782557197477_c6zm"></option><option value="小｜JC_春日館1303_JC春日議員勘版" data-id="p_1782557197560_claj"></option><option value="小｜節慶圖片" data-id="p_1782557197722_qpe6"></option><option value="小｜佳瑪_蘆洲店1002_門口玻璃" data-id="p_1782623608971_iutx"></option><option value="小｜佳瑪_新莊店1006_特力屋安全門揭露" data-id="p_1782702659391_rqf7"></option><option value="中｜佳瑪_新莊店1006_停車場入口場勘錄影" data-id="p_1782702729055_axuu"></option><option value="小｜水槽示意圖" data-id="p_1783341555935_b7ji"></option><option value="大｜JC_中正館1302_門面設計(重啟)" data-id="p_1783341817083_2bw9"></option><option value="中｜艾瑪特_板橋店611_外電梯設計模擬(重啟)" data-id="p_1783342159533_31mq"></option><option value="小｜公司的入口網頁調整" data-id="p_1784864571118_svq9"></option></datalist>
       <input type="hidden" id="iProjId">
     </div>
     <div class="form-group fg-full">
@@ -607,12 +1895,12 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
     <div class="dm-section-title">📌 備註記錄</div>
     <div id="itemLogList"></div>
     <div class="log-add">
-      <input class="log-input" id="itemLogInput" placeholder="新增備註…" onkeydown="if(event.key==='Enter')addItemLog()">
+      <input class="log-input" id="itemLogInput" placeholder="新增備註…" onkeydown="if(event.key===&#39;Enter&#39;)addItemLog()">
       <button class="log-btn" onclick="addItemLog()">新增</button>
     </div>
   </div>
   <div class="modal-actions">
-    <button class="btn-cancel" onclick="closeModal('itemModal')">取消</button>
+    <button class="btn-cancel" onclick="closeModal(&#39;itemModal&#39;)">取消</button>
     <button class="btn-del" id="itemDelBtn" style="display:none" onclick="deleteItem()">刪除</button>
     <button class="btn-save" onclick="saveItem()">儲存</button>
   </div>
@@ -620,12 +1908,12 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
 </div>
 
 <!-- DETAIL MODAL -->
-<div class="modal-overlay" id="detailModal" onclick="closeOuter(event,'detailModal')">
+<div class="modal-overlay" id="detailModal" onclick="closeOuter(event,&#39;detailModal&#39;)">
 <div class="detail-modal">
   <div class="modal-handle"></div>
   <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
     <div class="dm-name" id="dmName"></div>
-    <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+    <button class="modal-close" onclick="closeModal(&#39;detailModal&#39;)">✕</button>
   </div>
   <div class="dm-badges" id="dmBadges"></div>
   <div class="dm-prog-label"><span>完成進度</span><span id="dmPct"></span></div>
@@ -635,13 +1923,13 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
     <div class="dm-section-title">📌 備註記錄</div>
     <div id="dmLogs"></div>
     <div class="log-add" id="dmLogAdd" style="display:none">
-      <input class="log-input" id="dmLogInput" placeholder="新增備註…" onkeydown="if(event.key==='Enter')addDetailLog()">
+      <input class="log-input" id="dmLogInput" placeholder="新增備註…" onkeydown="if(event.key===&#39;Enter&#39;)addDetailLog()">
       <button class="log-btn" onclick="addDetailLog()">新增</button>
     </div>
   </div>
   <div class="modal-actions" style="margin-top:14px">
-    <button class="btn-cancel" onclick="closeModal('detailModal')">關閉</button>
-    <button class="t-btn" onclick="closeModal('detailModal');jumpToItems(detailProjId)" style="background:var(--jc-l);color:var(--jc);padding:13px 16px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;border:none">📋 查看細項</button>
+    <button class="btn-cancel" onclick="closeModal(&#39;detailModal&#39;)">關閉</button>
+    <button class="t-btn" onclick="closeModal(&#39;detailModal&#39;);jumpToItems(detailProjId)" style="background:var(--jc-l);color:var(--jc);padding:13px 16px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;border:none">📋 查看細項</button>
     <button class="btn-save" id="detailEditBtn" onclick="editFromDetail()" style="display:none">✏️ 編輯</button>
   </div>
 </div>
@@ -650,7 +1938,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
   <button class="lightbox-close">✕</button>
-  <img id="lightboxImg" src="" alt="簽核圖">
+  <img id="lightboxImg" src="https://trackdelightt-coder.github.io/pm/" alt="簽核圖">
 </div>
 
 <div class="toast" id="toast"></div>
@@ -787,7 +2075,7 @@ function pctNum(pid){ const p=calcPct(pid); return p!==null?p:0; }
 function autoDoneDate(pid){
   const its=projItems(pid).filter(i=>i.status!==VOID_STATUS);
   if(!its.length) return null;
-  if(!its.every(i=>i.status===DONE_STATUS)) return null;
+  if(!its.every(i=>i.status===DONE_STATUS||i.status===CLOSED_STATUS)) return null;
   const dates=its.map(i=>i.doneDate).filter(Boolean);
   if(!dates.length) return null;
   return dates.sort().reverse()[0];
@@ -2396,9 +3684,13 @@ window.renderReport = function(){
     const filtP = reportRange==='all' ? projects : projects.filter(inRange);
     const filtI = reportRange==='all' ? items : items.filter(i=>{ const p=getProj(i.projId)||{}; return inRange(p); });
 
+    const allProgP=projects.filter(p=>getStatus(p)==='執行中');
+    const allUrgentP=projects.filter(p=>p.grade==='急'&&getStatus(p)!=='已完成'&&getStatus(p)!=='流標');
+    const allAlertP=projects.filter(p=>autoAlert(p.id)==='需追蹤');
+
     const total=filtP.length;
     const done=filtP.filter(p=>getStatus(p)==='已完成').length;
-    const prog=filtP.filter(p=>getStatus(p)==='執行中').length;
+    const prog=allProgP.length;
     const totalQty=filtI.reduce((a,i)=>a+(parseInt(i.qty)||1),0);
     const doneQty=filtI.filter(i=>i.delivered===true||i.status===DONE_STATUS||i.status===CLOSED_STATUS).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
     const qtyPct=totalQty>0?Math.round(doneQty/totalQty*100):0;
@@ -2461,9 +3753,9 @@ window.renderReport = function(){
       return d>=rangeStart && d<=rangeEnd;
     }).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
 
-    const urgentProjs=filtP.filter(p=>p.grade==='急'&&getStatus(p)!=='已完成'&&getStatus(p)!=='流標');
-    const needAlert=filtP.filter(p=>autoAlert(p.id)==='需追蹤').sort((a,b)=>(a.date||'').localeCompare(b.date||''));
-    const thisMonth=filtP.filter(p=>{ const st=getStatus(p); return st!=='已完成'&&st!=='流標'; }).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+    const urgentProjs=allUrgentP;
+    const needAlert=allAlertP.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+    const thisMonth=allProgP.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
     const doneList=filtP.filter(p=>getStatus(p)==='已完成');
 
     let html = '';
@@ -2641,5 +3933,6 @@ window.showToast = msg => {
 };
 function showToast(msg){ window.showToast(msg); }
 </script>
-</body>
-</html>
+
+
+</body></html>
