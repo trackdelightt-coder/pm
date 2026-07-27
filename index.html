@@ -1,10 +1,11 @@
+
 <!DOCTYPE html>
 <!-- saved from url=(0041)https://trackdelightt-coder.github.io/pm/ -->
 <html lang="zh-TW"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="mobile-web-app-capable" content="yes">
-<link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=&#39;http://www.w3.org/2000/svg&#39; viewBox=&#39;0 0 100 100&#39;&gt;&lt;text y=&#39;.9em&#39; font-size=&#39;90&#39;&gt;%E2%9C%8F%EF%B8%8F&lt;/text&gt;&lt;/svg&gt;">
+<link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;text y='.9em' font-size='90'&gt;%E2%9C%8F%EF%B8%8F&lt;/text&gt;&lt;/svg&gt;">
 <meta name="theme-color" content="#0f172a">
 <title>設計專案執行總覽</title>
 <style>
@@ -244,21 +245,22 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
 .kanban-card-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .report-range-btn{padding:6px 14px;border-radius:20px;border:1.5px solid var(--line);background:white;color:var(--ink3);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
 .report-range-btn.active{background:var(--jia);color:white;border-color:var(--jia)}
+
 </style>
-<script src="./設計專案執行總覽_files/firebase-app.js.下載"></script>
-<script src="./設計專案執行總覽_files/firebase-firestore.js.下載"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
 <body>
-<script src="./設計專案執行總覽_files/exceljs.min.js.下載"></script>
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
 
 <!-- LOGIN -->
-<div class="login-screen hide" id="loginScreen">
+<div class="login-screen" id="loginScreen">
   <div style="font-size:36px;margin-bottom:10px">📋</div>
   <div style="font-size:22px;font-weight:900;color:white;margin-bottom:4px;text-align:center">設計專案執行總覽</div>
   <div style="font-size:13px;color:#64748b;margin-bottom:40px">設計專案課</div>
   <button class="login-view-btn" onclick="enterViewMode()">👁 查看進度</button>
   <div class="login-edit-wrap">
-    <input class="login-edit-input" type="password" id="pwInput" placeholder="編輯密碼" onkeydown="if(event.key===&#39;Enter&#39;)checkPw()">
+    <input class="login-edit-input" type="password" id="pwInput" placeholder="編輯密碼" onkeydown="if(event.key==='Enter')checkPw()">
     <button class="login-edit-btn" onclick="checkPw()">進入</button>
   </div>
   <div class="login-err" id="pwErr"></div>
@@ -275,10 +277,10 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
 <div class="topbar">
   <div class="topbar-title">📋 設計專案執行總覽</div>
   <div class="topbar-tabs">
-    <button class="ttab" onclick="showScreen(&#39;boss&#39;,this)">大項目</button>
-    <button class="ttab" onclick="showScreen(&#39;items&#39;,this)">細項</button>
-    <button class="ttab" onclick="showScreen(&#39;dash&#39;,this)">統計</button>
-    <button class="ttab active" onclick="showScreen(&#39;report&#39;,this)">📋 進度報告</button>
+    <button class="ttab" onclick="showScreen('boss',this)">大項目</button>
+    <button class="ttab" onclick="showScreen('items',this)">細項</button>
+    <button class="ttab" onclick="showScreen('dash',this)">統計</button>
+    <button class="ttab active" onclick="showScreen('report',this)">📋 進度報告</button>
   </div>
   <div style="display:flex;align-items:center;gap:6px">
     <span class="mode-tag" id="modeTag">👁 查看</span>
@@ -304,8 +306,8 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
   </div>
   <div class="alert-banner" id="alertBanner" style="display: block;">⚠️ 即將到期（7天內）：佳瑪_蘆洲店1002_外觀形象案（2026-07-31）、艾瑪特_板橋店611_縮坪改裝案（2026-07-31）、艾瑪特_新竹店609_廁所優化案（2026-07-29）、艾瑪特_蘆洲店613_櫥窗調整案（2026-07-31）</div>
   <div style="display:flex;justify-content:flex-end;padding:8px 0 4px;gap:6px">
-    <button id="btnTableView" onclick="switchBossView(&#39;table&#39;)" style="padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; border: 1.5px solid var(--line); background: white; color: var(--ink2);">☰ 表格</button>
-    <button id="btnKanbanView" onclick="switchBossView(&#39;kanban&#39;)" style="padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; border: 1.5px solid var(--jia); background: var(--jia); color: white;">⊞ 看板</button>
+    <button id="btnTableView" onclick="switchBossView('table')" style="padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; border: 1.5px solid var(--line); background: white; color: var(--ink2);">☰ 表格</button>
+    <button id="btnKanbanView" onclick="switchBossView('kanban')" style="padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; border: 1.5px solid var(--jia); background: var(--jia); color: white;">⊞ 看板</button>
   </div>
   <div class="filter-bar">
     <button class="chip active" data-bf="all">全部</button>
@@ -344,10 +346,10 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
     <table class="boss-table"><thead><tr>
       <th>等級</th><th>專案名稱</th><th style="width:40px"></th><th>事業部</th><th style="min-width:120px">進度</th>
       <th>狀態</th><th>預計完工</th><th>實際完成</th><th>關注</th><th>最新備註</th>
-    </tr></thead><tbody id="bossTableBody"><tr class="alert-tr" onclick="openDetail(&#39;p_1782557196844_crtt&#39;)">
+    </tr></thead><tbody id="bossTableBody"><tr class="alert-tr" onclick="openDetail('p_1782557196844_crtt')">
       <td><span class="grade grade-中">中</span></td>
       <td style="font-weight:700;color:var(--alert);white-space:normal;word-break:break-all">艾瑪特_板橋店611_縮坪改裝案</td>
-      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems(&#39;p_1782557196844_crtt&#39;)" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
+      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems('p_1782557196844_crtt')" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
       <td><span class="biz-badge biz-艾">艾瑪特</span></td>
       <td><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:30%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">30%</span></div></td>
       <td><span class="status-badge s-執行中">執行中</span></td>
@@ -357,10 +359,10 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
       </td>
       <td><span class="alert-badge a-yes">⚠️ 需追蹤</span></td>
       <td style="font-size:11px;color:var(--ink3);max-width:150px;white-space:normal;word-break:break-all;line-height:1.4">7/17提供樓梯處+內部模擬給副總</td>
-    </tr><tr class="alert-tr" onclick="openDetail(&#39;p_1782557197344_2s7o&#39;)">
+    </tr><tr class="alert-tr" onclick="openDetail('p_1782557197344_2s7o')">
       <td><span class="grade grade-急">急</span></td>
       <td style="font-weight:700;color:var(--alert);white-space:normal;word-break:break-all">艾瑪特_蘆洲店613_櫥窗調整案</td>
-      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems(&#39;p_1782557197344_2s7o&#39;)" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
+      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems('p_1782557197344_2s7o')" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
       <td><span class="biz-badge biz-艾">艾瑪特</span></td>
       <td><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:50%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">50%</span></div></td>
       <td><span class="status-badge s-執行中">執行中</span></td>
@@ -370,10 +372,10 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
       </td>
       <td><span class="alert-badge a-yes">⚠️ 需追蹤</span></td>
       <td style="font-size:11px;color:var(--ink3);max-width:150px;white-space:normal;word-break:break-all;line-height:1.4">7/17提供右邊新作櫥窗+砲管  共*3張</td>
-    </tr><tr class="alert-tr" onclick="openDetail(&#39;p_1782557196544_0mlq&#39;)">
+    </tr><tr class="alert-tr" onclick="openDetail('p_1782557196544_0mlq')">
       <td><span class="grade grade-中">中</span></td>
       <td style="font-weight:700;color:var(--alert);white-space:normal;word-break:break-all">艾瑪特_新竹店609_優化(追加)</td>
-      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems(&#39;p_1782557196544_0mlq&#39;)" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
+      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems('p_1782557196544_0mlq')" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
       <td><span class="biz-badge biz-艾">艾瑪特</span></td>
       <td><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:0%;background:var(--wait)"></div></div><span class="prog-pct" style="color:var(--wait)">0%</span></div></td>
       <td><span class="status-badge s-待執行">待執行</span></td>
@@ -383,10 +385,10 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
       </td>
       <td><span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;background:#fef3c7;color:#b45309">持續推進</span></td>
       <td style="font-size:11px;color:var(--ink3);max-width:150px;white-space:normal;word-break:break-all;line-height:1.4">—</td>
-    </tr><tr class="alert-tr" onclick="openDetail(&#39;p_1782557196632_5b7n&#39;)">
+    </tr><tr class="alert-tr" onclick="openDetail('p_1782557196632_5b7n')">
       <td><span class="grade grade-中">中</span></td>
       <td style="font-weight:700;color:var(--alert);white-space:normal;word-break:break-all">佳瑪_蘆洲店1002_收銀台標示</td>
-      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems(&#39;p_1782557196632_5b7n&#39;)" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
+      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems('p_1782557196632_5b7n')" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
       <td><span class="biz-badge biz-佳">佳瑪</span></td>
       <td><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:0%;background:var(--wait)"></div></div><span class="prog-pct" style="color:var(--wait)">0%</span></div></td>
       <td><span class="status-badge s-待執行">待執行</span></td>
@@ -396,10 +398,10 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
       </td>
       <td><span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;background:#fef3c7;color:#b45309">持續推進</span></td>
       <td style="font-size:11px;color:var(--ink3);max-width:150px;white-space:normal;word-break:break-all;line-height:1.4">—</td>
-    </tr><tr class="alert-tr" onclick="openDetail(&#39;p_1783342159533_31mq&#39;)">
+    </tr><tr class="alert-tr" onclick="openDetail('p_1783342159533_31mq')">
       <td><span class="grade grade-中">中</span></td>
       <td style="font-weight:700;color:var(--alert);white-space:normal;word-break:break-all">艾瑪特_板橋店611_外電梯設計模擬(重啟)</td>
-      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems(&#39;p_1783342159533_31mq&#39;)" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
+      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems('p_1783342159533_31mq')" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
       <td><span class="biz-badge biz-艾">艾瑪特</span></td>
       <td><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:0%;background:var(--wait)"></div></div><span class="prog-pct" style="color:var(--wait)">0%</span></div></td>
       <td><span class="status-badge s-待執行">待執行</span></td>
@@ -409,10 +411,10 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
       </td>
       <td><span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;background:#fef3c7;color:#b45309">持續推進</span></td>
       <td style="font-size:11px;color:var(--ink3);max-width:150px;white-space:normal;word-break:break-all;line-height:1.4">2025/1/16總務詢價後停擺</td>
-    </tr><tr class="alert-tr" onclick="openDetail(&#39;p_1782557196724_adu3&#39;)">
+    </tr><tr class="alert-tr" onclick="openDetail('p_1782557196724_adu3')">
       <td><span class="grade grade-大">大</span></td>
       <td style="font-weight:700;color:var(--alert);white-space:normal;word-break:break-all">佳瑪_蘆洲店1002+艾瑪特_蘆洲店613_櫃台+試衣間+廁所+佳瑪廁所</td>
-      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems(&#39;p_1782557196724_adu3&#39;)" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
+      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems('p_1782557196724_adu3')" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
       <td><span class="biz-badge biz-佳艾">佳＋艾</span></td>
       <td><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:0%;background:var(--wait)"></div></div><span class="prog-pct" style="color:var(--wait)">0%</span></div></td>
       <td><span class="status-badge s-待執行">待執行</span></td>
@@ -422,10 +424,10 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
       </td>
       <td><span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;background:#fef3c7;color:#b45309">持續推進</span></td>
       <td style="font-size:11px;color:var(--ink3);max-width:150px;white-space:normal;word-break:break-all;line-height:1.4">比照楊梅店</td>
-    </tr><tr class="" onclick="openDetail(&#39;p_1782557197010_vp88&#39;)">
+    </tr><tr class="" onclick="openDetail('p_1782557197010_vp88')">
       <td><span class="grade grade-中">中</span></td>
       <td style="font-weight:700;color:var(--ink);white-space:normal;word-break:break-all">艾瑪特_新竹店609_廁所優化案</td>
-      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems(&#39;p_1782557197010_vp88&#39;)" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
+      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems('p_1782557197010_vp88')" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
       <td><span class="biz-badge biz-艾">艾瑪特</span></td>
       <td><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:50%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">50%</span></div></td>
       <td><span class="status-badge s-執行中">執行中</span></td>
@@ -435,10 +437,10 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
       </td>
       <td><span class="alert-badge a-yes">⚠️ 需追蹤</span></td>
       <td style="font-size:11px;color:var(--ink3);max-width:150px;white-space:normal;word-break:break-all;line-height:1.4">7/17平面圖更新  重新模擬 已給副總</td>
-    </tr><tr class="" onclick="openDetail(&#39;p_1782557196292_2isl&#39;)">
+    </tr><tr class="" onclick="openDetail('p_1782557196292_2isl')">
       <td><span class="grade grade-大">大</span></td>
       <td style="font-weight:700;color:var(--ink);white-space:normal;word-break:break-all">佳瑪_蘆洲店1002_外觀形象案</td>
-      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems(&#39;p_1782557196292_2isl&#39;)" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
+      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems('p_1782557196292_2isl')" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
       <td><span class="biz-badge biz-佳">佳瑪</span></td>
       <td><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:50%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">50%</span></div></td>
       <td><span class="status-badge s-執行中">執行中</span></td>
@@ -448,10 +450,10 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
       </td>
       <td><span class="alert-badge a-yes">⚠️ 需追蹤</span></td>
       <td style="font-size:11px;color:var(--ink3);max-width:150px;white-space:normal;word-break:break-all;line-height:1.4">7/20修改貼圖+框板</td>
-    </tr><tr class="" onclick="openDetail(&#39;p_1783341817083_2bw9&#39;)">
+    </tr><tr class="" onclick="openDetail('p_1783341817083_2bw9')">
       <td><span class="grade grade-大">大</span></td>
       <td style="font-weight:700;color:var(--ink);white-space:normal;word-break:break-all">JC_中正館1302_門面設計(重啟)</td>
-      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems(&#39;p_1783341817083_2bw9&#39;)" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
+      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems('p_1783341817083_2bw9')" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
       <td><span class="biz-badge biz-JC">JCPARK</span></td>
       <td><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:50%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">50%</span></div></td>
       <td><span class="status-badge s-執行中">執行中</span></td>
@@ -461,10 +463,10 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
       </td>
       <td><span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;background:#fef3c7;color:#b45309">持續推進</span></td>
       <td style="font-size:11px;color:var(--ink3);max-width:150px;white-space:normal;word-break:break-all;line-height:1.4">2025/6/6總務詢價後停擺</td>
-    </tr><tr class="" onclick="openDetail(&#39;p_1782702729055_axuu&#39;)">
+    </tr><tr class="" onclick="openDetail('p_1782702729055_axuu')">
       <td><span class="grade grade-中">中</span></td>
       <td style="font-weight:700;color:var(--ink);white-space:normal;word-break:break-all">佳瑪_新莊店1006_停車場入口場勘錄影</td>
-      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems(&#39;p_1782702729055_axuu&#39;)" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
+      <td style="text-align:center"><button onclick="event.stopPropagation();jumpToItems('p_1782702729055_axuu')" style="background:var(--jc-l);color:var(--jc);border:none;border-radius:6px;padding:4px 7px;font-size:12px;cursor:pointer;font-weight:700">📋</button></td>
       <td><span class="biz-badge biz-佳">佳瑪</span></td>
       <td><div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:0%;background:var(--wait)"></div></div><span class="prog-pct" style="color:var(--wait)">0%</span></div></td>
       <td><span class="status-badge s-待執行">待執行</span></td>
@@ -476,7 +478,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
       <td style="font-size:11px;color:var(--ink3);max-width:150px;white-space:normal;word-break:break-all;line-height:1.4">—</td>
     </tr><tr id="doneCountRow"><td colspan="8" style="text-align:center;padding:12px;color:var(--done);font-size:13px;font-weight:600;cursor:pointer;background:var(--done-l)" onclick="toggleCollapse()">✅ 已完成 12 個專案（點此展開）</td></tr></tbody></table>
   </div>
-  <div class="boss-cards" id="bossCards" style="display: none;"><div class="boss-card alert-card" onclick="openDetail(&#39;p_1782557196844_crtt&#39;)">
+  <div class="boss-cards" id="bossCards" style="display: none;"><div class="boss-card alert-card" onclick="openDetail('p_1782557196844_crtt')">
       <div class="bc-top">
         <div class="bc-name" style="color:var(--alert)">艾瑪特_板橋店611_縮坪改裝案</div>
         <div class="bc-badges"><span class="grade grade-中">中</span><span class="status-badge s-執行中">執行中</span></div>
@@ -488,7 +490,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
         <span class="bc-meta-item" style="color:var(--alert);font-weight:600">⚠️ 需追蹤</span>
       </div>
       <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:30%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">30%</span></div>
-    </div><div class="boss-card alert-card" onclick="openDetail(&#39;p_1782557197344_2s7o&#39;)">
+    </div><div class="boss-card alert-card" onclick="openDetail('p_1782557197344_2s7o')">
       <div class="bc-top">
         <div class="bc-name" style="color:var(--alert)">艾瑪特_蘆洲店613_櫥窗調整案</div>
         <div class="bc-badges"><span class="grade grade-急">急</span><span class="status-badge s-執行中">執行中</span></div>
@@ -500,7 +502,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
         <span class="bc-meta-item" style="color:var(--alert);font-weight:600">⚠️ 需追蹤</span>
       </div>
       <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:50%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">50%</span></div>
-    </div><div class="boss-card alert-card" onclick="openDetail(&#39;p_1782557196544_0mlq&#39;)">
+    </div><div class="boss-card alert-card" onclick="openDetail('p_1782557196544_0mlq')">
       <div class="bc-top">
         <div class="bc-name" style="color:var(--alert)">艾瑪特_新竹店609_優化(追加)</div>
         <div class="bc-badges"><span class="grade grade-中">中</span><span class="status-badge s-待執行">待執行</span></div>
@@ -512,7 +514,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
         <span class="bc-meta-item" style="color:var(--alert);font-weight:600">⚠️ 需追蹤</span>
       </div>
       <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:0%;background:var(--wait)"></div></div><span class="prog-pct" style="color:var(--wait)">0%</span></div>
-    </div><div class="boss-card alert-card" onclick="openDetail(&#39;p_1782557196632_5b7n&#39;)">
+    </div><div class="boss-card alert-card" onclick="openDetail('p_1782557196632_5b7n')">
       <div class="bc-top">
         <div class="bc-name" style="color:var(--alert)">佳瑪_蘆洲店1002_收銀台標示</div>
         <div class="bc-badges"><span class="grade grade-中">中</span><span class="status-badge s-待執行">待執行</span></div>
@@ -524,7 +526,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
         <span class="bc-meta-item" style="color:var(--alert);font-weight:600">⚠️ 需追蹤</span>
       </div>
       <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:0%;background:var(--wait)"></div></div><span class="prog-pct" style="color:var(--wait)">0%</span></div>
-    </div><div class="boss-card alert-card" onclick="openDetail(&#39;p_1783342159533_31mq&#39;)">
+    </div><div class="boss-card alert-card" onclick="openDetail('p_1783342159533_31mq')">
       <div class="bc-top">
         <div class="bc-name" style="color:var(--alert)">艾瑪特_板橋店611_外電梯設計模擬(重啟)</div>
         <div class="bc-badges"><span class="grade grade-中">中</span><span class="status-badge s-待執行">待執行</span></div>
@@ -536,7 +538,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
         <span class="bc-meta-item" style="color:var(--alert);font-weight:600">⚠️ 需追蹤</span>
       </div>
       <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:0%;background:var(--wait)"></div></div><span class="prog-pct" style="color:var(--wait)">0%</span></div>
-    </div><div class="boss-card alert-card" onclick="openDetail(&#39;p_1782557196724_adu3&#39;)">
+    </div><div class="boss-card alert-card" onclick="openDetail('p_1782557196724_adu3')">
       <div class="bc-top">
         <div class="bc-name" style="color:var(--alert)">佳瑪_蘆洲店1002+艾瑪特_蘆洲店613_櫃台+試衣間+廁所+佳瑪廁所</div>
         <div class="bc-badges"><span class="grade grade-大">大</span><span class="status-badge s-待執行">待執行</span></div>
@@ -548,7 +550,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
         <span class="bc-meta-item" style="color:var(--alert);font-weight:600">⚠️ 需追蹤</span>
       </div>
       <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:0%;background:var(--wait)"></div></div><span class="prog-pct" style="color:var(--wait)">0%</span></div>
-    </div><div class="boss-card " onclick="openDetail(&#39;p_1782557197010_vp88&#39;)">
+    </div><div class="boss-card " onclick="openDetail('p_1782557197010_vp88')">
       <div class="bc-top">
         <div class="bc-name" style="color:var(--ink)">艾瑪特_新竹店609_廁所優化案</div>
         <div class="bc-badges"><span class="grade grade-中">中</span><span class="status-badge s-執行中">執行中</span></div>
@@ -560,7 +562,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
         
       </div>
       <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:50%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">50%</span></div>
-    </div><div class="boss-card " onclick="openDetail(&#39;p_1782557196292_2isl&#39;)">
+    </div><div class="boss-card " onclick="openDetail('p_1782557196292_2isl')">
       <div class="bc-top">
         <div class="bc-name" style="color:var(--ink)">佳瑪_蘆洲店1002_外觀形象案</div>
         <div class="bc-badges"><span class="grade grade-大">大</span><span class="status-badge s-執行中">執行中</span></div>
@@ -572,7 +574,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
         
       </div>
       <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:50%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">50%</span></div>
-    </div><div class="boss-card " onclick="openDetail(&#39;p_1783341817083_2bw9&#39;)">
+    </div><div class="boss-card " onclick="openDetail('p_1783341817083_2bw9')">
       <div class="bc-top">
         <div class="bc-name" style="color:var(--ink)">JC_中正館1302_門面設計(重啟)</div>
         <div class="bc-badges"><span class="grade grade-大">大</span><span class="status-badge s-執行中">執行中</span></div>
@@ -584,7 +586,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
         
       </div>
       <div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:50%;background:var(--prog)"></div></div><span class="prog-pct" style="color:var(--prog)">50%</span></div>
-    </div><div class="boss-card " onclick="openDetail(&#39;p_1782702729055_axuu&#39;)">
+    </div><div class="boss-card " onclick="openDetail('p_1782702729055_axuu')">
       <div class="bc-top">
         <div class="bc-name" style="color:var(--ink)">佳瑪_新莊店1006_停車場入口場勘錄影</div>
         <div class="bc-badges"><span class="grade grade-中">中</span><span class="status-badge s-待執行">待執行</span></div>
@@ -1735,10 +1737,10 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
 </div>
 
 <!-- PROJECT MODAL -->
-<div class="modal-overlay" id="projModal" onclick="closeOuter(event,&#39;projModal&#39;)">
+<div class="modal-overlay" id="projModal" onclick="closeOuter(event,'projModal')">
 <div class="modal">
   <div class="modal-handle"></div>
-  <div class="modal-title"><span id="projModalTitle">➕ 新增專案</span><button class="modal-close" onclick="closeModal(&#39;projModal&#39;)">✕</button></div>
+  <div class="modal-title"><span id="projModalTitle">➕ 新增專案</span><button class="modal-close" onclick="closeModal('projModal')">✕</button></div>
   <div class="form-grid">
     <div class="form-group"><label class="form-label">等級</label>
       <select class="form-select" id="pGrade"><option value="急">急件</option><option value="大">大型</option><option value="中" selected="">中型</option><option value="小">小型</option></select></div>
@@ -1801,12 +1803,12 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
     <div class="dm-section-title">📌 備註記錄</div>
     <div id="projLogList"></div>
     <div class="log-add">
-      <input class="log-input" id="projLogInput" placeholder="新增備註…" onkeydown="if(event.key===&#39;Enter&#39;)addProjLog()">
+      <input class="log-input" id="projLogInput" placeholder="新增備註…" onkeydown="if(event.key==='Enter')addProjLog()">
       <button class="log-btn" onclick="addProjLog()">新增</button>
     </div>
   </div>
   <div class="modal-actions">
-    <button class="btn-cancel" onclick="closeModal(&#39;projModal&#39;)">取消</button>
+    <button class="btn-cancel" onclick="closeModal('projModal')">取消</button>
     <button class="btn-del" id="projDelBtn" style="display:none" onclick="deleteProj()">刪除</button>
     <button class="btn-save" onclick="saveProj()">儲存</button>
   </div>
@@ -1814,10 +1816,10 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
 </div>
 
 <!-- ITEM MODAL -->
-<div class="modal-overlay" id="itemModal" onclick="closeOuter(event,&#39;itemModal&#39;)">
+<div class="modal-overlay" id="itemModal" onclick="closeOuter(event,'itemModal')">
 <div class="modal">
   <div class="modal-handle"></div>
-  <div class="modal-title"><span id="itemModalTitle">➕ 新增細項</span><button class="modal-close" onclick="closeModal(&#39;itemModal&#39;)">✕</button></div>
+  <div class="modal-title"><span id="itemModalTitle">➕ 新增細項</span><button class="modal-close" onclick="closeModal('itemModal')">✕</button></div>
   <div class="form-grid">
     <div class="form-group fg-full">
       <label class="form-label">所屬專案 *（輸入關鍵字搜尋）</label>
@@ -1894,12 +1896,12 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
     <div class="dm-section-title">📌 備註記錄</div>
     <div id="itemLogList"></div>
     <div class="log-add">
-      <input class="log-input" id="itemLogInput" placeholder="新增備註…" onkeydown="if(event.key===&#39;Enter&#39;)addItemLog()">
+      <input class="log-input" id="itemLogInput" placeholder="新增備註…" onkeydown="if(event.key==='Enter')addItemLog()">
       <button class="log-btn" onclick="addItemLog()">新增</button>
     </div>
   </div>
   <div class="modal-actions">
-    <button class="btn-cancel" onclick="closeModal(&#39;itemModal&#39;)">取消</button>
+    <button class="btn-cancel" onclick="closeModal('itemModal')">取消</button>
     <button class="btn-del" id="itemDelBtn" style="display:none" onclick="deleteItem()">刪除</button>
     <button class="btn-save" onclick="saveItem()">儲存</button>
   </div>
@@ -1907,12 +1909,12 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
 </div>
 
 <!-- DETAIL MODAL -->
-<div class="modal-overlay" id="detailModal" onclick="closeOuter(event,&#39;detailModal&#39;)">
+<div class="modal-overlay" id="detailModal" onclick="closeOuter(event,'detailModal')">
 <div class="detail-modal">
   <div class="modal-handle"></div>
   <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
     <div class="dm-name" id="dmName"></div>
-    <button class="modal-close" onclick="closeModal(&#39;detailModal&#39;)">✕</button>
+    <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
   </div>
   <div class="dm-badges" id="dmBadges"></div>
   <div class="dm-prog-label"><span>完成進度</span><span id="dmPct"></span></div>
@@ -1922,13 +1924,13 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
     <div class="dm-section-title">📌 備註記錄</div>
     <div id="dmLogs"></div>
     <div class="log-add" id="dmLogAdd" style="display:none">
-      <input class="log-input" id="dmLogInput" placeholder="新增備註…" onkeydown="if(event.key===&#39;Enter&#39;)addDetailLog()">
+      <input class="log-input" id="dmLogInput" placeholder="新增備註…" onkeydown="if(event.key==='Enter')addDetailLog()">
       <button class="log-btn" onclick="addDetailLog()">新增</button>
     </div>
   </div>
   <div class="modal-actions" style="margin-top:14px">
-    <button class="btn-cancel" onclick="closeModal(&#39;detailModal&#39;)">關閉</button>
-    <button class="t-btn" onclick="closeModal(&#39;detailModal&#39;);jumpToItems(detailProjId)" style="background:var(--jc-l);color:var(--jc);padding:13px 16px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;border:none">📋 查看細項</button>
+    <button class="btn-cancel" onclick="closeModal('detailModal')">關閉</button>
+    <button class="t-btn" onclick="closeModal('detailModal');jumpToItems(detailProjId)" style="background:var(--jc-l);color:var(--jc);padding:13px 16px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;border:none">📋 查看細項</button>
     <button class="btn-save" id="detailEditBtn" onclick="editFromDetail()" style="display:none">✏️ 編輯</button>
   </div>
 </div>
@@ -2074,7 +2076,7 @@ function pctNum(pid){ const p=calcPct(pid); return p!==null?p:0; }
 function autoDoneDate(pid){
   const its=projItems(pid).filter(i=>i.status!==VOID_STATUS);
   if(!its.length) return null;
-  if(!its.every(i=>i.status===DONE_STATUS)) return null;
+  if(!its.every(i=>i.status===DONE_STATUS||i.status===CLOSED_STATUS)) return null;
   const dates=its.map(i=>i.doneDate).filter(Boolean);
   if(!dates.length) return null;
   return dates.sort().reverse()[0];
@@ -3683,9 +3685,13 @@ window.renderReport = function(){
     const filtP = reportRange==='all' ? projects : projects.filter(inRange);
     const filtI = reportRange==='all' ? items : items.filter(i=>{ const p=getProj(i.projId)||{}; return inRange(p); });
 
+    const allProgP=projects.filter(p=>getStatus(p)==='執行中');
+    const allUrgentP=projects.filter(p=>p.grade==='急'&&getStatus(p)!=='已完成'&&getStatus(p)!=='流標');
+    const allAlertP=projects.filter(p=>autoAlert(p.id)==='需追蹤');
+
     const total=filtP.length;
     const done=filtP.filter(p=>getStatus(p)==='已完成').length;
-    const prog=filtP.filter(p=>getStatus(p)==='執行中').length;
+    const prog=allProgP.length;
     const totalQty=filtI.reduce((a,i)=>a+(parseInt(i.qty)||1),0);
     const doneQty=filtI.filter(i=>i.delivered===true||i.status===DONE_STATUS||i.status===CLOSED_STATUS).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
     const qtyPct=totalQty>0?Math.round(doneQty/totalQty*100):0;
@@ -3748,9 +3754,9 @@ window.renderReport = function(){
       return d>=rangeStart && d<=rangeEnd;
     }).reduce((a,i)=>a+(parseInt(i.qty)||1),0);
 
-    const urgentProjs=filtP.filter(p=>p.grade==='急'&&getStatus(p)!=='已完成'&&getStatus(p)!=='流標');
-    const needAlert=filtP.filter(p=>autoAlert(p.id)==='需追蹤').sort((a,b)=>(a.date||'').localeCompare(b.date||''));
-    const thisMonth=filtP.filter(p=>{ const st=getStatus(p); return st!=='已完成'&&st!=='流標'; }).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+    const urgentProjs=allUrgentP;
+    const needAlert=allAlertP.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+    const thisMonth=allProgP.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
     const doneList=filtP.filter(p=>getStatus(p)==='已完成');
 
     let html = '';
