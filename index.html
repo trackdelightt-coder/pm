@@ -2232,7 +2232,7 @@ window.renderBoss = function(){
   document.getElementById('bossTableBody').innerHTML=list.length?list.map(p=>{
     const col=sc(p._status),ia=p.alert==='需追蹤';
     const d=parseDate(p.date);
-    const isPast=d&&p._status!=='已完成'&&d<new Date();
+    const isPast=d&&p._status!=='已完成'&&p._status!=='流標'&&d<new Date()&&ia;
     const ds=p.date?p.date.replace('2026-',''):'—';
     return `<tr class="${ia?'alert-tr':''}" onclick="openDetail('${p.id}')">
       <td><span class="grade grade-${p.grade}">${p.grade}</span></td>
@@ -2273,7 +2273,7 @@ window.renderBoss = function(){
   document.getElementById('bossCards').innerHTML=list.length?list.map(p=>{
     const col=sc(p._status),ia=p.alert==='需追蹤';
     const d=parseDate(p.date);
-    const isPast=d&&p._status!=='已完成'&&d<new Date();
+    const isPast=d&&p._status!=='已完成'&&p._status!=='流標'&&d<new Date()&&ia;
     const ds=p.date?p.date.replace('2026-',''):'—';
     return `<div class="boss-card ${ia?'alert-card':''}" onclick="openDetail('${p.id}')">
       <div class="bc-top">
@@ -3701,8 +3701,21 @@ window.renderGantt = function(){
   const mo=moSel.value;
 
   let list=projects.filter(p=>getStatus(p)!=='流標');
+  // 年份篩選
   list=list.filter(p=>{ const d=p.date||p.doneDate||''; return d.startsWith(yr); });
-  if(mo!=='all') list=list.filter(p=>{ const d=p.date||p.doneDate||''; return d.startsWith(yr+'-'+mo); });
+  // 月份篩選：進行中的專案只要預計完成日在該月或之後就顯示；已完成的看實際完成日
+  if(mo!=='all'){
+    list=list.filter(p=>{
+      const st=getStatus(p);
+      if(st==='已完成'){
+        const d=autoDoneDate(p.id)||p.doneDate||'';
+        return d.startsWith(yr+'-'+mo);
+      }
+      // 進行中：預計完成日在該月或之後
+      const d=p.date||'';
+      return d>=yr+'-'+mo;
+    });
+  }
   if(!ganttShowDone) list=list.filter(p=>getStatus(p)!=='已完成');
   list=list.sort((a,b)=>(a.date||a.doneDate||'').localeCompare(b.date||b.doneDate||''));
 
@@ -3749,11 +3762,11 @@ window.renderGantt = function(){
     const isDone=st==='已完成';
     const pct=pctNum(p.id);
     const shortName=(p.name||'').length>20?(p.name||'').slice(0,20)+'…':p.name||'';
-    const divEl='<div data-pid="'+p.id+'" style="height:'+ROW_H+'px;padding:0 8px;display:flex;flex-direction:column;justify-content:center;background:'+(i%2===0?'white':'#f8f9ff')+';border-bottom:1px solid var(--line);cursor:pointer" onclick="jumpToItems(this.dataset.pid)">'
+    const pid_=p.id;
+    labelHtml+='<div onclick="jumpToItems(\''+pid_+'\');" style="height:'+ROW_H+'px;padding:0 8px;display:flex;flex-direction:column;justify-content:center;background:'+(i%2===0?'white':'#f8f9ff')+';border-bottom:1px solid var(--line);cursor:pointer">'
       +'<div style="font-size:11px;font-weight:700;color:'+(isDone?'#16a34a':'var(--jia)')+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:underline dotted" title="'+(p.name||'')+'">'+shortName+'</div>'
       +'<div style="font-size:10px;color:var(--ink4);margin-top:2px">'+st+' · '+pct+'%</div>'
       +'</div>';
-    labelHtml+=divEl;
   });
   labelsEl.innerHTML=labelHtml;
   labelsEl.style.height=totalH+'px';
