@@ -272,7 +272,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
   <!-- 甘特圖容器：左邊固定標籤 + 右邊可滑動 -->
   <div id="ganttWrap" style="display:flex;overflow:hidden;position:relative">
     <!-- 左邊固定標籤 -->
-    <div id="ganttLabels" style="flex-shrink:0;width:170px;overflow:hidden;z-index:10;background:white;border-right:2px solid var(--line)"></div>
+    <div id="ganttLabels" style="flex-shrink:0;width:220px;overflow:hidden;z-index:10;background:white;border-right:2px solid var(--line)"></div>
     <!-- 右邊可滑動區域 -->
     <div id="ganttScroll" style="flex:1;overflow-x:auto;overflow-y:hidden" onscroll="syncGanttScroll(this)">
       <div id="ganttBars"></div>
@@ -3737,7 +3737,7 @@ window.renderGantt = function(){
   // Build date markers (every 3 days or weekly)
   const markers=[];
   const md=new Date(minDate);
-  const step=totalDays>90?7:totalDays>30?3:1;
+  const step=totalDays>180?7:totalDays>60?3:1;
   while(md<=maxDate){ markers.push(new Date(md)); md.setDate(md.getDate()+step); }
 
   const totalH=HEADER_H+list.length*ROW_H+10;
@@ -3748,11 +3748,12 @@ window.renderGantt = function(){
     const st=getStatus(p);
     const isDone=st==='已完成';
     const pct=pctNum(p.id);
-    const shortName=(p.name||'').length>14?(p.name||'').slice(0,14)+'…':p.name||'';
-    labelHtml+='<div style="height:'+ROW_H+'px;padding:0 8px;display:flex;flex-direction:column;justify-content:center;background:'+(i%2===0?'white':'#f8f9ff')+';border-bottom:1px solid var(--line)">'
-      +'<div style="font-size:11px;font-weight:700;color:'+(isDone?'#16a34a':'var(--ink)')+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+shortName+'</div>'
+    const shortName=(p.name||'').length>20?(p.name||'').slice(0,20)+'…':p.name||'';
+    const divEl='<div data-pid="'+p.id+'" style="height:'+ROW_H+'px;padding:0 8px;display:flex;flex-direction:column;justify-content:center;background:'+(i%2===0?'white':'#f8f9ff')+';border-bottom:1px solid var(--line);cursor:pointer" onclick="jumpToItems(this.dataset.pid)">'
+      +'<div style="font-size:11px;font-weight:700;color:'+(isDone?'#16a34a':'var(--jia)')+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:underline dotted" title="'+(p.name||'')+'">'+shortName+'</div>'
       +'<div style="font-size:10px;color:var(--ink4);margin-top:2px">'+st+' · '+pct+'%</div>'
       +'</div>';
+    labelHtml+=divEl;
   });
   labelsEl.innerHTML=labelHtml;
   labelsEl.style.height=totalH+'px';
