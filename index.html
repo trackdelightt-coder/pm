@@ -253,6 +253,24 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
 <body>
 <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
 
+<!-- GANTT -->
+<div class="screen" id="screen-gantt">
+  <div style="padding:12px 16px;background:white;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+    <div style="font-size:15px;font-weight:900;color:var(--ink)">📅 專案甘特圖</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <select id="ganttYear" class="yr-sel" onchange="renderGantt()"></select>
+      <select id="ganttMonth" class="yr-sel" onchange="renderGantt()">
+        <option value="all">全部月份</option>
+        <option value="01">1月</option><option value="02">2月</option><option value="03">3月</option>
+        <option value="04">4月</option><option value="05">5月</option><option value="06">6月</option>
+        <option value="07">7月</option><option value="08">8月</option><option value="09">9月</option>
+        <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+      </select>
+    </div>
+  </div>
+  <div id="ganttContent" style="padding:16px;overflow-x:auto"></div>
+</div>
+
 <!-- LOGIN -->
 <div class="login-screen" id="loginScreen">
   <div style="font-size:36px;margin-bottom:10px">📋</div>
@@ -281,6 +299,7 @@ body{font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;backgroun
     <button class="ttab" onclick="showScreen('items',this)">細項</button>
     <button class="ttab" onclick="showScreen('dash',this)">統計</button>
     <button class="ttab active" onclick="showScreen('report',this)">📋 進度報告</button>
+    <button class="ttab" onclick="showScreen('gantt',this)">📅 甘特圖</button>
   </div>
   <div style="display:flex;align-items:center;gap:6px">
     <span class="mode-tag" id="modeTag">👁 查看</span>
@@ -3639,6 +3658,110 @@ window.toggleProjTable = () => {
   icon.textContent = isOpen ? '▶ 展開' : '▼ 收合';
 };
 
+// ── GANTT ──
+window.renderGantt = function(){
+  const el=document.getElementById('ganttContent');
+  if(!el) return;
+  const now=new Date();
+  const yrSel=document.getElementById('ganttYear');
+  const moSel=document.getElementById('ganttMonth');
+  if(!yrSel) return;
+
+  if(!yrSel.options.length){
+    const years=[...new Set(projects.map(p=>(p.date||'').slice(0,4)).filter(Boolean))].sort();
+    if(!years.includes(String(now.getFullYear()))) years.push(String(now.getFullYear()));
+    years.forEach(y=>{ const o=document.createElement('option'); o.value=y; o.textContent=y+'年'; yrSel.appendChild(o); });
+    yrSel.value=String(now.getFullYear());
+  }
+
+  const yr=yrSel.value;
+  const mo=moSel.value;
+
+  let list=projects.filter(p=>getStatus(p)!=='流標'&&p.date&&p.date.startsWith(yr));
+  if(mo!=='all') list=list.filter(p=>p.date.startsWith(yr+'-'+mo));
+  list=list.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+
+  if(!list.length){ el.innerHTML='<div style="text-align:center;padding:40px;color:var(--ink4)">此期間無專案</div>'; return; }
+
+  let minDate,maxDate;
+  if(mo!=='all'){
+    minDate=new Date(yr+'-'+mo+'-01');
+    maxDate=new Date(yr,parseInt(mo),0);
+  } else {
+    minDate=new Date(yr+'-01-01');
+    maxDate=new Date(yr+'-12-31');
+  }
+  const totalDays=(maxDate-minDate)/(1000*60*60*24)+1;
+  const today=new Date(); today.setHours(0,0,0,0);
+  const bizColors={'佳':'#2563eb','艾':'#7c3aed','JC':'#0891b2','佳艾':'#9333ea','事業':'#0f766e','招商':'#7e22ce'};
+
+  function dayPct(dateStr){ return Math.max(0,Math.min(1,(new Date(dateStr)-minDate)/(maxDate-minDate))); }
+
+  const ROW_H=60;
+  const LABEL_W=170;
+  const BAR_AREA=Math.max(500,totalDays*(mo!=='all'?12:36));
+  const svgH=30+(list.length*ROW_H)+10;
+
+  const step=totalDays>180?14:totalDays>60?7:totalDays>30?3:1;
+  const markers=[]; const md=new Date(minDate);
+  while(md<=maxDate){ markers.push(new Date(md)); md.setDate(md.getDate()+step); }
+
+  let svg='<svg width="'+(LABEL_W+BAR_AREA)+'" height="'+svgH+'" xmlns="http://www.w3.org/2000/svg">';
+  svg+='<rect width="100%" height="100%" fill="#f8f9ff"/>';
+  markers.forEach(m=>{
+    const x=LABEL_W+dayPct(m.toISOString().slice(0,10))*BAR_AREA;
+    svg+='<line x1="'+x+'" y1="28" x2="'+x+'" y2="'+svgH+'" stroke="#e0e7ff" stroke-width="1"/>';
+    svg+='<text x="'+x+'" y="18" font-size="10" fill="#94a3b8" text-anchor="middle">'+(m.getMonth()+1)+'/'+(m.getDate())+'</text>';
+  });
+  svg+='<rect x="0" y="0" width="'+(LABEL_W+BAR_AREA)+'" height="28" fill="white"/>';
+  svg+='<line x1="0" y1="28" x2="'+(LABEL_W+BAR_AREA)+'" y2="28" stroke="#e0e7ff" stroke-width="2"/>';
+  if(today>=minDate&&today<=maxDate){
+    const tx=LABEL_W+dayPct(today.toISOString().slice(0,10))*BAR_AREA;
+    svg+='<line x1="'+tx+'" y1="0" x2="'+tx+'" y2="'+svgH+'" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.7"/>';
+    svg+='<rect x="'+(tx-16)+'" y="0" width="32" height="14" rx="3" fill="#dc2626"/>';
+    svg+='<text x="'+tx+'" y="10" font-size="9" fill="white" text-anchor="middle">今天</text>';
+  }
+  list.forEach((p,i)=>{
+    const y=28+i*ROW_H;
+    const st=getStatus(p);
+    const startStr=p.start||p.date||'';
+    const endStr=p.date||'';
+    const biz=p.biz||'佳';
+    const barColor=bizColors[biz]||'#2563eb';
+    const isDone=st==='已完成';
+    svg+='<rect x="0" y="'+y+'" width="'+(LABEL_W+BAR_AREA)+'" height="'+ROW_H+'" fill="'+(i%2===0?'white':'#f8f9ff')+'"/>';
+    const shortName=(p.name||'').length>16?(p.name||'').slice(0,16)+'…':p.name||'';
+    svg+='<text x="8" y="'+(y+20)+'" font-size="12" font-weight="700" fill="'+(isDone?'#16a34a':'#1e1b4b')+'">'+shortName+'</text>';
+    svg+='<text x="8" y="'+(y+35)+'" font-size="10" fill="#94a3b8">'+st+'</text>';
+    if(startStr&&endStr){
+      const bx=LABEL_W+dayPct(startStr)*BAR_AREA;
+      const ex=LABEL_W+dayPct(endStr)*BAR_AREA;
+      const bw=Math.max(4,ex-bx);
+      const barY=y+14; const barH=20;
+      svg+='<rect x="'+bx+'" y="'+barY+'" width="'+bw+'" height="'+barH+'" rx="5" fill="'+(isDone?'#86efac':barColor)+'" opacity="0.3"/>';
+      const pct=pctNum(p.id);
+      if(pct>0) svg+='<rect x="'+bx+'" y="'+barY+'" width="'+(bw*pct/100)+'" height="'+barH+'" rx="5" fill="'+(isDone?'#16a34a':barColor)+'" opacity="0.9"/>';
+      svg+='<line x1="'+ex+'" y1="'+(y+10)+'" x2="'+ex+'" y2="'+(y+ROW_H-10)+'" stroke="#1e1b4b" stroke-width="2.5"/>';
+      const endLabel=(new Date(endStr).getMonth()+1)+'/'+(new Date(endStr).getDate());
+      svg+='<text x="'+(ex+4)+'" y="'+(barY+13)+'" font-size="10" font-weight="700" fill="#1e1b4b">'+endLabel+'</text>';
+    }
+    if(autoAlert(p.id)==='需追蹤') svg+='<text x="'+(LABEL_W-18)+'" y="'+(y+22)+'" font-size="12">⚠️</text>';
+    svg+='<line x1="0" y1="'+(y+ROW_H)+'" x2="'+(LABEL_W+BAR_AREA)+'" y2="'+(y+ROW_H)+'" stroke="#e0e7ff" stroke-width="1"/>';
+  });
+  svg+='<line x1="'+LABEL_W+'" y1="0" x2="'+LABEL_W+'" y2="'+svgH+'" stroke="#cbd5e1" stroke-width="1.5"/>';
+  svg+='</svg>';
+
+  const legend='<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;font-size:11px;color:var(--ink3)">'
+    +'<span><span style="display:inline-block;width:16px;height:8px;background:#2563eb;border-radius:3px;margin-right:3px;vertical-align:middle;opacity:.9"></span>佳瑪</span>'
+    +'<span><span style="display:inline-block;width:16px;height:8px;background:#7c3aed;border-radius:3px;margin-right:3px;vertical-align:middle;opacity:.9"></span>艾瑪特</span>'
+    +'<span><span style="display:inline-block;width:16px;height:8px;background:#0891b2;border-radius:3px;margin-right:3px;vertical-align:middle;opacity:.9"></span>JCPARK</span>'
+    +'<span><span style="display:inline-block;width:16px;height:8px;background:#16a34a;border-radius:3px;margin-right:3px;vertical-align:middle;opacity:.9"></span>已完成</span>'
+    +'<span><span style="display:inline-block;width:2px;height:12px;background:#1e1b4b;margin-right:3px;vertical-align:middle"></span>截止日</span>'
+    +'<span style="color:#dc2626">--- 今天</span>'
+    +'</div>';
+  el.innerHTML=legend+svg;
+};
+
 // ── REPORT ──
 let reportRange = 'month';
 window.setReportRange = function(btn){
@@ -3913,6 +4036,11 @@ window.showScreen = (name, btn) => {
     document.getElementById('mobileAddItem').style.display=isEdit?'block':'none';
     document.getElementById('mobileAddProj').style.display='none';
     populateFilters(); renderItems();
+  } else if(name==='gantt'){
+    ab.style.display='none';
+    document.getElementById('mobileAddProj').style.display='none';
+    document.getElementById('mobileAddItem').style.display='none';
+    renderGantt();
   } else if(name==='report'){
     ab.style.display='none';
     document.getElementById('mobileAddProj').style.display='none';
