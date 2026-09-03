@@ -3677,9 +3677,17 @@ window.renderGantt = function(){
   const yr=yrSel.value;
   const mo=moSel.value;
 
-  let list=projects.filter(p=>getStatus(p)!=='流標'&&p.date&&p.date.startsWith(yr));
-  if(mo!=='all') list=list.filter(p=>p.date.startsWith(yr+'-'+mo));
-  list=list.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  let list=projects.filter(p=>getStatus(p)!=='流標');
+  // 用預計完成日或實際完成日篩選年份
+  list=list.filter(p=>{
+    const d=p.date||p.doneDate||'';
+    return d.startsWith(yr);
+  });
+  if(mo!=='all') list=list.filter(p=>{
+    const d=p.date||p.doneDate||'';
+    return d.startsWith(yr+'-'+mo);
+  });
+  list=list.sort((a,b)=>(a.date||a.doneDate||'').localeCompare(b.date||b.doneDate||''));
 
   if(!list.length){ el.innerHTML='<div style="text-align:center;padding:40px;color:var(--ink4)">此期間無專案</div>'; return; }
 
@@ -3730,19 +3738,27 @@ window.renderGantt = function(){
     const barColor=bizColors[biz]||'#2563eb';
     const isDone=st==='已完成';
     svg+='<rect x="0" y="'+y+'" width="'+(LABEL_W+BAR_AREA)+'" height="'+ROW_H+'" fill="'+(i%2===0?'white':'#f8f9ff')+'"/>';
-    const shortName=(p.name||'').length>16?(p.name||'').slice(0,16)+'…':p.name||'';
-    svg+='<text x="8" y="'+(y+20)+'" font-size="12" font-weight="700" fill="'+(isDone?'#16a34a':'#1e1b4b')+'">'+shortName+'</text>';
-    svg+='<text x="8" y="'+(y+35)+'" font-size="10" fill="#94a3b8">'+st+'</text>';
-    if(startStr&&endStr){
-      const bx=LABEL_W+dayPct(startStr)*BAR_AREA;
-      const ex=LABEL_W+dayPct(endStr)*BAR_AREA;
-      const bw=Math.max(4,ex-bx);
-      const barY=y+14; const barH=20;
-      svg+='<rect x="'+bx+'" y="'+barY+'" width="'+bw+'" height="'+barH+'" rx="5" fill="'+(isDone?'#86efac':barColor)+'" opacity="0.3"/>';
+    const shortName=(p.name||'').length>15?(p.name||'').slice(0,15)+'…':p.name||'';
+    svg+='<clipPath id="clip'+i+'"><rect x="0" y="'+y+'" width="'+(LABEL_W-4)+'" height="'+ROW_H+'"/></clipPath>';
+    svg+='<g clip-path="url(#clip'+i+')">';
+    svg+='<text x="8" y="'+(y+22)+'" font-size="11" font-weight="700" fill="'+(isDone?'#16a34a':'#1e1b4b')+'">'+shortName+'</text>';
+    svg+='<text x="8" y="'+(y+37)+'" font-size="10" fill="#94a3b8">'+st+'</text>';
+    svg+='</g>';
+    // Get earliest item start date
+    const projIts=projItems(p.id);
+    const itemStarts=projIts.map(i=>i.start).filter(Boolean).sort();
+    const actualStart=startStr||itemStarts[0]||endStr;
+    const actualEnd=endStr||p.doneDate||'';
+    if(actualStart&&actualEnd){
+      const bx=LABEL_W+dayPct(actualStart)*BAR_AREA;
+      const ex=LABEL_W+dayPct(actualEnd)*BAR_AREA;
+      const bw=Math.max(8,ex-bx);
+      const barY=y+16; const barH=18;
+      svg+='<rect x="'+bx+'" y="'+barY+'" width="'+bw+'" height="'+barH+'" rx="5" fill="'+(isDone?'#86efac':barColor)+'" opacity="0.25"/>';
       const pct=pctNum(p.id);
-      if(pct>0) svg+='<rect x="'+bx+'" y="'+barY+'" width="'+(bw*pct/100)+'" height="'+barH+'" rx="5" fill="'+(isDone?'#16a34a':barColor)+'" opacity="0.9"/>';
-      svg+='<line x1="'+ex+'" y1="'+(y+10)+'" x2="'+ex+'" y2="'+(y+ROW_H-10)+'" stroke="#1e1b4b" stroke-width="2.5"/>';
-      const endLabel=(new Date(endStr).getMonth()+1)+'/'+(new Date(endStr).getDate());
+      if(pct>0) svg+='<rect x="'+bx+'" y="'+barY+'" width="'+(bw*pct/100)+'" height="'+barH+'" rx="5" fill="'+(isDone?'#16a34a':barColor)+'" opacity="0.85"/>';
+      svg+='<line x1="'+ex+'" y1="'+(y+8)+'" x2="'+ex+'" y2="'+(y+ROW_H-8)+'" stroke="#1e1b4b" stroke-width="2.5"/>';
+      const endLabel=(new Date(actualEnd).getMonth()+1)+'/'+(new Date(actualEnd).getDate());
       svg+='<text x="'+(ex+4)+'" y="'+(barY+13)+'" font-size="10" font-weight="700" fill="#1e1b4b">'+endLabel+'</text>';
     }
     if(autoAlert(p.id)==='需追蹤') svg+='<text x="'+(LABEL_W-18)+'" y="'+(y+22)+'" font-size="12">⚠️</text>';
